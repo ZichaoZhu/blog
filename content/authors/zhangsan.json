@@ -1,0 +1,10 @@
+{
+  "name": "张三",
+  "bio": "全栈开发工程师，热爱技术分享",
+  "avatar": "/avatars/zhangsan.jpg",
+  "social": {
+    "github": "zhangsan",
+    "twitter": "zhangsan",
+    "website": "https://example.com"
+  }
+}

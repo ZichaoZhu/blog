@@ -1,0 +1,9 @@
+{
+  "name": "李四",
+  "bio": "前端开发者，专注于用户体验",
+  "avatar": "/avatars/lisi.jpg",
+  "social": {
+    "github": "lisi",
+    "website": "https://example.com"
+  }
+}

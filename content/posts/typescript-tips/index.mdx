@@ -1,0 +1,264 @@
+---
+title: "TypeScript 实用技巧汇总"
+date: "2024-01-28"
+description: "分享一些 TypeScript 开发中的实用技巧和最佳实践，帮助你写出更优雅、更类型安全的代码。"
+tags: ["TypeScript", "JavaScript", "编程技巧"]
+category: "技术"
+author: "lisi"
+coverImage: "/images/typescript.jpg"
+draft: false
+---
+
+## 介绍
+
+TypeScript 为 JavaScript 带来了强大的类型系统，但要充分发挥其优势，需要掌握一些技巧和最佳实践。本文将分享一些我在实际开发中总结的实用技巧。
+
+## 1. 类型守卫
+
+类型守卫可以在运行时缩小类型范围：
+
+```typescript
+interface User {
+  name: string;
+  email: string;
+}
+
+interface Admin extends User {
+  role: 'admin';
+  permissions: string[];
+}
+
+function isAdmin(user: User | Admin): user is Admin {
+  return 'role' in user && user.role === 'admin';
+}
+
+function greetUser(user: User | Admin) {
+  if (isAdmin(user)) {
+    console.log(`Admin: ${user.name}, Permissions: ${user.permissions}`);
+  } else {
+    console.log(`User: ${user.name}`);
+  }
+}
+```
+
+## 2. 泛型约束
+
+使用泛型约束创建灵活且类型安全的函数：
+
+```typescript
+interface HasId {
+  id: string | number;
+}
+
+function findById<T extends HasId>(items: T[], id: string | number): T | undefined {
+  return items.find(item => item.id === id);
+}
+
+// 使用
+const users = [
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' }
+];
+
+const user = findById(users, 1); // 类型为 { id: number; name: string; } | undefined
+```
+
+## 3. 映射类型
+
+利用映射类型转换现有类型：
+
+```typescript
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P];
+};
+
+type Partial<T> = {
+  [P in keyof T]?: T[P];
+};
+
+interface Todo {
+  title: string;
+  description: string;
+  completed: boolean;
+}
+
+type ReadonlyTodo = Readonly<Todo>;
+type PartialTodo = Partial<Todo>;
+```
+
+## 4. 条件类型
+
+根据条件选择类型：
+
+```typescript
+type IsString<T> = T extends string ? true : false;
+
+type A = IsString<string>;  // true
+type B = IsString<number>;  // false
+
+// 实用示例：提取函数返回类型
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+function getUser() {
+  return { id: 1, name: 'Alice' };
+}
+
+type User = ReturnType<typeof getUser>; // { id: number; name: string; }
+```
+
+## 5. 模板字面量类型
+
+创建动态的字符串类型：
+
+```typescript
+type EventName = 'click' | 'scroll' | 'mousemove';
+type Handler = `on${Capitalize<EventName>}`;
+
+// Handler = 'onClick' | 'onScroll' | 'onMousemove'
+
+interface Events {
+  onClick: () => void;
+  onScroll: (e: Event) => void;
+  onMousemove: (e: MouseEvent) => void;
+}
+```
+
+## 6. 工具类型组合
+
+组合多个工具类型创建复杂类型：
+
+```typescript
+type DeepReadonly<T> = {
+  readonly [P in keyof T]: T[P] extends object
+    ? DeepReadonly<T[P]>
+    : T[P];
+};
+
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object
+    ? DeepPartial<T[P]>
+    : T[P];
+};
+
+interface Config {
+  server: {
+    host: string;
+    port: number;
+  };
+  database: {
+    url: string;
+  };
+}
+
+type ReadonlyConfig = DeepReadonly<Config>;
+type PartialConfig = DeepPartial<Config>;
+```
+
+## 7. 类型断言的替代方案
+
+避免使用 `as`，使用更安全的方式：
+
+```typescript
+// ❌ 不推荐
+const user = getUserData() as User;
+
+// ✅ 推荐：使用类型守卫
+function isUser(data: unknown): data is User {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'name' in data &&
+    typeof (data as any).name === 'string'
+  );
+}
+
+const userData = getUserData();
+if (isUser(userData)) {
+  // 这里 userData 被正确推断为 User 类型
+  console.log(userData.name);
+}
+```
+
+## 8. 索引签名的优化
+
+使用 Record 类型代替索引签名：
+
+```typescript
+// ❌ 不够精确
+interface StringMap {
+  [key: string]: string;
+}
+
+// ✅ 更精确
+type StringMap = Record<string, string>;
+
+// ✅ 甚至可以限制键的类型
+type ColorMap = Record<'primary' | 'secondary' | 'accent', string>;
+```
+
+## 9. 函数重载
+
+为同一个函数提供多个类型定义：
+
+```typescript
+function format(value: string): string;
+function format(value: number): number;
+function format(value: boolean): string;
+function format(value: string | number | boolean): string | number {
+  if (typeof value === 'string') {
+    return value.toUpperCase();
+  } else if (typeof value === 'number') {
+    return value.toFixed(2);
+  } else {
+    return value ? 'true' : 'false';
+  }
+}
+```
+
+## 10. 类型收窄
+
+利用 TypeScript 的类型收窄特性：
+
+```typescript
+function processValue(value: string | number | null) {
+  // typeof 收窄
+  if (typeof value === 'string') {
+    console.log(value.toUpperCase());
+  }
+  
+  // null 检查收窄
+  if (value !== null) {
+    console.log(value.toString());
+  }
+  
+  // instanceof 收窄
+  if (value instanceof Date) {
+    console.log(value.getFullYear());
+  }
+}
+```
+
+## 最佳实践
+
+1. **尽可能使用严格模式** - 在 `tsconfig.json` 中启用 `strict: true`
+2. **避免使用 `any`** - 使用 `unknown` 或更具体的类型
+3. **利用类型推断** - 让 TypeScript 自动推断类型
+4. **使用接口而非类型别名** - 对于对象类型，接口通常更好
+5. **编写可复用的泛型** - 提高代码的灵活性
+
+## 总结
+
+TypeScript 是一个强大的工具，掌握这些技巧可以帮助你：
+
+- ✅ 写出更安全的代码
+- ✅ 减少运行时错误
+- ✅ 提高代码可维护性
+- ✅ 改善开发体验
+
+持续学习和实践，你会发现 TypeScript 带来的价值远超预期！
+
+## 参考资源
+
+- [TypeScript 官方文档](https://www.typescriptlang.org/docs/)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+- [Type Challenges](https://github.com/type-challenges/type-challenges)

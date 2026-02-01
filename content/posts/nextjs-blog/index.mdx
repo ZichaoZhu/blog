@@ -1,0 +1,181 @@
+---
+title: "使用 Next.js 14 构建现代化博客"
+date: "2024-02-01"
+description: "详细介绍如何使用 Next.js 14 的 App Router、Server Components 和 MDX 构建一个功能完善的个人博客系统。"
+tags: ["Next.js", "React", "前端开发", "博客"]
+category: "教程"
+author: "zhangsan"
+coverImage: "/images/nextjs-blog.jpg"
+draft: false
+---
+
+## 前言
+
+Next.js 14 带来了许多激动人心的新特性，其中 App Router 和 Server Components 为构建现代化 Web 应用提供了全新的范式。本文将介绍如何利用这些特性构建一个功能完善的个人博客。
+
+## 技术选型
+
+### 核心技术栈
+
+1. **Next.js 14** - 使用最新的 App Router
+2. **TypeScript** - 类型安全
+3. **Tailwind CSS** - 样式方案
+4. **MDX** - 内容管理
+
+### 为什么选择 Next.js？
+
+Next.js 是构建博客的理想选择，原因如下：
+
+- 🚀 **出色的性能** - 静态生成和增量静态再生成
+- 📝 **SEO 友好** - 服务端渲染和元数据 API
+- 🎨 **开发体验** - 热重载、TypeScript 支持
+- 🔧 **灵活性** - 可以轻松扩展功能
+
+## 项目架构
+
+### 文件结构
+
+```
+blog/
+├── app/                    # 应用路由
+│   ├── blog/
+│   │   ├── [slug]/
+│   │   │   └── page.tsx   # 文章详情页
+│   │   └── page.tsx       # 博客列表页
+│   ├── layout.tsx         # 根布局
+│   └── page.tsx           # 首页
+├── components/            # 组件
+│   ├── Hero/
+│   ├── layouts/
+│   └── ...
+├── content/               # 内容
+│   ├── posts/            # MDX 文章
+│   └── authors/          # 作者信息
+└── lib/                  # 工具函数
+```
+
+### 核心功能实现
+
+#### 1. MDX 处理
+
+使用 `next-mdx-remote` 处理 MDX 内容：
+
+```typescript
+import { compileMDX } from 'next-mdx-remote/rsc';
+import rehypePrettyCode from 'rehype-pretty-code';
+
+export async function compileMDXContent(source: string) {
+  return await compileMDX({
+    source,
+    options: {
+      parseFrontmatter: true,
+      mdxOptions: {
+        rehypePlugins: [rehypePrettyCode],
+      },
+    },
+  });
+}
+```
+
+#### 2. 静态生成
+
+利用 `generateStaticParams` 预生成所有文章：
+
+```typescript
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  return posts.map(post => ({
+    slug: post.slug,
+  }));
+}
+```
+
+#### 3. 元数据优化
+
+使用 Next.js 的 Metadata API：
+
+```typescript
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const post = await getPostBySlug(params.slug);
+  
+  return {
+    title: post.frontmatter.title,
+    description: post.frontmatter.description,
+  };
+}
+```
+
+## 性能优化
+
+### 1. 图片优化
+
+使用 Next.js Image 组件：
+
+```tsx
+<Image
+  src={coverImage}
+  alt={title}
+  width={1200}
+  height={630}
+  priority
+/>
+```
+
+### 2. 代码分割
+
+动态导入大型组件：
+
+```typescript
+const AnimatedHero = dynamic(
+  () => import('@/components/Hero/AnimatedHero'),
+  { ssr: false }
+);
+```
+
+### 3. 字体优化
+
+使用 Next.js 字体优化：
+
+```typescript
+import { Geist } from 'next/font/google';
+
+const geistSans = Geist({
+  subsets: ['latin'],
+  variable: '--font-geist-sans',
+});
+```
+
+## 部署
+
+### Vercel 部署
+
+1. 推送代码到 GitHub
+2. 在 Vercel 导入项目
+3. 自动构建和部署
+
+```bash
+npm run build
+```
+
+### 环境变量
+
+```env
+NEXT_PUBLIC_SITE_URL=https://your-blog.com
+```
+
+## 总结
+
+使用 Next.js 14 构建博客是一个很好的学习和实践机会。通过本文介绍的方法，你可以构建一个：
+
+- ✅ 性能优异的静态博客
+- ✅ SEO 友好
+- ✅ 易于维护和扩展
+- ✅ 用户体验出色
+
+## 相关资源
+
+- [Next.js 官方文档](https://nextjs.org/docs)
+- [MDX 文档](https://mdxjs.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+希望这篇文章对你有所帮助！
