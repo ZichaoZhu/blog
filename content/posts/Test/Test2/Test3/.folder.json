@@ -1,0 +1,11 @@
+{
+  "name": "Test3",
+  "displayName": "📂 测试嵌套文件夹",
+  "description": "第三层嵌套文件夹，测试深度嵌套功能",
+  "icon": "📂",
+  "order": 1,
+  "collapsed": true,
+  "metadata": {
+    "color": "#f59e0b"
+  }
+}

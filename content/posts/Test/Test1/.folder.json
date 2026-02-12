@@ -1,0 +1,11 @@
+{
+  "name": "Test1",
+  "displayName": "📁 测试子文件夹1",
+  "description": "第一个测试子文件夹",
+  "icon": "📁",
+  "order": 1,
+  "collapsed": true,
+  "metadata": {
+    "color": "#3b82f6"
+  }
+}

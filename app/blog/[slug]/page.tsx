@@ -1,13 +1,14 @@
 import { notFound } from 'next/navigation';
-import { getAllPosts, getPostBySlug } from '@/lib/posts';
+import { getAllPosts, getPostBySlug, getFileTree } from '@/lib/posts';
 import { getAuthorById } from '@/lib/authors';
 import { compileMDXContent } from '@/lib/mdx';
 import { extractTOC } from '@/lib/toc';
-import { MDXComponents } from '@/components/MDXComponents';
 import { TableOfContents } from '@/components/TableOfContents';
+import { FileTreeClient } from '@/components/FileTreeClient';
 import { MobileTOC } from '@/components/MobileTOC';
 import { BackToTop } from '@/components/BackToTop';
 import { ReadingProgress } from '@/components/ReadingProgress';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import Image from 'next/image';
@@ -43,24 +44,40 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  
+  // 第一轮并行：获取文章数据和文件树
+  const [post, fileTree] = await Promise.all([
+    getPostBySlug(slug),
+    getFileTree(),
+  ]);
 
   if (!post) {
     notFound();
   }
 
-  const { content } = await compileMDXContent(post.content);
-  const author = getAuthorById(post.frontmatter.author);
-  const toc = extractTOC(post.content);
+  // 第二轮并行：编译内容、获取作者、提取目录
+  const [{ content }, author, toc] = await Promise.all([
+    compileMDXContent(post.content),
+    Promise.resolve(getAuthorById(post.frontmatter.author)),
+    Promise.resolve(extractTOC(post.content)),
+  ]);
 
   return (
     <>
       <ReadingProgress />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-8">
+        <div className="flex gap-6">
+          {/* 左侧文件树 - 仅桌面显示 */}
+          <aside className="hidden xl:block shrink-0">
+            <FileTreeClient fileTree={fileTree.root} currentSlug={slug} />
+          </aside>
+
           {/* 主内容区 */}
-          <article className="min-w-0">
+          <article className="flex-1 min-w-0">
+            {/* 面包屑导航 */}
+            <Breadcrumb post={post} />
+            
             {/* 移动端目录 */}
             <MobileTOC items={toc} />
 
@@ -134,7 +151,8 @@ export default async function PostPage({ params }: PostPageProps) {
             </header>
 
             {/* 文章内容 */}
-            <div className="prose dark:prose-invert max-w-none">
+            {/* 调整字号大小：选项一：更大 (18px) */}
+            <div className="prose prose-lg dark:prose-invert max-w-none">
               {content}
             </div>
 
@@ -151,8 +169,8 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           </article>
 
-          {/* 桌面端目录 */}
-          <aside className="hidden xl:block">
+          {/* 右侧目录 - 仅桌面显示 */}
+          <aside className="hidden xl:block shrink-0">
             <TableOfContents items={toc} />
           </aside>
         </div>

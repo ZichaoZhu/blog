@@ -121,22 +121,31 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'KaiTi', 'STKaiti', 'BiauKai', 'SimKai', 'STKaiti', 'FZKai-Z03', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   }
 
   /* 代码块样式 */
   pre {
     @apply rounded-lg p-4 my-6 overflow-x-auto;
-    background-color: oklch(0.96 0 0);
+    background-color: #f6f8fa;
   }
 
   .dark pre {
-    background-color: oklch(0.20 0 0);
+    background-color: #161b22;
   }
 
   pre code {
     @apply text-sm;
     font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
+  }
+
+  /* rehype-pretty-code 生成的语法高亮样式 */
+  pre code span {
+    color: var(--shiki-light);
+  }
+
+  .dark pre code span {
+    color: var(--shiki-dark);
   }
 
   /* 行内代码 */
@@ -185,5 +194,47 @@
     counter-increment: line;
     content: counter(line);
     @apply inline-block w-8 mr-4 text-right text-gray-500 dark:text-gray-500;
+  }
+
+  /* View Transitions API 样式 */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+  }
+
+  ::view-transition-old(root) {
+    animation-name: fade-out;
+  }
+
+  ::view-transition-new(root) {
+    animation-name: fade-in, slide-up;
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(20px);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
 }

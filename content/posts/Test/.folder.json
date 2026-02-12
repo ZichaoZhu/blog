@@ -1,0 +1,11 @@
+{
+  "name": "Test",
+  "displayName": "🧪 测试文件夹",
+  "description": "用于测试文件夹功能的示例文件夹",
+  "icon": "🧪",
+  "order": 10,
+  "collapsed": true,
+  "metadata": {
+    "color": "#8b5cf6"
+  }
+}

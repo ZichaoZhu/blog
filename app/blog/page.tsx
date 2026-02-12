@@ -1,9 +1,9 @@
-import { getAllPosts, getAllTags, getAllCategories } from '@/lib/posts';
+import { getAllPosts, getAllTags, getAllCategories, getFileTree, getPostsByFolder } from '@/lib/posts';
 import { BlogListClient } from '@/components/BlogListClient';
 import Link from 'next/link';
 
 interface BlogPageProps {
-  searchParams: Promise<{ tag?: string; category?: string }>;
+  searchParams: Promise<{ tag?: string; category?: string; folder?: string }>;
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
@@ -11,14 +11,25 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const allPosts = await getAllPosts();
   const allTags = await getAllTags();
   const allCategories = await getAllCategories();
+  const fileTree = await getFileTree();
   
   // 根据筛选条件过滤文章
   let filteredPosts = allPosts;
+  
+  // 按文件夹过滤
+  if (params.folder) {
+    const folderPosts = await getPostsByFolder(params.folder);
+    filteredPosts = folderPosts;
+  }
+  
+  // 按标签过滤
   if (params.tag) {
     filteredPosts = filteredPosts.filter(post =>
       post.frontmatter.tags.includes(params.tag!)
     );
   }
+  
+  // 按分类过滤
   if (params.category) {
     filteredPosts = filteredPosts.filter(post =>
       post.frontmatter.category === params.category
@@ -86,7 +97,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         </div>
       </div>
 
-      <BlogListClient posts={filteredPosts} />
+      <BlogListClient posts={filteredPosts} fileTree={fileTree.root} />
     </div>
   );
 }

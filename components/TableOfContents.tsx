@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { TOCItem } from '@/lib/toc';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 
 interface TableOfContentsProps {
   items: TOCItem[];
@@ -13,6 +13,7 @@ interface TableOfContentsProps {
 export function TableOfContents({ items, minLevel = 2, maxLevel = 4 }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>('');
   const [collapsed, setCollapsed] = useState<{ [key: string]: boolean }>({});
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   // 监听滚动，高亮当前标题
   useEffect(() => {
@@ -64,52 +65,84 @@ export function TableOfContents({ items, minLevel = 2, maxLevel = 4 }: TableOfCo
   }
 
   return (
-    <nav className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
-      <div className="space-y-2">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 px-2">
-          目录
-        </h2>
-        <ul className="space-y-1">
-          {items.map((item, index) => {
-            const hasChildren = items[index + 1]?.level > item.level;
-            const isCollapsed = collapsed[item.id];
+    <nav 
+      className={`
+        relative sticky top-20 max-h-[calc(100vh-6rem)]
+        transition-all duration-300 ease-in-out
+        ${isOpen ? 'w-[280px] overflow-y-auto' : 'w-12 overflow-hidden'}
+      `}
+    >
+      {/* 切换按钮 */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="
+          absolute top-0 right-0
+          p-2 rounded-lg
+          bg-gray-100 dark:bg-gray-800
+          hover:bg-gray-200 dark:hover:bg-gray-700
+          transition-all duration-200
+          z-10
+        "
+        aria-label={isOpen ? '收起目录' : '展开目录'}
+      >
+        {isOpen ? (
+          <PanelLeftClose className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+        ) : (
+          <PanelLeftOpen className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+        )}
+      </button>
 
-            return (
-              <li key={item.id} className="relative">
-                <div className="flex items-center gap-1">
-                  {hasChildren && (
-                    <button
-                      onClick={() => toggleCollapse(item.id)}
-                      className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
-                      aria-label={isCollapsed ? '展开' : '收起'}
+      {/* 目录内容 */}
+      <div 
+        className={`
+          pt-12 space-y-2 transition-opacity duration-200
+          ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+        `}
+      >
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 px-2">
+            目录
+          </h2>
+          <ul className="space-y-1">
+            {items.map((item, index) => {
+              const hasChildren = items[index + 1]?.level > item.level;
+              const isCollapsed = collapsed[item.id];
+
+              return (
+                <li key={item.id} className="relative">
+                  <div className="flex items-center gap-1">
+                    {hasChildren && (
+                      <button
+                        onClick={() => toggleCollapse(item.id)}
+                        className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+                        aria-label={isCollapsed ? '展开' : '收起'}
+                      >
+                        {isCollapsed ? (
+                          <ChevronRight className="w-3 h-3" />
+                        ) : (
+                          <ChevronDown className="w-3 h-3" />
+                        )}
+                      </button>
+                    )}
+                    <a
+                      href={`#${item.id}`}
+                      onClick={(e) => handleClick(e, item.id)}
+                      className={`
+                        flex-1 text-sm py-1 px-2 rounded transition-colors
+                        ${activeId === item.id
+                          ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                        }
+                      `}
+                      style={{ paddingLeft: `${(item.level - minLevel) * 12 + 8}px` }}
                     >
-                      {isCollapsed ? (
-                        <ChevronRight className="w-3 h-3" />
-                      ) : (
-                        <ChevronDown className="w-3 h-3" />
-                      )}
-                    </button>
-                  )}
-                  <a
-                    href={`#${item.id}`}
-                    onClick={(e) => handleClick(e, item.id)}
-                    className={`
-                      flex-1 text-sm py-1 px-2 rounded transition-colors
-                      ${activeId === item.id
-                        ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
-                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                      }
-                    `}
-                    style={{ paddingLeft: `${(item.level - minLevel) * 12 + 8}px` }}
-                  >
-                    {item.title}
-                  </a>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+                      {item.title}
+                    </a>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
     </nav>
   );
 }
