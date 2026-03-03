@@ -117,6 +117,58 @@ function MDXOl(props: ComponentPropsWithoutRef<'ol'>) {
   );
 }
 
+// 表格组件 - Typora 风格
+function MDXTable(props: ComponentPropsWithoutRef<'table'>) {
+  return (
+    <div className="my-6 overflow-x-auto">
+      <table
+        className="mx-auto min-w-full border-collapse table-auto"
+        {...props}
+      />
+    </div>
+  );
+}
+
+function MDXTHead(props: ComponentPropsWithoutRef<'thead'>) {
+  return (
+    <thead
+      className="bg-muted/50 border-b-2 border-border"
+      {...props}
+    />
+  );
+}
+
+function MDXTBody(props: ComponentPropsWithoutRef<'tbody'>) {
+  return <tbody {...props} />;
+}
+
+function MDXTr(props: ComponentPropsWithoutRef<'tr'>) {
+  return (
+    <tr
+      className="border-b border-border hover:bg-accent/30 transition-colors"
+      {...props}
+    />
+  );
+}
+
+function MDXTh(props: ComponentPropsWithoutRef<'th'>) {
+  return (
+    <th
+      className="px-4 py-3 text-left font-semibold text-foreground border-r border-border/30 last:border-r-0"
+      {...props}
+    />
+  );
+}
+
+function MDXTd(props: ComponentPropsWithoutRef<'td'>) {
+  return (
+    <td
+      className="px-4 py-3 text-foreground/90 border-r border-border/30 last:border-r-0"
+      {...props}
+    />
+  );
+}
+
 export const MDXComponents = {
   img: MDXImage,
   Image: MDXImage,
@@ -129,4 +181,10 @@ export const MDXComponents = {
   pre: MDXPre,
   ul: MDXUl,
   ol: MDXOl,
+  table: MDXTable,
+  thead: MDXTHead,
+  tbody: MDXTBody,
+  tr: MDXTr,
+  th: MDXTh,
+  td: MDXTd,
 };

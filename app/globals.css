@@ -196,6 +196,83 @@
     @apply inline-block w-8 mr-4 text-right text-gray-500 dark:text-gray-500;
   }
 
+  /* Typora 风格表格样式 */
+  table {
+    @apply my-6 mx-auto border-collapse shadow-sm rounded-lg overflow-hidden;
+    width: auto;
+  }
+
+  thead {
+    @apply border-b-2;
+    background: linear-gradient(to bottom, oklch(0.98 0 0), oklch(0.95 0 0));
+    border-color: oklch(0.88 0 0);
+  }
+
+  .dark thead {
+    background: linear-gradient(to bottom, oklch(0.25 0 0), oklch(0.22 0 0));
+    border-color: oklch(0.35 0 0);
+  }
+
+  th {
+    @apply px-4 py-3 font-semibold text-left;
+    border-right: 1px solid oklch(0 0 0 / 5%);
+  }
+
+  .dark th {
+    border-right: 1px solid oklch(1 0 0 / 5%);
+  }
+
+  th:last-child {
+    border-right: none;
+  }
+
+  tbody tr {
+    @apply border-b transition-colors;
+    border-color: var(--border);
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: oklch(0 0 0 / 2%);
+  }
+
+  .dark tbody tr:nth-child(odd) {
+    background-color: oklch(1 0 0 / 2%);
+  }
+
+  tbody tr:hover {
+    background-color: oklch(0.6 0.15 250 / 8%);
+  }
+
+  .dark tbody tr:hover {
+    background-color: oklch(0.6 0.15 250 / 12%);
+  }
+
+  td {
+    @apply px-4 py-3;
+    color: oklch(from var(--foreground) l c h / 90%);
+    border-right: 1px solid oklch(0 0 0 / 5%);
+  }
+
+  .dark td {
+    border-right: 1px solid oklch(1 0 0 / 5%);
+  }
+
+  td:last-child {
+    border-right: none;
+  }
+
+  /* 响应式表格 */
+  @media (max-width: 768px) {
+    table {
+      @apply text-sm;
+    }
+    
+    th,
+    td {
+      @apply px-3 py-2;
+    }
+  }
+
   /* View Transitions API 样式 */
   ::view-transition-old(root),
   ::view-transition-new(root) {

@@ -1,0 +1,50 @@
+---
+title: "编译原理 - Lec2: 词法分析"
+date: "2026-03-03"
+description: "介绍编译器前端、后端的划分，词法分析的任务、Token 概念及其处理流程。"
+tags: ["编译原理", "课程笔记", "计算机科学"]
+category: "编译原理"
+author: "zhuzichao"
+draft: false
+---
+
+# Lec2: Lexical Analysisx
+
+## Compiling Process
+
+​	编译器分为前端和后端：
+
+* 前端（Analysis）
+  - Lexical Analysis: breaking the input into individual words or =="tokens"==;
+  - Syntax Analysis: parsing the ==phrase structure== of the program; 
+  - Semantic Analysis: calculating the program's meaning.
+* 后端（Synthesis）
+
+| 阶段 |             内容 |
+| ---- | ---------------: |
+| 前端 |      源代码 → IR |
+| 后端 | IR → 汇编/机器码 |
+
+## Task of lexical analyzer
+
+![image-20260303103527279](/images/compiler-principle/image-20260303103527279.png)
+
+* 输入：字符流（stream of characters）
+* 输出：token 流（stream of tokens）
+
+​	例如：
+
+```C
+float match0(char *s)
+```
+
+​	会被转换为：
+
+```C
+FLOAT ID(match0) LPAREN CHAR STAR ID(s) RPAREN ...
+```
+
+## Lexical Token
+
+* token: 
+  * 是字符的一个序列

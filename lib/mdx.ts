@@ -11,7 +11,24 @@ const rehypePrettyCodeOptions = {
     light: 'github-light',
     dark: 'github-dark',
   },
-  keepBackground: false,
+  keepBackground: true,
+  
+  // 防止空行折叠
+  onVisitLine(node: any) {
+    if (node.children.length === 0) {
+      node.children = [{ type: 'text', value: ' ' }];
+    }
+  },
+  
+  // 高亮行样式
+  onVisitHighlightedLine(node: any) {
+    node.properties.className = ['highlighted'];
+  },
+  
+  // 高亮字符样式
+  onVisitHighlightedChars(node: any) {
+    node.properties.className = ['highlighted-chars'];
+  },
 };
 
 async function compileMDXInternal(source: string) {

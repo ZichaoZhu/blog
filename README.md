@@ -39,11 +39,19 @@ npm run dev
 
 ## 📝 写作指南
 
-### 创建新文章
 
+### 创建新文章或系列课程
+
+#### 单篇文章
 1. 在 `content/posts/` 下创建新文件夹，例如 `my-new-post`
 2. 在文件夹中创建 `index.mdx` 文件
 3. 添加 frontmatter 和内容：
+
+#### 系列课程/多篇文章
+1. 在 `content/posts/` 下创建系列文件夹，例如 `Compiler Principle`
+2. 在系列文件夹下为每一讲新建子文件夹（如 `Lec0`、`Lec1` 等）
+3. 每个子文件夹内创建 `index.mdx`，并添加 frontmatter 和内容
+4. frontmatter 示例见下方
 
 ```mdx
 ---
@@ -64,10 +72,17 @@ draft: false
 
 ### 添加图片
 
-将图片放在文章文件夹中，然后在 MDX 中引用：
+
+#### 图片管理
+推荐将课程/系列文章的图片统一放在 `public/images/系列名/` 目录下，然后在 MDX 中引用：
 
 ```mdx
-![图片描述](./image.jpg)
+![图片描述](/images/系列名/图片名.png)
+```
+
+如：
+```mdx
+![实验流程图](/images/compiler-principle/image-20260302101830207.png)
 ```
 
 ### 添加作者
