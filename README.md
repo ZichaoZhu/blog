@@ -39,6 +39,30 @@ npm run dev
 
 ## 📝 写作指南
 
+### 🔄 使用 Markdown 编辑（推荐）
+
+本博客支持从 `.md` 文件自动同步到 `.mdx`，你可以在 Typora 等编辑器中编辑笔记。
+
+**快速开始：**
+
+```bash
+# 方式一：自动监视（开发时推荐）
+npm run watch:md      # 编辑 .md 自动同步到 .mdx
+
+# 方式二：手动同步
+npm run sync:md       # 手动触发同步
+```
+
+**文件结构示例：**
+```
+Compiler Principle/
+├── assets/          # 图片文件夹
+├── Lec0/
+│   └── index.mdx   # 博客渲染文件（自动生成）
+└── Lec0.md         # 源笔记（在此编辑）
+```
+
+详细说明见 [MARKDOWN_SYNC.md](docs_for_developer/MARKDOWN_SYNC.md)
 
 ### 创建新文章或系列课程
 
@@ -72,8 +96,21 @@ draft: false
 
 ### 添加图片
 
+#### 图片管理（推荐方式）
 
-#### 图片管理
+**方式一：系列文章使用 assets 文件夹（推荐）**
+
+将图片放在系列文件夹下的 `assets/` 目录，在 `.md` 中使用相对路径：
+
+```markdown
+<!-- 在 Lec0.md 中 -->
+![图片描述](./assets/image-name.png)
+```
+
+同步脚本会自动转换为正确的路径。
+
+**方式二：使用 public/images**
+
 推荐将课程/系列文章的图片统一放在 `public/images/系列名/` 目录下，然后在 MDX 中引用：
 
 ```mdx

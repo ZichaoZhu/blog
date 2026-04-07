@@ -9,7 +9,7 @@ export default function AboutPage() {
           本站基于以下技术构建：
         </p>
         <ul>
-          <li><strong>Next.js 14</strong> - 使用 App Router 和 Server Components</li>
+          <li><strong>Next.js</strong> - 使用 App Router 和 Server Components</li>
           <li><strong>TypeScript</strong> - 类型安全的开发体验</li>
           <li><strong>Tailwind CSS</strong> - 现代化的样式方案</li>
           <li><strong>MDX</strong> - 支持在 Markdown 中使用 React 组件</li>

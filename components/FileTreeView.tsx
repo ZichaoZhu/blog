@@ -74,11 +74,11 @@ function FolderItem({ folder, level }: { folder: Folder; level: number }) {
 
 function PostItem({ post, level }: { post: Post; level: number }) {
   const pathname = usePathname();
-  const isActive = pathname === `/blog/${post.slug}`;
-  
+  const isActive = pathname === `/blog/${post.path}`;
+
   return (
     <Link
-      href={`/blog/${post.slug}`}
+      href={`/blog/${post.path}`}
       className={`
         flex items-center gap-2 px-3 py-2 rounded-md transition-colors group
         ${isActive 

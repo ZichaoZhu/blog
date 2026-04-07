@@ -13,11 +13,11 @@ export function CardLayout({ posts }: CardLayoutProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {posts.map((post) => (
         <article
-          key={post.slug}
+          key={post.path}
           className="border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col"
         >
           {post.frontmatter.coverImage && (
-            <Link href={`/blog/${post.slug}`} className="overflow-hidden">
+            <Link href={`/blog/${post.path}`} className="overflow-hidden">
               <Image
                 src={post.frontmatter.coverImage}
                 alt={post.frontmatter.title}
@@ -37,7 +37,7 @@ export function CardLayout({ posts }: CardLayoutProps) {
               <span>{post.readingTime}</span>
             </div>
             
-            <Link href={`/blog/${post.slug}`}>
+            <Link href={`/blog/${post.path}`}>
               <h2 className="text-xl font-bold mb-2 hover:text-primary transition-colors line-clamp-2">
                 {post.frontmatter.title}
               </h2>

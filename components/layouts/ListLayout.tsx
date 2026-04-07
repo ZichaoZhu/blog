@@ -13,12 +13,12 @@ export function ListLayout({ posts }: ListLayoutProps) {
     <div className="space-y-6">
       {posts.map((post) => (
         <article
-          key={post.slug}
+          key={post.path}
           className="flex flex-col md:flex-row gap-6 pb-6 border-b border-border last:border-0"
         >
           {post.frontmatter.coverImage && (
             <Link
-              href={`/blog/${post.slug}`}
+              href={`/blog/${post.path}`}
               className="md:w-48 md:h-32 flex-shrink-0 overflow-hidden rounded-lg"
             >
               <Image
@@ -44,7 +44,7 @@ export function ListLayout({ posts }: ListLayoutProps) {
               </span>
             </div>
             
-            <Link href={`/blog/${post.slug}`}>
+            <Link href={`/blog/${post.path}`}>
               <h2 className="text-2xl font-bold mb-2 hover:text-primary transition-colors">
                 {post.frontmatter.title}
               </h2>

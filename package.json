@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate-blur": "tsx scripts/generateBlurData.ts"
+    "generate-blur": "tsx scripts/generateBlurData.ts",
+    "sync:md": "tsx scripts/sync-md-to-mdx.ts",
+    "watch:md": "tsx scripts/watch-md.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -26,16 +28,22 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "reading-time": "^1.5.0",
+    "rehype-katex": "^7.0.1",
+    "rehype-stringify": "^10.0.1",
+    "remark-math": "^6.0.0",
     "sharp": "^0.34.5",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "unified": "^11.0.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.19",
+    "@types/chokidar": "^1.7.5",
     "@types/mdast": "^4.0.4",
     "@types/node": "^20.19.30",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "chokidar": "^5.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "glob": "^13.0.0",

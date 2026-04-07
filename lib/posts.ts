@@ -19,23 +19,14 @@ function scanDirectory(
     if (entry.name.startsWith('.')) continue;
 
     const fullPath = path.join(dirPath, entry.name);
-    const itemRelativePath = relativePath 
-      ? `${relativePath}/${entry.name}` 
+    const itemRelativePath = relativePath
+      ? `${relativePath}/${entry.name}`
       : entry.name;
 
     if (entry.isDirectory()) {
-      // 检查是否是文章目录(包含 index.mdx)
-      const mdxPath = path.join(fullPath, 'index.mdx');
-      
-      if (fs.existsSync(mdxPath)) {
-        // 是文章
-        const post = loadPost(itemRelativePath, fullPath);
-        if (post) items.push(post);
-      } else {
-        // 是文件夹 - 递归扫描
-        const folder = loadFolder(itemRelativePath, fullPath);
-        if (folder) items.push(folder);
-      }
+      // 递归扫描子文件夹
+      const folder = loadFolder(itemRelativePath, fullPath);
+      if (folder) items.push(folder);
     }
   }
 
@@ -59,28 +50,57 @@ function loadFolder(relativePath: string, fullPath: string): Folder | null {
     }
   }
 
-  // 递归加载子项
-  const children = scanDirectory(fullPath, relativePath);
+  const items: FileTreeItem[] = [];
 
-  if (children.length === 0) return null; // 空文件夹不显示
+  // 加载当前文件夹下的所有 .md 文件
+  const entries = fs.readdirSync(fullPath);
+  const mdFiles = entries.filter(f => f.endsWith('.md'));
+
+  for (const mdFile of mdFiles) {
+    // index.md 对应路径为文件夹名，其他文件对应 文件夹名/文件名
+    const mdRelativePath = mdFile === 'index.md'
+      ? relativePath
+      : `${relativePath}/${mdFile.replace('.md', '')}`;
+    const post = loadPost(mdRelativePath, fullPath, mdFile);
+    if (post) items.push(post);
+  }
+
+  // 递归加载子文件夹
+  const subDirs = entries
+    .filter(e => {
+      try {
+        return fs.statSync(path.join(fullPath, e)).isDirectory() && !e.startsWith('.');
+      } catch {
+        return false;
+      }
+    });
+
+  for (const subDir of subDirs) {
+    const subDirRelativePath = `${relativePath}/${subDir}`;
+    const subDirFullPath = path.join(fullPath, subDir);
+    const folder = loadFolder(subDirRelativePath, subDirFullPath);
+    if (folder) items.push(folder);
+  }
+
+  if (items.length === 0) return null; // 空文件夹不显示
 
   // 计算文章总数
-  const postCount = countPosts(children);
+  const postCount = countPosts(items);
 
   return {
     type: 'folder',
     path: relativePath,
     metadata,
-    children,
+    children: items,
     postCount,
   };
 }
 
 /** 加载文章 */
-function loadPost(relativePath: string, fullPath: string): Post | null {
+function loadPost(relativePath: string, fullPath: string, mdFile: string = 'index.md'): Post | null {
   try {
-    const mdxPath = path.join(fullPath, 'index.mdx');
-    const fileContents = fs.readFileSync(mdxPath, 'utf8');
+    const mdPath = path.join(fullPath, mdFile);
+    const fileContents = fs.readFileSync(mdPath, 'utf8');
     const { data, content } = matter(fileContents);
 
     if (data.draft) return null; // 跳过草稿
@@ -88,16 +108,33 @@ function loadPost(relativePath: string, fullPath: string): Post | null {
     const stats = readingTime(content);
     const pathParts = relativePath.split('/');
     const slug = pathParts[pathParts.length - 1];
-    const parentPath = pathParts.length > 1 
-      ? pathParts.slice(0, -1).join('/') 
+    const parentPath = pathParts.length > 1
+      ? pathParts.slice(0, -1).join('/')
       : undefined;
+
+    // 规范化 frontmatter，避免缺失字段导致后续渲染崩溃
+    const fileStats = fs.statSync(mdPath);
+    const frontmatter: PostFrontmatter = {
+      title: typeof data.title === 'string' && data.title ? data.title : slug,
+      date: typeof data.date === 'string'
+        ? data.date
+        : data.date instanceof Date
+          ? data.date.toISOString().split('T')[0]
+          : fileStats.mtime.toISOString().split('T')[0],
+      description: typeof data.description === 'string' ? data.description : '',
+      tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
+      category: typeof data.category === 'string' ? data.category : '未分类',
+      author: typeof data.author === 'string' ? data.author : '',
+      coverImage: typeof data.coverImage === 'string' ? data.coverImage : undefined,
+      draft: data.draft === true,
+    };
 
     return {
       type: 'post',
       slug,
       path: relativePath,
       parentPath,
-      frontmatter: data as PostFrontmatter,
+      frontmatter,
       content,
       readingTime: stats.text,
     };
@@ -242,21 +279,23 @@ export async function getPostsByCategory(category: string): Promise<Post[]> {
 export async function getAllTags(): Promise<string[]> {
   const allPosts = await getAllPosts();
   const tags = new Set<string>();
-  
+
   allPosts.forEach(post => {
-    post.frontmatter.tags.forEach(tag => tags.add(tag));
+    (post.frontmatter.tags || []).forEach(tag => tags.add(tag));
   });
-  
+
   return Array.from(tags).sort();
 }
 
 export async function getAllCategories(): Promise<string[]> {
   const allPosts = await getAllPosts();
   const categories = new Set<string>();
-  
+
   allPosts.forEach(post => {
-    categories.add(post.frontmatter.category);
+    if (post.frontmatter.category) {
+      categories.add(post.frontmatter.category);
+    }
   });
-  
+
   return Array.from(categories).sort();
 }
