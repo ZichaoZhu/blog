@@ -159,19 +159,20 @@ function flattenPosts(items: FileTreeItem[]): Post[] {
   return posts;
 }
 
-// 文件树缓存（60秒 TTL）
+// 文件树缓存：
+// - 生产构建：长 TTL（构建时只扫一次目录，进程结束就没了）
+// - 开发模式：禁用缓存，新增/重命名文章无需重启 dev server
 let fileTreeCache: { data: FileTree | null; timestamp: number } = {
   data: null,
   timestamp: 0,
 };
 
-const CACHE_TTL = 5 * 60 * 1000; // 5分钟
+const CACHE_TTL = process.env.NODE_ENV === 'production' ? 5 * 60 * 1000 : 0;
 
 /** 获取文件树 */
 export async function getFileTree(): Promise<FileTree> {
-  // 检查缓存
   const now = Date.now();
-  if (fileTreeCache.data && now - fileTreeCache.timestamp < CACHE_TTL) {
+  if (CACHE_TTL > 0 && fileTreeCache.data && now - fileTreeCache.timestamp < CACHE_TTL) {
     return fileTreeCache.data;
   }
 

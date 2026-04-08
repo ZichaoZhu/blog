@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+// LaTeX 论文风阅读主题(scoped 在 .theme-latex 下,默认不影响任何元素)
+import "./latex-theme.css";
 import { Providers } from "./providers";
 import { Navigation } from "@/components/Navigation";
 import { ClickEffect } from "@/components/ClickEffect";
+import { ReadingThemeProvider } from "@/components/ReadingTheme";
 
 // KaTeX CSS
 import "katex/dist/katex.min.css";
@@ -30,9 +33,11 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
       >
         <Providers>
-          <Navigation />
-          {children}
-          <ClickEffect />
+          <ReadingThemeProvider>
+            <Navigation />
+            {children}
+            <ClickEffect />
+          </ReadingThemeProvider>
         </Providers>
       </body>
     </html>

@@ -5,57 +5,121 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
+import remarkEmoji from 'remark-emoji';
 import type { PostFrontmatter } from '@/types';
 import { createMDXComponents } from '@/components/MDXComponents';
 import { visit } from 'unist-util-visit';
 
 /**
- * 自定义 remark 插件：将 ==text== 转换为 <mark> 标签
+ * Typora 扩展行内语法 → JSX 元素映射:
+ *   - ==高亮==  →  <mark>高亮</mark>
+ *   - ~下标~    →  <sub>下标</sub>
+ *   - ^上标^    →  <sup>上标</sup>
+ *
+ * 必须用 `mdxJsxTextElement` (MDX 行内 JSX 节点),不能用 hast 风格的
+ * `{type:'element', tagName:...}` —— 那是 rehype 格式,MDX 会 fallback 成块级 div,
+ * 导致 `<p><div>` 嵌套引发 hydration error。
+ *
+ * 内容里不能含空白和该分隔符自身,以免误匹配 `~/path/to/file~` 之类。
  */
-function remarkHighlight() {
+// 注意:GFM 的 ~~删除线~~ 由 remark-gfm 提前处理掉,所以 ~ 规则只需要避开 `~~` 边界
+// 即可。要求 ~/^ 内部不含空白和分隔符自身,以避免误匹配 `~/path/file~` 之类。
+const TYPORA_INLINE_RULES = [
+  { regex: /==([^=\s][^=]*?[^=\s]|[^=\s])==/g, name: 'mark' },
+  { regex: /(?<!~)~([^~\s][^~]*?[^~\s]|[^~\s])~(?!~)/g, name: 'sub' },
+  { regex: /(?<!\^)\^([^\^\s][^\^]*?[^\^\s]|[^\^\s])\^(?!\^)/g, name: 'sup' },
+] as const;
+
+/**
+ * 把 ```mermaid 代码块替换成 <Mermaid chart="..." /> JSX,
+ * 这样 rehype-pretty-code 就不会再把它当代码语法高亮。
+ */
+function remarkMermaid() {
   return (tree: any) => {
-    visit(tree, 'text', (node: any, index: any, parent: any) => {
-      // 检查是否在代码块中
-      if (parent?.type === 'code' || parent?.tagName === 'code') return;
+    visit(tree, 'code', (node: any, index: number | undefined, parent: any) => {
+      if (index === undefined || !parent) return;
+      if (node.lang !== 'mermaid') return;
+      parent.children.splice(index, 1, {
+        type: 'mdxJsxFlowElement',
+        name: 'Mermaid',
+        attributes: [
+          { type: 'mdxJsxAttribute', name: 'chart', value: node.value },
+        ],
+        children: [],
+      });
+    });
+  };
+}
 
-      // 匹配 ==text== 模式
-      const regex = /==([^=]+)==/g;
-      if (regex.test(node.value)) {
-        const children: any[] = [];
-        let lastIndex = 0;
-        let match;
+/**
+ * Typora 的 [toc] 渲染成文章内嵌目录。
+ * 匹配独占一段且只含 `[toc]` (大小写不敏感) 的段落,替换为 <ArticleTOC /> JSX。
+ */
+function remarkTocPlaceholder() {
+  return (tree: any) => {
+    visit(tree, 'paragraph', (node: any, index: number | undefined, parent: any) => {
+      if (index === undefined || !parent) return;
+      if (node.children.length !== 1 || node.children[0].type !== 'text') return;
+      if (!/^\s*\[toc\]\s*$/i.test(node.children[0].value)) return;
+      parent.children.splice(index, 1, {
+        type: 'mdxJsxFlowElement',
+        name: 'ArticleTOC',
+        attributes: [],
+        children: [],
+      });
+    });
+  };
+}
 
-        while ((match = regex.exec(node.value)) !== null) {
-          // 添加匹配前的文本
-          if (match.index > lastIndex) {
-            children.push({
-              type: 'text',
-              value: node.value.slice(lastIndex, match.index),
-            });
-          }
+function remarkTyporaInline() {
+  return (tree: any) => {
+    visit(tree, 'text', (node: any, index: number | undefined, parent: any) => {
+      if (index === undefined || !parent) return;
+      if (parent.type === 'code' || parent.type === 'inlineCode') return;
 
-          // 添加高亮文本（使用 mark 元素）
-          children.push({
-            type: 'element',
-            tagName: 'mark',
-            children: [{ type: 'text', value: match[1] }],
-          });
-
-          lastIndex = regex.lastIndex;
+      // 收集所有规则在当前文本节点上的所有匹配
+      type Hit = { start: number; end: number; name: string; inner: string };
+      const hits: Hit[] = [];
+      for (const { regex, name } of TYPORA_INLINE_RULES) {
+        regex.lastIndex = 0;
+        let m;
+        while ((m = regex.exec(node.value)) !== null) {
+          hits.push({ start: m.index, end: m.index + m[0].length, name, inner: m[1] });
         }
-
-        // 添加剩余文本
-        if (lastIndex < node.value.length) {
-          children.push({
-            type: 'text',
-            value: node.value.slice(lastIndex),
-          });
-        }
-
-        // 替换父节点中的文本节点
-        parent.children.splice(index, 1, ...children);
-        return index + children.length;
       }
+      if (hits.length === 0) return;
+
+      // 按起点排序,丢弃彼此重叠的(后来者优先级更低)
+      hits.sort((a, b) => a.start - b.start);
+      const accepted: Hit[] = [];
+      let cursor = 0;
+      for (const h of hits) {
+        if (h.start >= cursor) {
+          accepted.push(h);
+          cursor = h.end;
+        }
+      }
+
+      const children: any[] = [];
+      let lastIndex = 0;
+      for (const h of accepted) {
+        if (h.start > lastIndex) {
+          children.push({ type: 'text', value: node.value.slice(lastIndex, h.start) });
+        }
+        children.push({
+          type: 'mdxJsxTextElement',
+          name: h.name,
+          attributes: [],
+          children: [{ type: 'text', value: h.inner }],
+        });
+        lastIndex = h.end;
+      }
+      if (lastIndex < node.value.length) {
+        children.push({ type: 'text', value: node.value.slice(lastIndex) });
+      }
+
+      parent.children.splice(index, 1, ...children);
+      return index + children.length;
     });
   };
 }
@@ -85,17 +149,63 @@ const rehypePrettyCodeOptions = {
   },
 };
 
+// 仅匹配真正的 HTML/JSX 标签开头:<tagname>、<tagname ...>、</tagname>、<!--
+// tagname 必须是字母开头,后面只能跟字母数字,且必须以空白/`/`/`>` 收尾。
+// 这样 `<segment-number, offset>`、`<>`、`a < b` 等元组/比较写法都会被排除。
+const TAG_START = /<(\/?[a-zA-Z][a-zA-Z0-9]*(?=[\s/>])|!--)/g;
+const SENTINEL = '\u0000';
+
+/**
+ * 处理 Typora 等编辑器导出的散装 markdown,使其能被 MDX 编译:
+ *
+ * 1. 把 `style="zoom:NN%"` 重写成 `width="NN%"` 并剥掉其他 style 字符串属性
+ *    —— React JSX 不接受字符串 style,必须是对象;Typora 的 `zoom` 也只在 Webkit 生效。
+ * 2. 把不像合法标签开头的 `<` 转义成 `&lt;`(`count <>0`、`<segment, offset>` 等)。
+ *
+ * 围栏代码块(```)和行内代码(`)内的内容原样保留。
+ */
+function preprocessMarkdown(source: string): string {
+  const segments = source.split(/(```[\s\S]*?```)/g);
+  return segments
+    .map((seg, i) => {
+      if (i % 2 === 1) return seg;
+      const inlineParts = seg.split(/(`[^`\n]*`)/g);
+      return inlineParts
+        .map((part, j) => {
+          if (j % 2 === 1) return part;
+          let out = part
+            .replace(/\sstyle="zoom:\s*([\d.]+%?)\s*;?\s*"/gi, ' width="$1"')
+            .replace(/\sstyle="[^"]*"/gi, '');
+          // 标记合法的标签开头 → 转义剩余 `<` → 还原标记
+          out = out.replace(TAG_START, SENTINEL + '$1');
+          out = out.replace(/</g, '&lt;');
+          out = out.replace(new RegExp(SENTINEL, 'g'), '<');
+          return out;
+        })
+        .join('');
+    })
+    .join('');
+}
+
 async function compileMDXInternal(source: string, postPath?: string) {
-  // 创建带有 postPath 上下文的 MDX 组件
   const components = createMDXComponents(postPath);
+  const sanitizedSource = preprocessMarkdown(source);
 
   return await compileMDX<PostFrontmatter>({
-    source,
+    source: sanitizedSource,
     components,
     options: {
       parseFrontmatter: true,
       mdxOptions: {
-        remarkPlugins: [remarkGfm, remarkMath, remarkHighlight],
+        remarkPlugins: [
+          // 关掉 GFM 的 singleTilde,把单 ~ 留给我们的 sub 语法;~~strike~~ 仍然有效
+          [remarkGfm, { singleTilde: false }],
+          remarkMath,
+          remarkEmoji,
+          remarkMermaid,
+          remarkTocPlaceholder,
+          remarkTyporaInline,
+        ],
         rehypePlugins: [
           rehypeKatex,
           rehypeSlug,

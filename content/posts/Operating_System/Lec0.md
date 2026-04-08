@@ -1,3 +1,13 @@
+---
+title: "Lec2: Lexical Analysisx"
+date: "2026-04-06"
+description: "​"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "Operating System"
+author: "zhuzichao"
+draft: false
+---
+
 # Course and Grades
 
 ## Main Contents

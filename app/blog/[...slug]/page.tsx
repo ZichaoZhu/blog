@@ -9,6 +9,7 @@ import { MobileTOC } from '@/components/MobileTOC';
 import { BackToTop } from '@/components/BackToTop';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { Breadcrumb } from '@/components/Breadcrumb';
+import { ArticleBody, ReadingThemeToggle } from '@/components/ReadingTheme';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import Image from 'next/image';
@@ -152,11 +153,8 @@ export default async function PostPage({ params }: PostPageProps) {
               </div>
             </header>
 
-            {/* 文章内容 */}
-            {/* 调整字号大小：选项一：更大 (18px) */}
-            <div className="prose prose-lg dark:prose-invert max-w-none">
-              {content}
-            </div>
+            {/* 文章内容 — ArticleBody 根据 reading theme 在默认 prose / LaTeX 论文风之间切换 */}
+            <ArticleBody>{content}</ArticleBody>
 
             {/* 预留评论区域 */}
             <div className="mt-16 pt-8 border-t border-border">
@@ -179,6 +177,7 @@ export default async function PostPage({ params }: PostPageProps) {
       </div>
 
       <BackToTop />
+      <ReadingThemeToggle />
     </>
   );
 }

@@ -1,56 +1,61 @@
-import Image from 'next/image';
-import type { ComponentPropsWithoutRef } from 'react';
+import type { CSSProperties, ComponentPropsWithoutRef } from 'react';
+import { ArticleTOC } from './ArticleTOC';
+import { Mermaid } from './Mermaid';
 
-interface MDXImageProps extends ComponentPropsWithoutRef<'img'> {
+// raw HTML 透传给 React 时,style 可能是字符串(MDX/Typora)
+type MDXImageProps = Omit<ComponentPropsWithoutRef<'img'>, 'style'> & {
   src: string;
   alt: string;
+  style?: CSSProperties | string;
+};
+
+/**
+ * 把 HTML style 字符串(如 Typora 导出的 `zoom:50%;`)解析成 React style 对象。
+ * 同时把 Webkit 专属的 `zoom: N%` 转成等价的 `width: N%`,以便在所有浏览器生效。
+ */
+function parseStyleAttr(style: string): CSSProperties {
+  const result: Record<string, string> = {};
+  for (const decl of style.split(';')) {
+    const idx = decl.indexOf(':');
+    if (idx === -1) continue;
+    const key = decl.slice(0, idx).trim();
+    const value = decl.slice(idx + 1).trim();
+    if (!key || !value) continue;
+    if (key === 'zoom') {
+      result.width = value;
+    } else {
+      // kebab-case → camelCase
+      const camel = key.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+      result[camel] = value;
+    }
+  }
+  return result as CSSProperties;
 }
 
-// 创建带上下文的 MDXImage 组件
 function createMDXImage(postPath?: string) {
-  return function MDXImage({ src, alt, ...props }: MDXImageProps) {
+  return function MDXImage({ src, alt, style, ...props }: MDXImageProps) {
     let resolvedSrc = src;
 
-    // 处理相对路径图片 (./assets/xxx.png)
-    if (src.startsWith('./')) {
-      if (postPath) {
-        // 获取文章所在文件夹路径（父文件夹）
-        const cleanPath = postPath.replace(/^\//, ''); // 移除前导斜杠
-        const pathParts = cleanPath.split('/');
-
-        // 如果是嵌套子文章（如 Compiler Principle/Lec1），取父文件夹
-        // 如果是顶层文章（如 Compiler Principle），使用自身
-        let folderPath: string;
-        if (pathParts.length > 1) {
-          folderPath = pathParts.slice(0, -1).join('/');
-        } else {
-          folderPath = cleanPath;
-        }
-
-        // 去掉 ./ 前缀
-        const imagePath = src.slice(2); // assets/xxx.png
-        resolvedSrc = `/api/images/${encodeURI(folderPath)}/${encodeURI(imagePath)}`;
-      }
+    // 相对路径图片 (./assets/xxx.png) → /api/images/<folder>/assets/xxx.png
+    if (src.startsWith('./') && postPath) {
+      const pathParts = postPath.replace(/^\//, '').split('/');
+      // 嵌套子文章取父目录;顶层文章用自身
+      const folderPath = pathParts.length > 1
+        ? pathParts.slice(0, -1).join('/')
+        : pathParts[0];
+      const imagePath = src.slice(2);
+      resolvedSrc = `/api/images/${encodeURI(folderPath)}/${encodeURI(imagePath)}`;
     }
 
-    // 处理外部图片
-    if (resolvedSrc.startsWith('http://') || resolvedSrc.startsWith('https://')) {
-      return (
-        <img
-          src={resolvedSrc}
-          alt={alt || ''}
-          className="rounded-lg my-4"
-          {...props}
-        />
-      );
-    }
+    const normalizedStyle: CSSProperties | undefined =
+      typeof style === 'string' ? parseStyleAttr(style) : style;
 
-    // 本地图片使用 img 标签
     return (
       <img
         src={resolvedSrc}
         alt={alt || ''}
         className="rounded-lg my-4"
+        style={normalizedStyle}
         {...props}
       />
     );
@@ -195,7 +200,6 @@ function MDXTd(props: ComponentPropsWithoutRef<'td'>) {
   );
 }
 
-// 高亮组件
 function MDXMark(props: ComponentPropsWithoutRef<'mark'>) {
   return (
     <mark
@@ -205,10 +209,15 @@ function MDXMark(props: ComponentPropsWithoutRef<'mark'>) {
   );
 }
 
-// 导出默认组件（向后兼容）
-export const MDXComponents = {
-  img: defaultMDXImage,
-  Image: defaultMDXImage,
+function MDXSub(props: ComponentPropsWithoutRef<'sub'>) {
+  return <sub className="text-[0.75em]" {...props} />;
+}
+
+function MDXSup(props: ComponentPropsWithoutRef<'sup'>) {
+  return <sup className="text-[0.75em]" {...props} />;
+}
+
+const baseComponents = {
   h2: MDXHeading2,
   h3: MDXHeading3,
   p: MDXParagraph,
@@ -225,30 +234,26 @@ export const MDXComponents = {
   th: MDXTh,
   td: MDXTd,
   mark: MDXMark,
+  sub: MDXSub,
+  sup: MDXSup,
+  // Typora 扩展
+  ArticleTOC,
+  Mermaid,
+};
+
+// 导出默认组件（向后兼容）
+export const MDXComponents = {
+  ...baseComponents,
+  img: defaultMDXImage,
+  Image: defaultMDXImage,
 };
 
 // 导出带上下文的组件创建函数
 export function createMDXComponents(postPath?: string) {
   const MDXImage = createMDXImage(postPath);
-
   return {
+    ...baseComponents,
     img: MDXImage,
     Image: MDXImage,
-    h2: MDXHeading2,
-    h3: MDXHeading3,
-    p: MDXParagraph,
-    a: MDXLink,
-    blockquote: MDXBlockquote,
-    code: MDXCode,
-    pre: MDXPre,
-    ul: MDXUl,
-    ol: MDXOl,
-    table: MDXTable,
-    thead: MDXTHead,
-    tbody: MDXTBody,
-    tr: MDXTr,
-    th: MDXTh,
-    td: MDXTd,
-    mark: MDXMark,
   };
 }
