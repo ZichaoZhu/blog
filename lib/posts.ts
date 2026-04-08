@@ -51,35 +51,22 @@ function loadFolder(relativePath: string, fullPath: string): Folder | null {
   }
 
   const items: FileTreeItem[] = [];
+  const entries = fs.readdirSync(fullPath, { withFileTypes: true });
 
-  // 加载当前文件夹下的所有 .md 文件
-  const entries = fs.readdirSync(fullPath);
-  const mdFiles = entries.filter(f => f.endsWith('.md'));
+  for (const entry of entries) {
+    if (entry.name.startsWith('.')) continue;
 
-  for (const mdFile of mdFiles) {
-    // index.md 对应路径为文件夹名，其他文件对应 文件夹名/文件名
-    const mdRelativePath = mdFile === 'index.md'
-      ? relativePath
-      : `${relativePath}/${mdFile.replace('.md', '')}`;
-    const post = loadPost(mdRelativePath, fullPath, mdFile);
-    if (post) items.push(post);
-  }
-
-  // 递归加载子文件夹
-  const subDirs = entries
-    .filter(e => {
-      try {
-        return fs.statSync(path.join(fullPath, e)).isDirectory() && !e.startsWith('.');
-      } catch {
-        return false;
-      }
-    });
-
-  for (const subDir of subDirs) {
-    const subDirRelativePath = `${relativePath}/${subDir}`;
-    const subDirFullPath = path.join(fullPath, subDir);
-    const folder = loadFolder(subDirRelativePath, subDirFullPath);
-    if (folder) items.push(folder);
+    if (entry.isFile() && entry.name.endsWith('.md')) {
+      // index.md 对应路径为文件夹名，其他文件对应 文件夹名/文件名
+      const mdRelativePath = entry.name === 'index.md'
+        ? relativePath
+        : `${relativePath}/${entry.name.replace(/\.md$/, '')}`;
+      const post = loadPost(mdRelativePath, fullPath, entry.name);
+      if (post) items.push(post);
+    } else if (entry.isDirectory()) {
+      const folder = loadFolder(`${relativePath}/${entry.name}`, path.join(fullPath, entry.name));
+      if (folder) items.push(folder);
+    }
   }
 
   if (items.length === 0) return null; // 空文件夹不显示
@@ -113,14 +100,19 @@ function loadPost(relativePath: string, fullPath: string, mdFile: string = 'inde
       : undefined;
 
     // 规范化 frontmatter，避免缺失字段导致后续渲染崩溃
-    const fileStats = fs.statSync(mdPath);
+    let date: string;
+    if (typeof data.date === 'string') {
+      date = data.date;
+    } else if (data.date instanceof Date) {
+      date = data.date.toISOString().split('T')[0];
+    } else {
+      // 仅当 frontmatter 未提供日期时才 stat 文件
+      date = fs.statSync(mdPath).mtime.toISOString().split('T')[0];
+    }
+
     const frontmatter: PostFrontmatter = {
       title: typeof data.title === 'string' && data.title ? data.title : slug,
-      date: typeof data.date === 'string'
-        ? data.date
-        : data.date instanceof Date
-          ? data.date.toISOString().split('T')[0]
-          : fileStats.mtime.toISOString().split('T')[0],
+      date,
       description: typeof data.description === 'string' ? data.description : '',
       tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
       category: typeof data.category === 'string' ? data.category : '未分类',
@@ -281,7 +273,7 @@ export async function getAllTags(): Promise<string[]> {
   const tags = new Set<string>();
 
   allPosts.forEach(post => {
-    (post.frontmatter.tags || []).forEach(tag => tags.add(tag));
+    post.frontmatter.tags.forEach(tag => tags.add(tag));
   });
 
   return Array.from(tags).sort();
@@ -292,9 +284,7 @@ export async function getAllCategories(): Promise<string[]> {
   const categories = new Set<string>();
 
   allPosts.forEach(post => {
-    if (post.frontmatter.category) {
-      categories.add(post.frontmatter.category);
-    }
+    categories.add(post.frontmatter.category);
   });
 
   return Array.from(categories).sort();
