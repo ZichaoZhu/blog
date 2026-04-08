@@ -156,15 +156,30 @@ const TAG_START = /<(\/?[a-zA-Z][a-zA-Z0-9]*(?=[\s/>])|!--)/g;
 const SENTINEL = '\u0000';
 
 /**
+ * 根据文章 path 计算它的"图片文件夹":
+ *   "Operating_System/Lec0"  → "Operating_System"  (嵌套子文章用父目录)
+ *   "hello-world"            → "hello-world"       (顶层文章用自身)
+ * 与 components/MDXComponents.tsx 里 createMDXImage 的算法保持一致。
+ */
+function imageFolderForPost(postPath: string): string {
+  const parts = postPath.replace(/^\//, '').split('/');
+  return parts.length > 1 ? parts.slice(0, -1).join('/') : parts[0];
+}
+
+/**
  * 处理 Typora 等编辑器导出的散装 markdown,使其能被 MDX 编译:
  *
- * 1. 把 `style="zoom:NN%"` 重写成 `width="NN%"` 并剥掉其他 style 字符串属性
+ * 1. 把 raw HTML `<img src="./assets/x.png">` 的相对路径重写为 /api/images/...
+ *    —— MDX 的 components.img 覆盖只对 markdown ![]() 生效,对 raw HTML img 无效,
+ *    所以必须在源串阶段就把相对路径换掉,否则浏览器会请求 /blog/.../assets/x.png 而 404。
+ * 2. 把 `style="zoom:NN%"` 重写成 `width="NN%"` 并剥掉其他 style 字符串属性
  *    —— React JSX 不接受字符串 style,必须是对象;Typora 的 `zoom` 也只在 Webkit 生效。
- * 2. 把不像合法标签开头的 `<` 转义成 `&lt;`(`count <>0`、`<segment, offset>` 等)。
+ * 3. 把不像合法标签开头的 `<` 转义成 `&lt;`(`count <>0`、`<segment, offset>` 等)。
  *
  * 围栏代码块(```)和行内代码(`)内的内容原样保留。
  */
-function preprocessMarkdown(source: string): string {
+function preprocessMarkdown(source: string, postPath?: string): string {
+  const folder = postPath ? imageFolderForPost(postPath) : null;
   const segments = source.split(/(```[\s\S]*?```)/g);
   return segments
     .map((seg, i) => {
@@ -173,10 +188,17 @@ function preprocessMarkdown(source: string): string {
       return inlineParts
         .map((part, j) => {
           if (j % 2 === 1) return part;
-          let out = part
+          let out = part;
+          // raw HTML <img src="./..."> → /api/images/<folder>/...
+          if (folder) {
+            out = out.replace(
+              /(<img\b[^>]*\bsrc=")\.\/([^"]+)"/gi,
+              (_m, prefix, rel) => `${prefix}/api/images/${encodeURI(folder)}/${encodeURI(rel)}"`
+            );
+          }
+          out = out
             .replace(/\sstyle="zoom:\s*([\d.]+%?)\s*;?\s*"/gi, ' width="$1"')
             .replace(/\sstyle="[^"]*"/gi, '');
-          // 标记合法的标签开头 → 转义剩余 `<` → 还原标记
           out = out.replace(TAG_START, SENTINEL + '$1');
           out = out.replace(/</g, '&lt;');
           out = out.replace(new RegExp(SENTINEL, 'g'), '<');
@@ -189,7 +211,7 @@ function preprocessMarkdown(source: string): string {
 
 async function compileMDXInternal(source: string, postPath?: string) {
   const components = createMDXComponents(postPath);
-  const sanitizedSource = preprocessMarkdown(source);
+  const sanitizedSource = preprocessMarkdown(source, postPath);
 
   return await compileMDX<PostFrontmatter>({
     source: sanitizedSource,
