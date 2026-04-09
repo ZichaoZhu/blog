@@ -5,6 +5,7 @@ import "./globals.css";
 import "./latex-theme.css";
 import { Providers } from "./providers";
 import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 import { ClickEffect } from "@/components/ClickEffect";
 import { ReadingThemeProvider } from "@/components/ReadingTheme";
 
@@ -43,7 +44,8 @@ export default function RootLayout({
         <Providers>
           <ReadingThemeProvider>
             <Navigation />
-            {children}
+            <main>{children}</main>
+            <Footer />
             <ClickEffect />
           </ReadingThemeProvider>
         </Providers>

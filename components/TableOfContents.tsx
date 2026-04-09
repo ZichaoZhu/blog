@@ -65,43 +65,40 @@ export function TableOfContents({ items, minLevel = 2, maxLevel = 4 }: TableOfCo
   }
 
   return (
-    <nav 
+    <nav
       className={`
-        relative sticky top-20 max-h-[calc(100vh-6rem)]
+        glass-panel relative sticky top-24 max-h-[calc(100vh-7rem)] p-4
         transition-all duration-300 ease-in-out
-        ${isOpen ? 'w-[280px] overflow-y-auto' : 'w-12 overflow-hidden'}
+        ${isOpen ? 'w-[300px] overflow-y-auto' : 'w-14 overflow-hidden'}
       `}
     >
       {/* 切换按钮 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="
-          absolute top-0 right-0
-          p-2 rounded-lg
-          bg-gray-100 dark:bg-gray-800
-          hover:bg-gray-200 dark:hover:bg-gray-700
-          transition-all duration-200
+          absolute top-3 right-3
+          p-1.5 rounded-md
+          hover:bg-white/60 dark:hover:bg-white/10
+          transition-colors
           z-10
         "
         aria-label={isOpen ? '收起目录' : '展开目录'}
       >
         {isOpen ? (
-          <PanelLeftClose className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+          <PanelLeftClose className="w-4 h-4 text-muted-foreground" />
         ) : (
-          <PanelLeftOpen className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+          <PanelLeftOpen className="w-4 h-4 text-muted-foreground" />
         )}
       </button>
 
       {/* 目录内容 */}
-      <div 
+      <div
         className={`
-          pt-12 space-y-2 transition-opacity duration-200
+          pt-9 space-y-2 transition-opacity duration-200
           ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
         `}
       >
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 px-2">
-            目录
-          </h2>
+          <h2 className="micro-label px-2">On this page</h2>
           <ul className="space-y-1">
             {items.map((item, index) => {
               const hasChildren = items[index + 1]?.level > item.level;

@@ -26,43 +26,40 @@ export function FileTreeClient({ fileTree, currentSlug }: FileTreeClientProps) {
   }
 
   return (
-    <nav 
+    <nav
       className={`
-        relative sticky top-20 max-h-[calc(100vh-6rem)]
+        glass-panel relative sticky top-24 max-h-[calc(100vh-7rem)] p-4
         transition-all duration-300 ease-in-out
-        ${isOpen ? 'w-64 overflow-y-auto' : 'w-12 overflow-hidden'}
+        ${isOpen ? 'w-72 overflow-y-auto' : 'w-14 overflow-hidden'}
       `}
     >
       {/* 切换按钮 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="
-          absolute top-0 right-0
-          p-2 rounded-lg
-          bg-gray-100 dark:bg-gray-800
-          hover:bg-gray-200 dark:hover:bg-gray-700
-          transition-all duration-200
+          absolute top-3 right-3
+          p-1.5 rounded-md
+          hover:bg-white/60 dark:hover:bg-white/10
+          transition-colors
           z-10
         "
         aria-label={isOpen ? '收起文件树' : '展开文件树'}
       >
         {isOpen ? (
-          <PanelLeftClose className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+          <PanelLeftClose className="w-4 h-4 text-muted-foreground" />
         ) : (
-          <PanelLeftOpen className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+          <PanelLeftOpen className="w-4 h-4 text-muted-foreground" />
         )}
       </button>
 
       {/* 文件树内容 */}
-      <div 
+      <div
         className={`
-          pt-12 transition-opacity duration-200
+          pt-9 transition-opacity duration-200
           ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
         `}
       >
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 px-2 mb-4">
-          文件夹
-        </h2>
+        <h2 className="micro-label mb-4 px-2">Folders</h2>
         <FileTreeView items={fileTree} />
       </div>
     </nav>

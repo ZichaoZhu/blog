@@ -79,6 +79,14 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* ===== 统一设计系统 tokens ===== */
+  --accent-indigo: oklch(0.55 0.17 270);
+  --accent-pink: oklch(0.70 0.18 10);
+  --glow-1: rgba(99, 102, 241, 0.10);
+  --glow-2: rgba(236, 72, 153, 0.08);
+  --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 2px 8px -2px rgba(0, 0, 0, 0.08);
+  --glass-shadow-hover: 0 20px 60px -10px rgba(0, 0, 0, 0.25), 0 4px 16px -4px rgba(0, 0, 0, 0.12);
 }
 
 .dark {
@@ -113,6 +121,12 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* 暗色下 glow 再强一点,因为黑底上需要更亮的光才能看出层次 */
+  --glow-1: rgba(129, 140, 248, 0.14);
+  --glow-2: rgba(244, 114, 182, 0.10);
+  --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.6), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+  --glass-shadow-hover: 0 20px 60px -10px rgba(0, 0, 0, 0.7), 0 4px 16px -4px rgba(0, 0, 0, 0.5);
 }
 
 @layer base {
@@ -122,6 +136,78 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  }
+
+  /* ===== 玻璃卡片(整站统一) =====
+     - light: 白色梯度 + border,阴影柔
+     - dark : 半透明白叠到暗背景 */
+  .glass-card {
+    @apply rounded-2xl border backdrop-blur-xl transition-shadow duration-500;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.7),
+      rgba(255, 255, 255, 0.6)
+    );
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: var(--glass-shadow);
+  }
+  .glass-card:hover {
+    box-shadow: var(--glass-shadow-hover);
+  }
+  .dark .glass-card {
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.10),
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.02)
+    );
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* 更轻量的玻璃面板,用于 TOC/文件树侧栏等大面积区域 */
+  .glass-panel {
+    @apply rounded-xl border backdrop-blur-md;
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  .dark .glass-panel {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  /* 双径向柔光背景,挂到任何 section 的 ::before 或专用 div 上 */
+  .glow-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+  }
+  .glow-bg::before,
+  .glow-bg::after {
+    content: '';
+    position: absolute;
+    width: 32rem;
+    height: 32rem;
+    border-radius: 9999px;
+    filter: blur(96px);
+  }
+  .glow-bg::before {
+    top: -4rem;
+    left: 15%;
+    background: var(--glow-1);
+  }
+  .glow-bg::after {
+    bottom: -4rem;
+    right: 15%;
+    background: var(--glow-2);
+  }
+
+  /* 微标签(分类/系列) */
+  .micro-label {
+    @apply text-xs font-medium tracking-[0.15em] uppercase;
+    color: var(--accent-indigo);
   }
 
   /* 楷体工具类:

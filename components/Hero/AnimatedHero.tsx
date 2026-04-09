@@ -56,7 +56,7 @@ export function AnimatedHero() {
             transition={{ duration: 0.8, delay: 1.8 }}
             className="font-kaiti text-xl md:text-2xl text-white/90 mb-8 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
           >
-            世界很温柔 · 分享技术,记录成长
+            世界很温柔，我们都在努力变得更好。
           </motion.p>
 
           <motion.div

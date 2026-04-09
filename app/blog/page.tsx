@@ -1,5 +1,12 @@
-import { getAllPosts, getAllTags, getAllCategories, getFileTree, getPostsByFolder } from '@/lib/posts';
+import {
+  getAllPosts,
+  getAllTags,
+  getAllCategories,
+  getFileTree,
+  getPostsByFolder,
+} from '@/lib/posts';
 import { BlogListClient } from '@/components/BlogListClient';
+import { PageHero } from '@/components/PageHero';
 import Link from 'next/link';
 
 interface BlogPageProps {
@@ -21,7 +28,6 @@ function buildBlogHref(current: FilterParams, override: Partial<FilterParams>): 
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const params = await searchParams;
-  // 这些调用共享 getFileTree() 内部缓存，并行 await 更清晰且避免串行等待
   const [basePosts, allTags, allCategories, fileTree] = await Promise.all([
     params.folder ? getPostsByFolder(params.folder) : getAllPosts(),
     getAllTags(),
@@ -31,13 +37,13 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   let filteredPosts = basePosts;
   if (params.tag) {
-    filteredPosts = filteredPosts.filter(post =>
+    filteredPosts = filteredPosts.filter((post) =>
       post.frontmatter.tags.includes(params.tag!)
     );
   }
   if (params.category) {
-    filteredPosts = filteredPosts.filter(post =>
-      post.frontmatter.category === params.category
+    filteredPosts = filteredPosts.filter(
+      (post) => post.frontmatter.category === params.category
     );
   }
 
@@ -47,83 +53,98 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   if (params.tag) activeFilters.push({ key: 'tag', label: `标签: #${params.tag}` });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      {/* 筛选器 */}
-      <div className="mb-8 space-y-4">
-        {activeFilters.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-muted-foreground">当前筛选：</span>
-            {activeFilters.map(({ key, label }) => (
-              <Link
-                key={key}
-                href={buildBlogHref(params, { [key]: undefined })}
-                className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-              >
-                {label}
-                <span aria-hidden>×</span>
-              </Link>
-            ))}
-            <Link
-              href="/blog"
-              className="px-3 py-1 rounded-full text-sm bg-muted hover:bg-muted/80 transition-colors"
-            >
-              清除全部
-            </Link>
-          </div>
-        )}
+    <>
+      <PageHero
+        eyebrow="Blog"
+        title="文章"
+        subtitle={`共 ${fileTree.flat.length} 篇笔记,用心写下的每一页`}
+        minHeight="min-h-[320px]"
+      />
 
-        <div className="flex flex-wrap gap-x-8 gap-y-4">
-          <div>
-            <h3 className="text-sm font-semibold mb-2 text-muted-foreground">分类</h3>
-            <div className="flex flex-wrap gap-2">
-              <Link
-                href={buildBlogHref(params, { category: undefined })}
-                className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                  !params.category
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted hover:bg-muted/80'
-                }`}
-              >
-                全部
-              </Link>
-              {allCategories.map(category => (
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        {/* 筛选区 glass panel */}
+        <div className="glass-panel p-5 mb-8 space-y-4">
+          {activeFilters.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 pb-3 border-b border-border/50">
+              <span className="text-xs text-muted-foreground mr-1">当前筛选：</span>
+              {activeFilters.map(({ key, label }) => (
                 <Link
-                  key={category}
-                  href={buildBlogHref(params, { category: params.category === category ? undefined : category })}
-                  className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                    params.category === category
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted hover:bg-muted/80'
-                  }`}
+                  key={key}
+                  href={buildBlogHref(params, { [key]: undefined })}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/20 transition-colors"
                 >
-                  {category}
+                  {label}
+                  <span aria-hidden>×</span>
                 </Link>
               ))}
+              <Link
+                href="/blog"
+                className="px-3 py-1 rounded-full text-xs bg-muted hover:bg-muted/80 transition-colors"
+              >
+                清除全部
+              </Link>
             </div>
-          </div>
+          )}
 
-          <div>
-            <h3 className="text-sm font-semibold mb-2 text-muted-foreground">标签</h3>
-            <div className="flex flex-wrap gap-2">
-              {allTags.slice(0, 10).map(tag => (
+          <div className="flex flex-wrap gap-x-8 gap-y-4">
+            <div>
+              <h3 className="micro-label mb-2">Categories</h3>
+              <div className="flex flex-wrap gap-2">
                 <Link
-                  key={tag}
-                  href={buildBlogHref(params, { tag: params.tag === tag ? undefined : tag })}
-                  className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                    params.tag === tag
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted hover:bg-muted/80'
+                  href={buildBlogHref(params, { category: undefined })}
+                  className={`px-3 py-1 rounded-full text-xs transition-colors ${
+                    !params.category
+                      ? 'bg-foreground text-background'
+                      : 'bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10'
                   }`}
                 >
-                  #{tag}
+                  全部
                 </Link>
-              ))}
+                {allCategories.map((category) => (
+                  <Link
+                    key={category}
+                    href={buildBlogHref(params, {
+                      category: params.category === category ? undefined : category,
+                    })}
+                    className={`px-3 py-1 rounded-full text-xs transition-colors ${
+                      params.category === category
+                        ? 'bg-foreground text-background'
+                        : 'bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10'
+                    }`}
+                  >
+                    {category}
+                  </Link>
+                ))}
+              </div>
             </div>
+
+            {allTags.length > 0 && (
+              <div>
+                <h3 className="micro-label mb-2">Tags</h3>
+                <div className="flex flex-wrap gap-2">
+                  {allTags.slice(0, 12).map((tag) => (
+                    <Link
+                      key={tag}
+                      href={buildBlogHref(params, {
+                        tag: params.tag === tag ? undefined : tag,
+                      })}
+                      className={`px-3 py-1 rounded-full text-xs transition-colors ${
+                        params.tag === tag
+                          ? 'bg-foreground text-background'
+                          : 'bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10'
+                      }`}
+                    >
+                      #{tag}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      </div>
 
-      <BlogListClient posts={filteredPosts} fileTree={fileTree.root} />
-    </div>
+        <BlogListClient posts={filteredPosts} fileTree={fileTree.root} />
+      </section>
+    </>
   );
 }

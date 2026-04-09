@@ -65,111 +65,152 @@ export default async function PostPage({ params }: PostPageProps) {
     Promise.resolve(extractTOC(post.content)),
   ]);
 
+  const categoryLabel =
+    post.frontmatter.category && post.frontmatter.category !== '未分类'
+      ? post.frontmatter.category
+      : post.parentPath?.replace(/_/g, ' ') ?? '未分类';
+
   return (
     <>
       <ReadingProgress />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex gap-6">
-          {/* 左侧文件树 - 仅桌面显示 */}
+
+      <div className="relative max-w-[88rem] mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16">
+        {/* 柔和光晕背景 */}
+        <div className="glow-bg" aria-hidden />
+
+        <div className="flex gap-8">
+          {/* 左侧文件树 - 仅桌面显示 (组件自带 sticky,不要包 div) */}
           <aside className="hidden xl:block shrink-0">
-            <FileTreeClient fileTree={fileTree.root} currentSlug={slug[slug.length - 1]} />
+            <FileTreeClient
+              fileTree={fileTree.root}
+              currentSlug={slug[slug.length - 1]}
+            />
           </aside>
 
-          {/* 主内容区 */}
-          <article className="flex-1 min-w-0">
-            {/* 面包屑导航 */}
+          {/* 主内容区 (正文固定窄宽度,两侧 aside 占走) */}
+          <article className="flex-1 min-w-0 max-w-4xl mx-auto">
             <Breadcrumb post={post} />
-            
-            {/* 移动端目录 */}
             <MobileTOC items={toc} />
 
             {/* 文章头部 */}
-            <header className="mb-8">
+            <header className="mb-10">
               {post.frontmatter.coverImage && (
                 <Image
                   src={post.frontmatter.coverImage}
                   alt={post.frontmatter.title}
                   width={1200}
                   height={630}
-                  className="w-full h-auto rounded-lg mb-8"
+                  className="w-full h-auto rounded-2xl mb-8 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.3)]"
                   priority
                 />
               )}
-              
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                <time dateTime={post.frontmatter.date}>
-                  {format(new Date(post.frontmatter.date), 'yyyy年MM月dd日', { locale: zhCN })}
-                </time>
-                <span>•</span>
-                <span>{post.readingTime}</span>
-                <span>•</span>
-                <span className="px-2 py-0.5 bg-primary/10 text-primary rounded text-xs">
-                  {post.frontmatter.category}
-                </span>
-              </div>
 
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              <p className="micro-label mb-4">{categoryLabel}</p>
+
+              <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-5">
                 {post.frontmatter.title}
               </h1>
 
-              <p className="text-xl text-muted-foreground mb-6">
-                {post.frontmatter.description}
-              </p>
-
-              {/* 作者信息 */}
-              {author && (
-                <Link
-                  href={`/authors/${author.id}`}
-                  className="flex items-center gap-3 p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors"
-                >
-                  {author.avatar && (
-                    <Image
-                      src={author.avatar}
-                      alt={author.name}
-                      width={48}
-                      height={48}
-                      className="rounded-full"
-                    />
-                  )}
-                  <div>
-                    <div className="font-semibold">{author.name}</div>
-                    <div className="text-sm text-muted-foreground">{author.bio}</div>
-                  </div>
-                </Link>
+              {post.frontmatter.description && (
+                <p className="text-lg md:text-xl text-muted-foreground mb-8">
+                  {post.frontmatter.description}
+                </p>
               )}
 
-              {/* 标签 */}
-              <div className="flex flex-wrap gap-2 mt-6">
-                {post.frontmatter.tags.map(tag => (
-                  <Link
-                    key={tag}
-                    href={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="text-sm px-3 py-1 bg-muted hover:bg-muted/80 rounded-full transition-colors"
-                  >
-                    #{tag}
-                  </Link>
-                ))}
+              {/* 元信息玻璃胶囊 */}
+              <div className="glass-panel inline-flex flex-wrap items-center gap-x-5 gap-y-2 px-5 py-3 text-sm text-foreground/80 mb-8">
+                <time
+                  dateTime={post.frontmatter.date}
+                  className="inline-flex items-center gap-1.5"
+                >
+                  {format(new Date(post.frontmatter.date), 'yyyy 年 MM 月 dd 日', {
+                    locale: zhCN,
+                  })}
+                </time>
+                <span className="text-border">/</span>
+                <span>{post.readingTime}</span>
+                {author && (
+                  <>
+                    <span className="text-border">/</span>
+                    <Link
+                      href={`/authors/${author.id}`}
+                      className="inline-flex items-center gap-2 hover:text-foreground transition-colors"
+                    >
+                      {author.avatar && (
+                        <Image
+                          src={author.avatar}
+                          alt={author.name}
+                          width={22}
+                          height={22}
+                          className="rounded-full"
+                        />
+                      )}
+                      <span>{author.name}</span>
+                    </Link>
+                  </>
+                )}
               </div>
+
+              {/* 标签 */}
+              {post.frontmatter.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {post.frontmatter.tags.map((tag) => (
+                    <Link
+                      key={tag}
+                      href={`/blog?tag=${encodeURIComponent(tag)}`}
+                      className="text-xs px-3 py-1 rounded-full bg-white/50 dark:bg-white/5 border border-white/60 dark:border-white/10 hover:bg-indigo-500/10 hover:border-indigo-500/30 transition-colors"
+                    >
+                      #{tag}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </header>
 
             {/* 文章内容 — ArticleBody 根据 reading theme 在默认 prose / LaTeX 论文风之间切换 */}
             <ArticleBody>{content}</ArticleBody>
 
-            {/* 预留评论区域 */}
-            <div className="mt-16 pt-8 border-t border-border">
+            {/* 作者卡片 (文末) */}
+            {author && (
+              <Link
+                href={`/authors/${author.id}`}
+                className="glass-card mt-16 flex items-center gap-4 p-5 no-underline"
+              >
+                {author.avatar && (
+                  <Image
+                    src={author.avatar}
+                    alt={author.name}
+                    width={56}
+                    height={56}
+                    className="rounded-full border-2 border-white/50 dark:border-white/10"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="micro-label mb-1">Written by</p>
+                  <div className="font-semibold truncate">{author.name}</div>
+                  {author.bio && (
+                    <div className="text-sm text-muted-foreground truncate">
+                      {author.bio}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            )}
+
+            {/* 评论区 */}
+            <div className="mt-10 glass-card p-8">
+              <p className="micro-label mb-3">Comments</p>
               <div
                 id="comments"
                 data-giscus
-                className="min-h-[200px] flex items-center justify-center text-muted-foreground"
+                className="min-h-[160px] flex items-center justify-center text-sm text-muted-foreground"
               >
-                {/* TODO: 集成 Giscus 评论系统 */}
                 评论功能即将上线
               </div>
             </div>
           </article>
 
-          {/* 右侧目录 - 仅桌面显示 */}
+          {/* 右侧目录 - 仅桌面显示 (组件自带 sticky) */}
           <aside className="hidden xl:block shrink-0">
             <TableOfContents items={toc} />
           </aside>
