@@ -167,7 +167,8 @@ let fileTreeCache: { data: FileTree | null; timestamp: number } = {
   timestamp: 0,
 };
 
-const CACHE_TTL = process.env.NODE_ENV === 'production' ? 5 * 60 * 1000 : 0;
+// dev 用 30 秒短 TTL,刚好能吸收一次交互内的多次 fetch,又不会让新文章等太久
+const CACHE_TTL = process.env.NODE_ENV === 'production' ? 5 * 60 * 1000 : 30 * 1000;
 
 /** 获取文件树 */
 export async function getFileTree(): Promise<FileTree> {

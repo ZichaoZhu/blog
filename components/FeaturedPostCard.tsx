@@ -1,5 +1,6 @@
 'use client';
 
+import { memo, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { format } from 'date-fns';
@@ -64,12 +65,24 @@ function seriesLabel(post: Post): string {
   return post.parentPath?.replace(/_/g, ' ') ?? '未分类';
 }
 
-export function FeaturedPostCard({ post, variant = 'hero' }: FeaturedPostCardProps) {
+function FeaturedPostCardInner({ post, variant = 'hero' }: FeaturedPostCardProps) {
   if (variant === 'list') {
     return <ListVariant post={post} />;
   }
   return <CardVariant post={post} tilt={variant === 'hero'} />;
 }
+
+/**
+ * 用 memo 包一层,防止筛选切换时所有卡片连锁重渲染。
+ * post 对象引用相同就直接跳过 —— 由于 allPosts 是服务端一次性传进来的
+ * 稳定引用,筛选后 useMemo 生成的 filteredPosts 里的 post 对象引用不变,
+ * memo 能正确命中。
+ */
+export const FeaturedPostCard = memo(
+  FeaturedPostCardInner,
+  (prev, next) =>
+    prev.post === next.post && prev.variant === next.variant,
+);
 
 // ─────────────────────────────────────────────────────────
 // 网格/Hero 卡片变体
@@ -108,9 +121,12 @@ function CardVariant({ post, tilt }: { post: Post; tilt: boolean }) {
     mouseY.set(0);
   };
 
-  const words = countWords(post.content);
-  const preview = extractPreview(post.content, tilt ? 4 : 3);
-  const category = seriesLabel(post);
+  const words = useMemo(() => countWords(post.content), [post.content]);
+  const preview = useMemo(
+    () => extractPreview(post.content, tilt ? 4 : 3),
+    [post.content, tilt],
+  );
+  const category = useMemo(() => seriesLabel(post), [post]);
 
   return (
     <Link href={`/blog/${post.path}`} className={`block ${tilt ? '[perspective:1200px]' : ''}`}>
@@ -194,8 +210,8 @@ function CardVariant({ post, tilt }: { post: Post; tilt: boolean }) {
 // ─────────────────────────────────────────────────────────
 
 function ListVariant({ post }: { post: Post }) {
-  const words = countWords(post.content);
-  const category = seriesLabel(post);
+  const words = useMemo(() => countWords(post.content), [post.content]);
+  const category = useMemo(() => seriesLabel(post), [post]);
 
   return (
     <Link href={`/blog/${post.path}`} className="block group">
