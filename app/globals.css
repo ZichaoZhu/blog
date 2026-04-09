@@ -124,6 +124,17 @@
     font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   }
 
+  /* 楷体工具类:
+     1. 先试 Klee One (Google 日式楷风,next/font 自动拉取,保证跨平台一致)
+     2. fallback 到各平台系统楷体
+     3. 最后兜底 serif */
+  .font-kaiti {
+    font-family:
+      var(--font-klee),
+      'Kaiti SC', 'STKaiti', '楷体', 'KaiTi', 'BIZ UDMincho',
+      'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  }
+
   /* 代码块样式 */
   pre {
     @apply rounded-lg p-4 my-6 overflow-x-auto;
