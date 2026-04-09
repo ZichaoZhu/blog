@@ -47,6 +47,11 @@ function createMDXImage(postPath?: string) {
       resolvedSrc = `/api/images/${encodeURI(folderPath)}/${encodeURI(imagePath)}`;
     }
 
+    // 对 API 路由图片追加最大宽度参数，触发服务端缩放 + WebP 转换
+    if (resolvedSrc.startsWith('/api/images/')) {
+      resolvedSrc = `${resolvedSrc}?w=1200`;
+    }
+
     const normalizedStyle: CSSProperties | undefined =
       typeof style === 'string' ? parseStyleAttr(style) : style;
 
@@ -54,6 +59,8 @@ function createMDXImage(postPath?: string) {
       <img
         src={resolvedSrc}
         alt={alt || ''}
+        loading="lazy"
+        decoding="async"
         className="rounded-lg my-4"
         style={normalizedStyle}
         {...props}
