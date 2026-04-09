@@ -30,6 +30,7 @@ export interface Post {
   frontmatter: PostFrontmatter;
   content: string;
   readingTime?: string;
+  wordCount: number;      // 服务端预计算,避免客户端卡片每次渲染都扫正文
   // 预留扩展字段
   series?: string;
   relatedPosts?: string[];

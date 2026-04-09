@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { ViewSwitcher } from '@/components/ViewSwitcher';
 import { FeaturedPostCard } from '@/components/FeaturedPostCard';
 import { FileTreeView } from '@/components/FileTreeView';
-import { FolderTree } from 'lucide-react';
+import { FolderTree, FileSearch } from 'lucide-react';
 import type { Post, ViewType, FileTreeItem } from '@/types';
 
 interface Filters {
@@ -145,7 +145,7 @@ export function BlogListClient({
                 onClick={() => setCategory(undefined)}
                 className={`px-3 py-1 rounded-full text-xs transition-colors ${
                   !filters.category
-                    ? 'bg-foreground text-background'
+                    ? 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-500/30'
                     : 'bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10'
                 }`}
               >
@@ -158,7 +158,7 @@ export function BlogListClient({
                   onClick={() => setCategory(category)}
                   className={`px-3 py-1 rounded-full text-xs transition-colors ${
                     filters.category === category
-                      ? 'bg-foreground text-background'
+                      ? 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-500/30'
                       : 'bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10'
                   }`}
                 >
@@ -179,7 +179,7 @@ export function BlogListClient({
                     onClick={() => setTag(tag)}
                     className={`px-3 py-1 rounded-full text-xs transition-colors ${
                       filters.tag === tag
-                        ? 'bg-foreground text-background'
+                        ? 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-500/30'
                         : 'bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10'
                     }`}
                   >
@@ -232,8 +232,19 @@ export function BlogListClient({
           </div>
 
           {filteredPosts.length === 0 ? (
-            <div className="glass-card p-12 text-center text-muted-foreground">
-              没有找到匹配的文章
+            <div className="glass-card p-12 text-center">
+              <FileSearch className="w-12 h-12 mx-auto mb-4 text-muted-foreground/60" />
+              <p className="font-semibold text-foreground mb-1">没有找到匹配的文章</p>
+              <p className="text-sm text-muted-foreground">
+                试试调整筛选条件,或{' '}
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  className="text-indigo-600 dark:text-indigo-400 hover:underline"
+                >
+                  清除全部筛选
+                </button>
+              </p>
             </div>
           ) : view === 'list' ? (
             <div className="space-y-4">

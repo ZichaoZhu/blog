@@ -10,8 +10,7 @@ import { BackToTop } from '@/components/BackToTop';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { ArticleBody, ReadingThemeToggle } from '@/components/ReadingTheme';
-import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
+import { formatPostDate, seriesLabel } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -65,10 +64,7 @@ export default async function PostPage({ params }: PostPageProps) {
     Promise.resolve(extractTOC(post.content)),
   ]);
 
-  const categoryLabel =
-    post.frontmatter.category && post.frontmatter.category !== '未分类'
-      ? post.frontmatter.category
-      : post.parentPath?.replace(/_/g, ' ') ?? '未分类';
+  const categoryLabel = seriesLabel(post);
 
   return (
     <>
@@ -123,9 +119,7 @@ export default async function PostPage({ params }: PostPageProps) {
                   dateTime={post.frontmatter.date}
                   className="inline-flex items-center gap-1.5"
                 >
-                  {format(new Date(post.frontmatter.date), 'yyyy 年 MM 月 dd 日', {
-                    locale: zhCN,
-                  })}
+                  {formatPostDate(post.frontmatter.date, 'yyyy 年 MM 月 dd 日')}
                 </time>
                 <span className="text-border">/</span>
                 <span>{post.readingTime}</span>

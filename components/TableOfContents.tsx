@@ -110,7 +110,7 @@ export function TableOfContents({ items, minLevel = 2, maxLevel = 4 }: TableOfCo
                     {hasChildren && (
                       <button
                         onClick={() => toggleCollapse(item.id)}
-                        className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+                        className="p-0.5 rounded text-muted-foreground hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
                         aria-label={isCollapsed ? '展开' : '收起'}
                       >
                         {isCollapsed ? (
@@ -126,8 +126,8 @@ export function TableOfContents({ items, minLevel = 2, maxLevel = 4 }: TableOfCo
                       className={`
                         flex-1 text-sm py-1 px-2 rounded transition-colors
                         ${activeId === item.id
-                          ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
-                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                          ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 font-medium'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-white/40 dark:hover:bg-white/5'
                         }
                       `}
                       style={{ paddingLeft: `${(item.level - minLevel) * 12 + 8}px` }}

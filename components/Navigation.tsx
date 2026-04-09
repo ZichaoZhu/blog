@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from './ThemeToggle';
-import { SearchDialog } from './SearchDialog';
 import { useEffect, useState } from 'react';
 
 const NAV_LINKS = [
@@ -77,7 +76,6 @@ export function Navigation() {
               );
             })}
             <div className="ml-2 flex items-center gap-1">
-              <SearchDialog />
               <ThemeToggle />
             </div>
           </div>
@@ -134,7 +132,6 @@ export function Navigation() {
               );
             })}
             <div className="flex items-center gap-2 px-2 pt-3 border-t border-border/40 mt-2">
-              <SearchDialog />
               <ThemeToggle />
             </div>
           </div>

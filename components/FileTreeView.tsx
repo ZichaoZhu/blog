@@ -32,26 +32,26 @@ function FolderItem({ folder, level }: { folder: Folder; level: number }) {
     <div>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors text-left"
+        className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-left transition-colors hover:bg-white/60 dark:hover:bg-white/10"
         style={{ paddingLeft: `${level * 1.5 + 0.75}rem` }}
       >
-        <ChevronRight 
-          className={`w-4 h-4 flex-shrink-0 text-gray-600 dark:text-gray-400 transition-transform duration-200 ${
+        <ChevronRight
+          className={`w-4 h-4 flex-shrink-0 text-muted-foreground transition-transform duration-200 ${
             isOpen ? 'rotate-90' : ''
           }`}
         />
-        
+
         {folder.metadata.icon ? (
           <span className="text-lg leading-none">{folder.metadata.icon}</span>
         ) : (
-          <FolderIcon className="w-4 h-4 text-yellow-500" />
+          <FolderIcon className="w-4 h-4 text-amber-500" />
         )}
-        
-        <span className="font-medium flex-1 text-gray-900 dark:text-gray-100">
+
+        <span className="font-medium flex-1 text-foreground">
           {folder.metadata.displayName || folder.metadata.name}
         </span>
-        
-        <span className="text-xs text-gray-500 dark:text-gray-400">
+
+        <span className="text-xs text-muted-foreground">
           {folder.postCount}
         </span>
       </button>
@@ -81,25 +81,27 @@ function PostItem({ post, level }: { post: Post; level: number }) {
       href={`/blog/${post.path}`}
       className={`
         flex items-center gap-2 px-3 py-2 rounded-md transition-colors group
-        ${isActive 
-          ? 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400' 
-          : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+        ${isActive
+          ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+          : 'hover:bg-white/60 dark:hover:bg-white/10'
         }
       `}
       style={{ paddingLeft: `${level * 1.5 + 2.25}rem` }}
     >
-      <FileText className={`w-4 h-4 flex-shrink-0 ${
-        isActive 
-          ? 'text-blue-600 dark:text-blue-400' 
-          : 'text-gray-400 dark:text-gray-500'
-      }`} />
-      <span className={`
-        flex-1 text-sm transition-colors truncate
-        ${isActive 
-          ? 'font-medium text-blue-600 dark:text-blue-400' 
-          : 'text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400'
-        }
-      `}>
+      <FileText
+        className={`w-4 h-4 flex-shrink-0 ${
+          isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground'
+        }`}
+      />
+      <span
+        className={`
+          flex-1 text-sm transition-colors truncate
+          ${isActive
+            ? 'font-medium text-indigo-600 dark:text-indigo-400'
+            : 'text-foreground/80 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
+          }
+        `}
+      >
         {post.frontmatter.title}
       </span>
     </Link>

@@ -3,10 +3,9 @@
 import { memo, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 import { ArrowUpRight, Clock, FileText } from 'lucide-react';
 import type { Post } from '@/types';
+import { formatPostDate, seriesLabel } from '@/lib/utils';
 
 export type PostCardVariant = 'hero' | 'grid' | 'list';
 
@@ -19,15 +18,6 @@ interface FeaturedPostCardProps {
    * - 'list': 单行横向长卡片,用于 ListLayout 场景
    */
   variant?: PostCardVariant;
-}
-
-/**
- * 统计中文字符 + 英文单词数,与 Typora/Markdown 常见"字数"算法一致。
- */
-function countWords(content: string): number {
-  const chinese = content.match(/[\u4e00-\u9fff]/g)?.length ?? 0;
-  const english = content.match(/[a-zA-Z]+/g)?.length ?? 0;
-  return chinese + english;
 }
 
 /** 取前几行正文作预览,剥掉 markdown 语法干扰 */
@@ -58,13 +48,6 @@ function extractPreview(content: string, maxLines = 4): string[] {
   return lines.slice(0, maxLines);
 }
 
-/** 根据 frontmatter / 父文件夹推导系列标签 */
-function seriesLabel(post: Post): string {
-  const cat = post.frontmatter.category;
-  if (cat && cat !== '未分类') return cat;
-  return post.parentPath?.replace(/_/g, ' ') ?? '未分类';
-}
-
 function FeaturedPostCardInner({ post, variant = 'hero' }: FeaturedPostCardProps) {
   if (variant === 'list') {
     return <ListVariant post={post} />;
@@ -73,15 +56,12 @@ function FeaturedPostCardInner({ post, variant = 'hero' }: FeaturedPostCardProps
 }
 
 /**
- * 用 memo 包一层,防止筛选切换时所有卡片连锁重渲染。
- * post 对象引用相同就直接跳过 —— 由于 allPosts 是服务端一次性传进来的
- * 稳定引用,筛选后 useMemo 生成的 filteredPosts 里的 post 对象引用不变,
- * memo 能正确命中。
+ * memo 跳过未变卡片重渲染。由于 allPosts 是稳定引用、筛选后 useMemo 生成
+ * 的 filteredPosts 里 post 对象引用不变,memo 能正确命中。
  */
 export const FeaturedPostCard = memo(
   FeaturedPostCardInner,
-  (prev, next) =>
-    prev.post === next.post && prev.variant === next.variant,
+  (prev, next) => prev.post === next.post && prev.variant === next.variant,
 );
 
 // ─────────────────────────────────────────────────────────
@@ -92,7 +72,6 @@ function CardVariant({ post, tilt }: { post: Post; tilt: boolean }) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // 只有 tilt 模式才算 rotate(省掉一点 spring 计算)
   const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], ['8deg', '-8deg']), {
     stiffness: 200,
     damping: 20,
@@ -102,7 +81,7 @@ function CardVariant({ post, tilt }: { post: Post; tilt: boolean }) {
     damping: 20,
   });
 
-  // Hooks 不能有条件调用,所以 glowBg 总是计算,只在 motion 层决定是否应用
+  // Hooks 不能有条件调用,glowBg 总是计算,只在 motion 层决定是否应用
   const glowBg = useTransform(
     [mouseX, mouseY],
     ([mx, my]) =>
@@ -121,7 +100,6 @@ function CardVariant({ post, tilt }: { post: Post; tilt: boolean }) {
     mouseY.set(0);
   };
 
-  const words = useMemo(() => countWords(post.content), [post.content]);
   const preview = useMemo(
     () => extractPreview(post.content, tilt ? 4 : 3),
     [post.content, tilt],
@@ -144,7 +122,7 @@ function CardVariant({ post, tilt }: { post: Post; tilt: boolean }) {
 
         {/* 鼠标跟随柔光斑 */}
         <motion.div
-          className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           style={{ background: glowBg }}
         />
 
@@ -174,14 +152,14 @@ function CardVariant({ post, tilt }: { post: Post; tilt: boolean }) {
           <div className="flex items-center gap-4 text-xs text-muted-foreground mb-5">
             <span className="inline-flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5" />
-              约 {words.toLocaleString()} 字
+              约 {post.wordCount.toLocaleString()} 字
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" />
               {post.readingTime}
             </span>
             <time dateTime={post.frontmatter.date} className="ml-auto">
-              {format(new Date(post.frontmatter.date), 'yyyy-MM-dd', { locale: zhCN })}
+              {formatPostDate(post.frontmatter.date)}
             </time>
           </div>
 
@@ -193,7 +171,8 @@ function CardVariant({ post, tilt }: { post: Post; tilt: boolean }) {
                 </p>
               ))}
             </div>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white/90 dark:from-neutral-900/80 to-transparent" />
+            {/* 底部渐隐,用设计系统 --background 变量 */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background/95 to-transparent" />
           </div>
 
           <div className="mt-4 pt-3 border-t border-border/50 font-mono text-[11px] text-muted-foreground truncate">
@@ -210,7 +189,6 @@ function CardVariant({ post, tilt }: { post: Post; tilt: boolean }) {
 // ─────────────────────────────────────────────────────────
 
 function ListVariant({ post }: { post: Post }) {
-  const words = useMemo(() => countWords(post.content), [post.content]);
   const category = useMemo(() => seriesLabel(post), [post]);
 
   return (
@@ -223,7 +201,7 @@ function ListVariant({ post }: { post: Post }) {
             dateTime={post.frontmatter.date}
             className="text-xs text-muted-foreground font-mono"
           >
-            {format(new Date(post.frontmatter.date), 'yyyy-MM-dd', { locale: zhCN })}
+            {formatPostDate(post.frontmatter.date)}
           </time>
         </div>
 
@@ -240,7 +218,7 @@ function ListVariant({ post }: { post: Post }) {
           <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5" />
-              约 {words.toLocaleString()} 字
+              约 {post.wordCount.toLocaleString()} 字
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" />

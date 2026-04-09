@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import readingTime from 'reading-time';
 import type { Post, PostFrontmatter, Folder, FolderMetadata, FileTreeItem, FileTree } from '@/types';
+import { countWords } from '@/lib/utils';
 
 const postsDirectory = path.join(process.cwd(), 'content/posts');
 
@@ -129,6 +130,7 @@ function loadPost(relativePath: string, fullPath: string, mdFile: string = 'inde
       frontmatter,
       content,
       readingTime: stats.text,
+      wordCount: countWords(content),
     };
   } catch (error) {
     console.error(`Error loading post: ${relativePath}`, error);
@@ -234,40 +236,10 @@ export async function getPostByPath(postPath: string): Promise<Post | null> {
   return tree.flat.find(p => p.path === postPath) || null;
 }
 
-/** 根据 slug 获取文章 - 向后兼容 */
-export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const tree = await getFileTree();
-  return tree.flat.find(p => p.slug === slug) || null;
-}
-
-/** 根据文件夹路径获取文章 */
-export async function getPostsByFolder(folderPath: string): Promise<Post[]> {
-  const tree = await getFileTree();
-  const folder = tree.folders.get(folderPath);
-  
-  if (!folder) return [];
-  return flattenPosts(folder.children);
-}
-
-export async function getPostsByTag(tag: string): Promise<Post[]> {
-  const allPosts = await getAllPosts();
-  return allPosts.filter(post => 
-    post.frontmatter.tags.includes(tag)
-  );
-}
-
+/** 根据作者 ID 获取文章(作者详情页用) */
 export async function getPostsByAuthor(authorId: string): Promise<Post[]> {
   const allPosts = await getAllPosts();
-  return allPosts.filter(post => 
-    post.frontmatter.author === authorId
-  );
-}
-
-export async function getPostsByCategory(category: string): Promise<Post[]> {
-  const allPosts = await getAllPosts();
-  return allPosts.filter(post => 
-    post.frontmatter.category === category
-  );
+  return allPosts.filter(post => post.frontmatter.author === authorId);
 }
 
 export async function getAllTags(): Promise<string[]> {

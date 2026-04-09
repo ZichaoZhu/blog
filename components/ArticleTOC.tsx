@@ -33,8 +33,8 @@ export function ArticleTOC() {
   if (headings.length === 0) return null;
 
   return (
-    <nav className="my-6 rounded-lg border border-border bg-muted/30 px-5 py-4">
-      <div className="mb-2 text-sm font-semibold text-muted-foreground">目录</div>
+    <nav className="glass-panel my-6 px-5 py-4">
+      <div className="micro-label mb-2">目录</div>
       <ul className="space-y-1 text-sm">
         {headings.map((h) => (
           <li
@@ -43,7 +43,7 @@ export function ArticleTOC() {
           >
             <a
               href={`#${h.id}`}
-              className="text-foreground/80 hover:text-primary transition-colors"
+              className="text-foreground/80 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
             >
               {h.text}
             </a>

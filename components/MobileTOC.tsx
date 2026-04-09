@@ -30,22 +30,22 @@ export function MobileTOC({ items, minLevel = 2 }: MobileTOCProps) {
     <div className="xl:hidden mb-6">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        className="glass-panel flex items-center gap-2 w-full px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
       >
         <List className="w-4 h-4" />
         <span>目录</span>
-        <span className="ml-auto text-gray-500">{isOpen ? '−' : '+'}</span>
+        <span className="ml-auto text-muted-foreground">{isOpen ? '−' : '+'}</span>
       </button>
 
       {isOpen && (
-        <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <div className="glass-panel mt-2 p-4 rounded-lg">
           <ul className="space-y-2">
             {items.map((item) => (
               <li key={item.id}>
                 <a
                   href={`#${item.id}`}
                   onClick={(e) => handleClick(e, item.id)}
-                  className="block text-sm py-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                  className="block text-sm py-1 text-muted-foreground hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                   style={{ paddingLeft: `${(item.level - minLevel) * 12}px` }}
                 >
                   {item.title}

@@ -6,8 +6,8 @@ import "./latex-theme.css";
 import { Providers } from "./providers";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { ClickEffect } from "@/components/ClickEffect";
 import { ReadingThemeProvider } from "@/components/ReadingTheme";
+import { ClickEffect } from "@/components/ClickEffect";
 
 // KaTeX CSS
 import "katex/dist/katex.min.css";
