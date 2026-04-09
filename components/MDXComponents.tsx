@@ -1,6 +1,7 @@
 import type { CSSProperties, ComponentPropsWithoutRef } from 'react';
 import { ArticleTOC } from './ArticleTOC';
 import { Mermaid } from './Mermaid';
+import { Callout } from './Callout';
 
 // raw HTML 透传给 React 时,style 可能是字符串(MDX/Typora)
 type MDXImageProps = Omit<ComponentPropsWithoutRef<'img'>, 'style'> & {
@@ -243,9 +244,10 @@ const baseComponents = {
   mark: MDXMark,
   sub: MDXSub,
   sup: MDXSup,
-  // Typora 扩展
+  // Typora / Obsidian 扩展
   ArticleTOC,
   Mermaid,
+  Callout,
 };
 
 // 导出默认组件（向后兼容）

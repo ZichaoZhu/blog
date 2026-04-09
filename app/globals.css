@@ -210,6 +210,133 @@
     color: var(--accent-indigo);
   }
 
+  /* ===== Obsidian 风格 Callout =====
+     语法: > [!note]- 标题
+     支持 12 种类型,可折叠版本用原生 <details> 实现 */
+  .callout {
+    --callout-accent: oklch(0.55 0.17 270);
+    /* 惰性解析:每个 .callout-X 覆盖 --callout-accent 时,下面两个会自动重算 */
+    --callout-accent-soft: oklch(from var(--callout-accent) l c h / 10%);
+    --callout-accent-border: oklch(from var(--callout-accent) l c h / 25%);
+    @apply my-6 rounded-xl border backdrop-blur-md overflow-hidden;
+    background: linear-gradient(
+      135deg,
+      var(--callout-accent-soft),
+      rgba(255, 255, 255, 0.5) 80%
+    );
+    border-color: var(--callout-accent-border);
+    border-left-width: 4px;
+    border-left-color: var(--callout-accent);
+    box-shadow: 0 4px 20px -8px var(--callout-accent-border);
+  }
+  .dark .callout {
+    background: linear-gradient(
+      135deg,
+      var(--callout-accent-soft),
+      rgba(255, 255, 255, 0.03) 80%
+    );
+  }
+
+  /* 类型主题色 */
+  .callout-note     { --callout-accent: oklch(0.55 0.17 270);  }  /* 蓝紫 */
+  .callout-tip      { --callout-accent: oklch(0.65 0.17 180);  }  /* 青绿 */
+  .callout-info     { --callout-accent: oklch(0.60 0.15 220);  }  /* 蓝青 */
+  .callout-abstract { --callout-accent: oklch(0.62 0.13 200);  }  /* 青 */
+  .callout-success  { --callout-accent: oklch(0.62 0.18 145);  }  /* 绿 */
+  .callout-question { --callout-accent: oklch(0.60 0.20 300);  }  /* 紫 */
+  .callout-warning  { --callout-accent: oklch(0.70 0.17 65);   }  /* 橙 */
+  .callout-danger   { --callout-accent: oklch(0.60 0.22 25);   }  /* 红 */
+  .callout-bug      { --callout-accent: oklch(0.55 0.22 15);   }  /* 红 */
+  .callout-example  { --callout-accent: oklch(0.60 0.20 320);  }  /* 品红 */
+  .callout-quote    { --callout-accent: oklch(0.55 0.02 250);  }  /* 灰 */
+  .callout-todo     { --callout-accent: oklch(0.60 0.15 240);  }  /* 蓝 */
+
+  /* <summary> 本身:只负责隐藏原生三角 + 可点击,不参与布局 */
+  .callout-summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    padding: 0;
+    margin: 0;
+  }
+  .callout-summary::-webkit-details-marker { display: none; }
+  .callout-summary::marker { content: ""; }
+
+  /* 头部(标题行)—— flex 布局在 div 上,绕开 summary 的浏览器 quirk */
+  .callout-header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--callout-accent);
+  }
+
+  /* Tailwind preflight 把 svg 设成 display:block,这里强制回 inline-block,
+     否则在 flex 容器里会把 baseline 拉偏。shrink-0 防止被压缩。 */
+  .callout-header > svg {
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .callout-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .callout-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: inherit;
+  }
+
+  .callout-chevron {
+    width: 1rem;
+    height: 1rem;
+    opacity: 0.6;
+    transition: transform 0.25s ease;
+  }
+  details.callout[open] > .callout-summary .callout-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* 内容区 */
+  .callout-body {
+    @apply px-4 pb-3 pt-1;
+    color: oklch(from var(--foreground) l c h / 90%);
+  }
+  /* 内部 prose 元素外边距重置,避免双重 gap */
+  .callout-body > :first-child { margin-top: 0; }
+  .callout-body > :last-child  { margin-bottom: 0; }
+  .callout-body p { @apply my-2 leading-7; }
+  .callout-body ul,
+  .callout-body ol { @apply my-2; }
+  .callout-body pre { @apply my-3; }
+
+  /* 折叠块有内容时,头部和内容之间加一条淡分割线 */
+  details.callout[open] > .callout-summary > .callout-header {
+    border-bottom: 1px solid var(--callout-accent-border);
+  }
+
+  /* raw <details><summary> 兜底:没写 callout 语法、直接写 HTML 时也能美化 */
+  .prose details:not(.callout),
+  article details:not(.callout) {
+    @apply my-6 rounded-xl border px-4 py-3 backdrop-blur-md;
+    background: rgba(255, 255, 255, 0.5);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  .dark .prose details:not(.callout),
+  .dark article details:not(.callout) {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  .prose details:not(.callout) > summary,
+  article details:not(.callout) > summary {
+    @apply font-semibold cursor-pointer;
+  }
+
   /* 楷体工具类:
      1. 先试 Klee One (Google 日式楷风,next/font 自动拉取,保证跨平台一致)
      2. fallback 到各平台系统楷体

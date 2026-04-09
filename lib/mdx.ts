@@ -52,6 +52,75 @@ function remarkMermaid() {
 }
 
 /**
+ * Obsidian 风格 callout / admonition 语法:
+ *
+ *   > [!note] 标题        ← 普通提示块
+ *   > 内容
+ *
+ *   > [!note]- 标题       ← 可折叠,默认收起
+ *   > 内容
+ *
+ *   > [!note]+ 标题       ← 可折叠,默认展开
+ *   > 内容
+ *
+ * 关键:保留 blockquote 原始 AST children 作为 Callout 的 children,
+ * 这样内部的列表、公式、代码块、图片都能继续被 MDX 正常渲染。
+ */
+function remarkCallout() {
+  return (tree: any) => {
+    visit(tree, 'blockquote', (node: any, index: number | undefined, parent: any) => {
+      if (index === undefined || !parent) return;
+
+      const firstPara = node.children?.[0];
+      if (!firstPara || firstPara.type !== 'paragraph') return;
+
+      const firstText = firstPara.children?.[0];
+      if (!firstText || firstText.type !== 'text') return;
+
+      const match = firstText.value.match(/^\[!(\w+)\]([+-]?)[ \t]*([^\n]*)/);
+      if (!match) return;
+
+      const [fullMatch, rawType, modifier, rawTitle] = match;
+      const type = rawType.toLowerCase();
+      const title = rawTitle.trim();
+      const collapsible = modifier === '+' || modifier === '-';
+      const defaultOpen = modifier === '+';
+
+      // 剥离匹配的标记部分,保留后续内容
+      firstText.value = firstText.value.slice(fullMatch.length).replace(/^\n/, '');
+      if (firstText.value === '') {
+        firstPara.children.shift();
+        // 顺带去掉紧跟的 soft break
+        if (firstPara.children[0]?.type === 'break') firstPara.children.shift();
+      }
+      if (firstPara.children.length === 0) {
+        node.children.shift();
+      }
+
+      const attributes: any[] = [
+        { type: 'mdxJsxAttribute', name: 'type', value: type },
+      ];
+      if (title) {
+        attributes.push({ type: 'mdxJsxAttribute', name: 'title', value: title });
+      }
+      if (collapsible) {
+        attributes.push({ type: 'mdxJsxAttribute', name: 'collapsible', value: 'true' });
+      }
+      if (defaultOpen) {
+        attributes.push({ type: 'mdxJsxAttribute', name: 'defaultOpen', value: 'true' });
+      }
+
+      parent.children.splice(index, 1, {
+        type: 'mdxJsxFlowElement',
+        name: 'Callout',
+        attributes,
+        children: node.children,
+      });
+    });
+  };
+}
+
+/**
  * Typora 的 [toc] 渲染成文章内嵌目录。
  * 匹配独占一段且只含 `[toc]` (大小写不敏感) 的段落,替换为 <ArticleTOC /> JSX。
  */
@@ -225,6 +294,7 @@ async function compileMDXInternal(source: string, postPath?: string) {
           remarkMath,
           remarkEmoji,
           remarkMermaid,
+          remarkCallout,
           remarkTocPlaceholder,
           remarkTyporaInline,
         ],
