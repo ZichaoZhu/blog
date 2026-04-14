@@ -7,6 +7,40 @@ import { countWords } from '@/lib/utils';
 
 const postsDirectory = path.join(process.cwd(), 'content/posts');
 
+/** 自然序比较 (Lec1 < Lec2 < Lec10,而不是字典序 Lec1 < Lec10 < Lec2) */
+const NATURAL = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
+/**
+ * 同一层级内排序:
+ *   1. 文件夹永远在文章之前
+ *   2. 同为文件夹: .folder.json 的 order 优先,缺失者视为 +∞;相同则按 displayName 自然序
+ *   3. 同为文章:   frontmatter.order 优先,缺失者视为 +∞;相同则按 slug 自然序
+ */
+function sortTreeItems(items: FileTreeItem[]): void {
+  items.sort((a, b) => {
+    if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+
+    if (a.type === 'folder' && b.type === 'folder') {
+      const ao = a.metadata.order ?? Number.POSITIVE_INFINITY;
+      const bo = b.metadata.order ?? Number.POSITIVE_INFINITY;
+      if (ao !== bo) return ao - bo;
+      return NATURAL.compare(
+        a.metadata.displayName || a.metadata.name,
+        b.metadata.displayName || b.metadata.name,
+      );
+    }
+
+    if (a.type === 'post' && b.type === 'post') {
+      const ao = a.frontmatter.order ?? Number.POSITIVE_INFINITY;
+      const bo = b.frontmatter.order ?? Number.POSITIVE_INFINITY;
+      if (ao !== bo) return ao - bo;
+      return NATURAL.compare(a.slug, b.slug);
+    }
+
+    return 0;
+  });
+}
+
 /** 递归扫描目录 */
 function scanDirectory(
   dirPath: string,
@@ -31,6 +65,7 @@ function scanDirectory(
     }
   }
 
+  sortTreeItems(items);
   return items;
 }
 
@@ -71,6 +106,8 @@ function loadFolder(relativePath: string, fullPath: string): Folder | null {
   }
 
   if (items.length === 0) return null; // 空文件夹不显示
+
+  sortTreeItems(items);
 
   // 计算文章总数
   const postCount = countPosts(items);
@@ -120,6 +157,7 @@ function loadPost(relativePath: string, fullPath: string, mdFile: string = 'inde
       author: typeof data.author === 'string' ? data.author : '',
       coverImage: typeof data.coverImage === 'string' ? data.coverImage : undefined,
       draft: data.draft === true,
+      order: typeof data.order === 'number' ? data.order : undefined,
     };
 
     return {

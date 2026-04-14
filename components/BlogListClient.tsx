@@ -71,6 +71,9 @@ export function BlogListClient({
   }, [filters]);
 
   // 客户端筛选 —— useMemo 保证只在 filters 或 allPosts 变化时重算
+  // allPosts 进来是树顺序(.folder.json order + frontmatter.order + 文件名自然序):
+  //   - 有 folder 筛选时:保持树顺序(Lec1 → Lec10 符合直觉)
+  //   - 无 folder 筛选时:按日期倒序(首页/全量视图要"最新")
   const filteredPosts = useMemo(() => {
     let result = allPosts;
     if (filters.folder) {
@@ -81,6 +84,13 @@ export function BlogListClient({
     }
     if (filters.tag) {
       result = result.filter((p) => p.frontmatter.tags.includes(filters.tag!));
+    }
+    if (!filters.folder) {
+      result = [...result].sort(
+        (a, b) =>
+          new Date(b.frontmatter.date).getTime() -
+          new Date(a.frontmatter.date).getTime(),
+      );
     }
     return result;
   }, [allPosts, filters]);

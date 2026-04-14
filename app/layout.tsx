@@ -12,6 +12,7 @@ import { ClickEffect } from "@/components/ClickEffect";
 // KaTeX CSS
 import "katex/dist/katex.min.css";
 
+// Inter:拉丁现代无衬线,搭配苹方系列兼顾中文。
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],

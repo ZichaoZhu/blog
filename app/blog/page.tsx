@@ -1,5 +1,4 @@
 import {
-  getAllPosts,
   getAllTags,
   getAllCategories,
   getFileTree,
@@ -13,12 +12,13 @@ interface BlogPageProps {
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const params = await searchParams;
-  const [allPosts, allTags, allCategories, fileTree] = await Promise.all([
-    getAllPosts(),
+  const [allTags, allCategories, fileTree] = await Promise.all([
     getAllTags(),
     getAllCategories(),
     getFileTree(),
   ]);
+  // 传树顺序给 Client:folder 筛选时保持 Lec1 → Lec10 自然序
+  const allPosts = fileTree.flat;
 
   return (
     <>

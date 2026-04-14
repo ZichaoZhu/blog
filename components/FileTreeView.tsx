@@ -3,12 +3,24 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronRight, ChevronDown, Folder as FolderIcon, FileText } from 'lucide-react';
+import { ChevronRight, Folder as FolderIcon, FileText } from 'lucide-react';
 import type { FileTreeItem, Folder, Post } from '@/types';
 
 interface FileTreeViewProps {
   items: FileTreeItem[];
   level?: number;
+}
+
+/** 递归判断该文件夹(或任一子文件夹)是否包含与当前 pathname 匹配的文章 */
+function containsActivePost(folder: Folder, activePath: string): boolean {
+  for (const child of folder.children) {
+    if (child.type === 'post') {
+      if (`/blog/${child.path}` === activePath) return true;
+    } else if (containsActivePost(child, activePath)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function FileTreeView({ items, level = 0 }: FileTreeViewProps) {
@@ -26,7 +38,13 @@ export function FileTreeView({ items, level = 0 }: FileTreeViewProps) {
 }
 
 function FolderItem({ folder, level }: { folder: Folder; level: number }) {
-  const [isOpen, setIsOpen] = useState(!folder.metadata.collapsed);
+  const pathname = usePathname();
+  // 默认折叠;但若文件夹(或子文件夹)包含当前文章,则自动展开,方便定位。
+  // 显式 "collapsed": false 同样保持展开。
+  const hasActive = containsActivePost(folder, pathname);
+  const [isOpen, setIsOpen] = useState(
+    folder.metadata.collapsed === false || hasActive,
+  );
 
   return (
     <div>

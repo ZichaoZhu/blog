@@ -135,7 +135,18 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    /* 现代无衬线字体栈:
+       1. 拉丁 → Inter (next/font 自托管,清晰利落)
+       2. 系统 UI → -apple-system / BlinkMacSystemFont (Safari/Chrome SF Pro)
+       3. 中文 → 苹方 (PingFang SC,macOS/iOS 原生) / Hiragino Sans GB / Microsoft YaHei / Noto Sans SC
+       4. 兜底 sans + emoji */
+    font-family:
+      var(--font-inter),
+      -apple-system, BlinkMacSystemFont,
+      'PingFang SC', 'PingFang TC',
+      'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', 'Noto Sans CJK SC',
+      sans-serif,
+      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   }
 
   /* ===== 玻璃卡片(整站统一) =====
@@ -378,6 +389,42 @@
     background-color: oklch(0.94 0 0);
     color: oklch(0.35 0 0);
     font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
+  }
+
+  /* ===== KaTeX 块公式:长公式改为容器内横向滚动,不撑爆页面 =====
+     rehype-katex 把 $$...$$ 渲染成 <span class="katex-display">,内部公式按自然宽度排,
+     如果超过父容器就整页横向滚动。加 overflow-x:auto 后公式溢出时只在自己容器里滚。 */
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    /* 顶部/底部留一点空间给滚动条和公式不被裁切 */
+    padding: 0.25rem 0 0.5rem;
+    /* 保守 max-width,锁死不超出文章栏 */
+    max-width: 100%;
+  }
+  /* 细滚动条,呼应玻璃态风格 */
+  .katex-display::-webkit-scrollbar {
+    height: 6px;
+  }
+  .katex-display::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .katex-display::-webkit-scrollbar-thumb {
+    background: oklch(from var(--accent-indigo) l c h / 30%);
+    border-radius: 3px;
+  }
+  .katex-display::-webkit-scrollbar-thumb:hover {
+    background: oklch(from var(--accent-indigo) l c h / 50%);
+  }
+  /* Firefox */
+  .katex-display {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(from var(--accent-indigo) l c h / 30%) transparent;
+  }
+
+  /* 行内公式 $...$ 也偶尔会超宽(极长的表达式),限制一下最大宽度并允许断行容器滚动 */
+  .katex:not(.katex-display .katex) {
+    max-width: 100%;
   }
 
   .dark :not(pre) > code {

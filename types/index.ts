@@ -20,6 +20,8 @@ export interface PostFrontmatter {
   author: string;
   coverImage?: string;
   draft?: boolean;
+  /** 同一文件夹内的排序权重,越小越靠前。未设置则按文件名自然序 */
+  order?: number;
 }
 
 export interface Post {
