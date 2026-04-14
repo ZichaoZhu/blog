@@ -1,14 +1,12 @@
 ---
 title: "Introduction"
-date: "2026-03-06"
-description: "1. 什么是编译器：编译器实际上就是一个可以将一个语言（source language）转化成另一个语言（target language）的程序（equivalent program）。"
+date: "2026-03-13"
+description: "编译原理课程的第一章，介绍了编译器的基本概念、模块化设计以及常用工具。编译器是将一种语言转换为另一种语言的程序，分为多个阶段，每个阶段处理不同的抽象表示形式。课程还介绍了正则表达式和上下文无关文法，以及相应的工具Lex和Yacc，用于词法分析和语法分析。"
 tags: ["编译原理","课程笔记","计算机科学"]
 category: "编译原理"
 author: "zhuzichao"
 draft: false
 ---
-
-# Introduction
 
 ## 编译器
 

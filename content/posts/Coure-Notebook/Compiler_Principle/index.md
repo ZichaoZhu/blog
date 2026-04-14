@@ -1,7 +1,7 @@
 ---
-title: "Compiler_Principle - Lec0"
+title: "Course Principle"
 date: "2026-03-06"
-description: "* HW：10分 10次 * Quiz 10分 理论课上测试"
+description: "编译原理课程的第一堂课，介绍了课程的分数构成、习题课安排以及实验目标。学生需要编写一个编译器，将源语言SysY编译成RISC-V 32汇编语言。实验报告需要详细描述实验思路，并且需要独立完成，禁止使用AI工具。"
 tags: ["编译原理","课程笔记","计算机科学"]
 category: "编译原理"
 author: "zhuzichao"
