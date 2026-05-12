@@ -10,7 +10,7 @@ draft: false
 
 > 论文标题:ManiGaussian: Dynamic Gaussian Splatting for Multi-task Robotic Manipulation
 > 作者:Guanxing Lu, Shiyi Zhang, Ziwei Wang 等(清华大学、CMU、南洋理工)
-> 会议:ECCV 2024
+> 会议:ECCV
 > 关键词:多任务机器人操作、动态高斯泼溅、世界模型
 > 项目主页:https://guanxinglu.github.io/ManiGaussian/
 
