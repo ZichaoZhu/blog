@@ -1,4 +1,14 @@
-# Lec 6: 同步
+---
+title: "Lec6: 进程同步"
+date: "2025-11-10"
+description: "临界区问题、Peterson 解、硬件原子指令、互斥锁、信号量、管程,以及经典同步问题(生产者-消费者/读者-写者/哲学家就餐)。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
+
+## 进程同步
 
 ![image-20251231195637430](./assets/image-20251231195637430.png)
 

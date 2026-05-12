@@ -1,4 +1,12 @@
-# File-System Interface
+---
+title: "Lec10: File-System Interface"
+date: "2025-12-20"
+description: "文件与目录的概念、访问方式、共享与保护、文件系统挂载,以及目录结构(单层/两层/树形/无环图/通用图)。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
 
 感觉这一章不需要花费太多的时间，就看看别人的笔记吧：[xyx的笔记](https://xuan-insr.github.io/%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/os/VI_file_system/13_fs_interface/)
 

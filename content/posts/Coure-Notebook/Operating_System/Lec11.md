@@ -1,4 +1,12 @@
-# File system implementation
+---
+title: "Lec11: File System Implementation"
+date: "2025-12-30"
+description: "文件系统分层结构、磁盘上的元数据组织、目录实现、空闲空间管理、分配方法,以及效率与性能。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
 
 ## File System Structure
 

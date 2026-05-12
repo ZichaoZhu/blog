@@ -1,4 +1,14 @@
-# Virtual Memory
+---
+title: "Lec9: Virtual Memory"
+date: "2025-12-10"
+description: "请求调页、页面置换算法(FIFO/Optimal/LRU/Clock)、帧分配策略、抖动与工作集模型。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
+
+## Virtual Memory
 
 ​	这一章与上一章有什么区别呢？我的理解如下：
 

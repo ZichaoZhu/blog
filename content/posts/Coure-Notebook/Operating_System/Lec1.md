@@ -1,4 +1,14 @@
-# Introduction
+---
+title: "Lec1: Introduction"
+date: "2025-09-25"
+description: "操作系统第一章:操作系统是什么、它管理哪些资源、为什么需要它,以及本课程关注的三大 Management(进程/内存/存储)。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
+
+## Introduction
 
 ![NotebookLM Mind Map (2)](./assets/NotebookLM Mind Map (2).png)
 

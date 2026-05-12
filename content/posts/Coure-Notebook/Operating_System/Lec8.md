@@ -1,4 +1,14 @@
-# Main memory
+---
+title: "Lec8: Main Memory"
+date: "2025-11-30"
+description: "内存管理基础、地址绑定、连续内存分配与分段、分页机制、TLB、共享与保护。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
+
+## Main Memory
 
 ![NotebookLM Mind Map (8)](./assets/NotebookLM Mind Map (8).png)
 

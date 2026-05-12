@@ -1,4 +1,14 @@
-# Lec7: Deadlocks
+---
+title: "Lec7: Deadlocks"
+date: "2025-11-20"
+description: "死锁的四个必要条件、资源分配图、死锁预防/避免(银行家算法)、检测与恢复。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
+
+## Deadlocks
 
 ![NotebookLM Mind Map (7)](./assets/NotebookLM Mind Map (7).png)
 

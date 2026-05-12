@@ -1,14 +1,14 @@
 ---
-title: "Lec2: Lexical Analysisx"
-date: "2026-04-06"
-description: "​"
+title: "Lec0: 课程介绍与成绩"
+date: "2025-09-16"
+description: "操作系统课程的开场:主要内容总览、实验与考试评分规则、推荐教材与参考资料。"
 tags: ["操作系统","课程笔记","计算机科学"]
-category: "Operating System"
+category: "操作系统"
 author: "zhuzichao"
 draft: false
 ---
 
-# Course and Grades
+## Course and Grades
 
 ## Main Contents
 

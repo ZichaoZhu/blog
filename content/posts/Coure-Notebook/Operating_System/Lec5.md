@@ -1,4 +1,14 @@
-# CPU Scheduling
+---
+title: "Lec5: CPU Scheduling"
+date: "2025-10-30"
+description: "CPU 调度的基本概念、各类调度算法(FCFS/SJF/RR/优先级/多级反馈队列),以及多核与实时调度。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
+
+## CPU Scheduling
 
 ![NotebookLM Mind Map (5)](./assets/NotebookLM Mind Map (5).png)
 

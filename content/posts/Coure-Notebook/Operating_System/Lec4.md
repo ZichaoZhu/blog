@@ -1,4 +1,14 @@
-# Threads（多线程编程）
+---
+title: "Lec4: Threads（多线程编程）"
+date: "2025-10-20"
+description: "为什么需要线程、多线程模型、Pthreads/Java/OpenMP 等线程库,以及隐式线程与线程相关问题。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
+
+## Threads(多线程编程)
 
 ![image-20251231103705989](./assets/image-20251231103705989.png)
 

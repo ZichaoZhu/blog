@@ -1,4 +1,14 @@
-# Operating-System Structures
+---
+title: "Lec2: Operating-System Structures"
+date: "2025-09-28"
+description: "操作系统能提供哪些服务、系统调用与 shell 接口、内核结构(单体/分层/微内核/模块化)。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
+
+## Operating-System Structures
 
 ## Operation System Services
 

@@ -1,4 +1,14 @@
-# Processes
+---
+title: "Lec3: Processes"
+date: "2025-10-09"
+description: "进程的概念、PCB 结构、进程状态转换、进程调度,以及进程间通信(IPC)。"
+tags: ["操作系统","课程笔记","计算机科学"]
+category: "操作系统"
+author: "zhuzichao"
+draft: false
+---
+
+## Processes
 
 ![NotebookLM Mind Map (3)](./assets/NotebookLM Mind Map (3).png)
 
