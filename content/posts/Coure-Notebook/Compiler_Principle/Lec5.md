@@ -1,7 +1,7 @@
 ---
-title: "Semantic Analysis"
-date: "2026-03-20"
-description: "编译原理课程的第二章，介绍了词法分析的基本概念、正则表达式以及有限自动机。词法分析器将源代码转换为 token 流，使用正则表达式描述 token 模式，并通过 NFA 和 DFA 实现。课程还介绍了 Lex 工具，用于自动生成词法分析器，以及 DFA 最小化算法，优化状态数量。"
+title: "Lec5: Semantic Analysis"
+date: "2026-04-10"
+description: "在 AST 上做语义检查:类型系统、符号表的层级与作用域、变量声明与使用一致性,以及类型推导的基础。"
 tags: ["编译原理","课程笔记","计算机科学"]
 category: "编译原理"
 author: "zhuzichao"
