@@ -2,10 +2,28 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import readingTime from 'reading-time';
-import type { Post, PostFrontmatter, Folder, FolderMetadata, FileTreeItem, FileTree } from '@/types';
+import type {
+  PostDocument,
+  PostFrontmatter,
+  PostSummary,
+  Folder,
+  FolderMetadata,
+  FileTreeItem,
+  FileTree,
+  ContentTree,
+} from '@/types';
 import { countWords } from '@/lib/utils';
+import { siteConfig } from '@/lib/site';
 
 const postsDirectory = path.join(process.cwd(), 'content/posts');
+
+interface ScanContext {
+  postsDirectory: string;
+  sourceFiles: Map<string, string>;
+}
+
+/** 仅服务端持有的路由 -> Markdown 源文件映射。 */
+let sourceFiles = new Map<string, string>();
 
 /** 自然序比较 (Lec1 < Lec2 < Lec10,而不是字典序 Lec1 < Lec10 < Lec2) */
 const NATURAL = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -44,7 +62,8 @@ function sortTreeItems(items: FileTreeItem[]): void {
 /** 递归扫描目录 */
 function scanDirectory(
   dirPath: string,
-  relativePath: string = ''
+  context: ScanContext,
+  relativePath: string = '',
 ): FileTreeItem[] {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });
   const items: FileTreeItem[] = [];
@@ -60,8 +79,12 @@ function scanDirectory(
 
     if (entry.isDirectory()) {
       // 递归扫描子文件夹
-      const folder = loadFolder(itemRelativePath, fullPath);
+      const folder = loadFolder(itemRelativePath, fullPath, context);
       if (folder) items.push(folder);
+    } else if (entry.isFile() && entry.name.endsWith('.md')) {
+      const postPath = itemRelativePath.replace(/\.md$/, '');
+      const post = loadPost(postPath, dirPath, entry.name, context);
+      if (post) items.push(post);
     }
   }
 
@@ -70,7 +93,11 @@ function scanDirectory(
 }
 
 /** 加载文件夹 */
-function loadFolder(relativePath: string, fullPath: string): Folder | null {
+function loadFolder(
+  relativePath: string,
+  fullPath: string,
+  context: ScanContext,
+): Folder | null {
   const metaPath = path.join(fullPath, '.folder.json');
   let metadata: FolderMetadata = {
     name: path.basename(relativePath),
@@ -97,10 +124,14 @@ function loadFolder(relativePath: string, fullPath: string): Folder | null {
       const mdRelativePath = entry.name === 'index.md'
         ? relativePath
         : `${relativePath}/${entry.name.replace(/\.md$/, '')}`;
-      const post = loadPost(mdRelativePath, fullPath, entry.name);
+      const post = loadPost(mdRelativePath, fullPath, entry.name, context);
       if (post) items.push(post);
     } else if (entry.isDirectory()) {
-      const folder = loadFolder(`${relativePath}/${entry.name}`, path.join(fullPath, entry.name));
+      const folder = loadFolder(
+        `${relativePath}/${entry.name}`,
+        path.join(fullPath, entry.name),
+        context,
+      );
       if (folder) items.push(folder);
     }
   }
@@ -122,13 +153,47 @@ function loadFolder(relativePath: string, fullPath: string): Folder | null {
 }
 
 /** 加载文章 */
-function loadPost(relativePath: string, fullPath: string, mdFile: string = 'index.md'): Post | null {
+function createExcerpt(content: string, maxLength = 220): string {
+  const plain = content
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^\s*>\s?/gm, '')
+    .replace(/^\s*(?:[-*+] |\d+\.\s+)/gm, '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[`*_~=^]/g, '')
+    .replace(/\$+[^$]*\$+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return plain.length > maxLength
+    ? `${plain.slice(0, maxLength).trimEnd()}…`
+    : plain;
+}
+
+function normalizeDate(value: unknown, mdPath: string): string {
+  if (typeof value === 'string' && !Number.isNaN(Date.parse(value))) {
+    return value;
+  }
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString().split('T')[0];
+  }
+  return fs.statSync(mdPath).mtime.toISOString().split('T')[0];
+}
+
+function loadPost(
+  relativePath: string,
+  fullPath: string,
+  mdFile: string,
+  context: ScanContext,
+): PostSummary | null {
   try {
     const mdPath = path.join(fullPath, mdFile);
     const fileContents = fs.readFileSync(mdPath, 'utf8');
     const { data, content } = matter(fileContents);
 
-    if (data.draft) return null; // 跳过草稿
+    if (data.draft === true) return null; // 仅跳过显式布尔草稿
 
     const stats = readingTime(content);
     const pathParts = relativePath.split('/');
@@ -138,15 +203,7 @@ function loadPost(relativePath: string, fullPath: string, mdFile: string = 'inde
       : undefined;
 
     // 规范化 frontmatter，避免缺失字段导致后续渲染崩溃
-    let date: string;
-    if (typeof data.date === 'string') {
-      date = data.date;
-    } else if (data.date instanceof Date) {
-      date = data.date.toISOString().split('T')[0];
-    } else {
-      // 仅当 frontmatter 未提供日期时才 stat 文件
-      date = fs.statSync(mdPath).mtime.toISOString().split('T')[0];
-    }
+    const date = normalizeDate(data.date, mdPath);
 
     const frontmatter: PostFrontmatter = {
       title: typeof data.title === 'string' && data.title ? data.title : slug,
@@ -154,22 +211,32 @@ function loadPost(relativePath: string, fullPath: string, mdFile: string = 'inde
       description: typeof data.description === 'string' ? data.description : '',
       tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
       category: typeof data.category === 'string' ? data.category : '未分类',
-      author: typeof data.author === 'string' ? data.author : '',
+      author: typeof data.author === 'string' && data.author.trim()
+        ? data.author.trim()
+        : siteConfig.primaryAuthorId,
       coverImage: typeof data.coverImage === 'string' ? data.coverImage : undefined,
       draft: data.draft === true,
       order: typeof data.order === 'number' ? data.order : undefined,
     };
 
-    return {
+    const post: PostSummary = {
       type: 'post',
       slug,
       path: relativePath,
       parentPath,
       frontmatter,
-      content,
+      excerpt: typeof data.description === 'string' && data.description.trim()
+        ? data.description.trim()
+        : createExcerpt(content),
       readingTime: stats.text,
       wordCount: countWords(content),
     };
+
+    context.sourceFiles.set(
+      relativePath,
+      path.relative(context.postsDirectory, mdPath),
+    );
+    return post;
   } catch (error) {
     console.error(`Error loading post: ${relativePath}`, error);
     return null;
@@ -185,8 +252,8 @@ function countPosts(items: FileTreeItem[]): number {
 }
 
 /** 扁平化文章列表 */
-function flattenPosts(items: FileTreeItem[]): Post[] {
-  const posts: Post[] = [];
+function flattenPosts(items: FileTreeItem[]): PostSummary[] {
+  const posts: PostSummary[] = [];
   
   for (const item of items) {
     if (item.type === 'post') {
@@ -197,6 +264,53 @@ function flattenPosts(items: FileTreeItem[]): Post[] {
   }
   
   return posts;
+}
+
+function buildContentIndex(
+  directory: string,
+  scannedSourceFiles: Map<string, string>,
+): FileTree {
+  const context: ScanContext = {
+    postsDirectory: directory,
+    sourceFiles: scannedSourceFiles,
+  };
+  const root = scanDirectory(directory, context);
+  const flat = flattenPosts(root);
+  const seenPaths = new Set<string>();
+
+  for (const post of flat) {
+    if (seenPaths.has(post.path)) {
+      throw new Error(`Duplicate post path: ${post.path}`);
+    }
+    seenPaths.add(post.path);
+  }
+
+  flat.sort(
+    (a, b) =>
+      new Date(b.frontmatter.date).getTime() -
+      new Date(a.frontmatter.date).getTime(),
+  );
+
+  const folders = new Map<string, Folder>();
+  function collectFolders(items: FileTreeItem[]) {
+    for (const item of items) {
+      if (item.type === 'folder') {
+        folders.set(item.path, item);
+        collectFolders(item.children);
+      }
+    }
+  }
+  collectFolders(root);
+
+  return { root, flat, folders };
+}
+
+/**
+ * Build a content summary index from an arbitrary posts directory. This is
+ * also used by fixture-based validation without changing the process cwd.
+ */
+export function buildContentIndexFromDirectory(directory: string): FileTree {
+  return buildContentIndex(path.resolve(directory), new Map());
 }
 
 // 文件树缓存：
@@ -218,28 +332,9 @@ export async function getFileTree(): Promise<FileTree> {
   }
 
   try {
-    const root = scanDirectory(postsDirectory);
-    const flat = flattenPosts(root);
-    
-    // 按日期排序
-    flat.sort((a, b) => 
-      new Date(b.frontmatter.date).getTime() - 
-      new Date(a.frontmatter.date).getTime()
-    );
-
-    // 构建文件夹映射
-    const folders = new Map<string, Folder>();
-    function collectFolders(items: FileTreeItem[]) {
-      for (const item of items) {
-        if (item.type === 'folder') {
-          folders.set(item.path, item);
-          collectFolders(item.children);
-        }
-      }
-    }
-    collectFolders(root);
-
-    const result = { root, flat, folders };
+    const scannedSourceFiles = new Map<string, string>();
+    const result = buildContentIndex(postsDirectory, scannedSourceFiles);
+    sourceFiles = scannedSourceFiles;
     
     // 更新缓存
     fileTreeCache = {
@@ -263,21 +358,80 @@ export async function getFileTree(): Promise<FileTree> {
 }
 
 /** 获取所有文章(扁平) - 向后兼容 */
-export async function getAllPosts(): Promise<Post[]> {
+export async function getAllPosts(): Promise<PostSummary[]> {
   const tree = await getFileTree();
   return tree.flat;
 }
 
 /** 根据路径获取文章 */
-export async function getPostByPath(postPath: string): Promise<Post | null> {
+export async function getPostByPath(postPath: string): Promise<PostSummary | null> {
   const tree = await getFileTree();
   return tree.flat.find(p => p.path === postPath) || null;
 }
 
 /** 根据作者 ID 获取文章(作者详情页用) */
-export async function getPostsByAuthor(authorId: string): Promise<Post[]> {
+export async function getPostsByAuthor(authorId: string): Promise<PostSummary[]> {
   const allPosts = await getAllPosts();
   return allPosts.filter(post => post.frontmatter.author === authorId);
+}
+
+/** 新的显式摘要索引 API。 */
+export async function getContentIndex(): Promise<ContentTree> {
+  return getFileTree();
+}
+
+/** 仅读取当前文章正文，不把它塞入全站文件树。 */
+export async function getPostDocument(postPath: string): Promise<PostDocument | null> {
+  const summary = await getPostByPath(postPath);
+  if (!summary) return null;
+
+  const sourceFile = sourceFiles.get(postPath);
+  if (!sourceFile) return null;
+
+  try {
+    const absolutePath = path.join(postsDirectory, sourceFile);
+    const raw = await fs.promises.readFile(absolutePath, 'utf8');
+    const { content } = matter(raw);
+    return { ...summary, content, sourceFile };
+  } catch (error) {
+    console.error(`Error loading post document: ${postPath}`, error);
+    return null;
+  }
+}
+
+/** 文章页左侧只需要当前顶层主题，不必序列化整棵树。 */
+export async function getTopicTreeForPost(postPath: string): Promise<FileTreeItem[]> {
+  const tree = await getFileTree();
+  const topLevelPath = postPath.split('/')[0];
+  const topic = tree.root.find((item) => item.path === topLevelPath);
+  return topic ? [topic] : [];
+}
+
+function flattenInTreeOrder(items: FileTreeItem[]): PostSummary[] {
+  const result: PostSummary[] = [];
+  for (const item of items) {
+    if (item.type === 'post') result.push(item);
+    else result.push(...flattenInTreeOrder(item.children));
+  }
+  return result;
+}
+
+export async function getAdjacentPosts(postPath: string): Promise<{
+  previous: PostSummary | null;
+  next: PostSummary | null;
+}> {
+  const current = await getPostByPath(postPath);
+  if (!current) return { previous: null, next: null };
+
+  const tree = await getFileTree();
+  const ordered = flattenInTreeOrder(tree.root).filter(
+    (post) => post.parentPath === current.parentPath,
+  );
+  const index = ordered.findIndex((post) => post.path === postPath);
+  return {
+    previous: index > 0 ? ordered[index - 1] : null,
+    next: index >= 0 && index < ordered.length - 1 ? ordered[index + 1] : null,
+  };
 }
 
 export async function getAllTags(): Promise<string[]> {

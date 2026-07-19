@@ -1,13 +1,12 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+  --font-mono: "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -47,86 +46,84 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --radius: 0.375rem;
+  --background: oklch(0.985 0.006 84);
+  --foreground: oklch(0.235 0.018 252);
+  --card: oklch(0.995 0.003 84);
+  --card-foreground: oklch(0.235 0.018 252);
+  --popover: oklch(0.995 0.003 84);
+  --popover-foreground: oklch(0.235 0.018 252);
+  --primary: oklch(0.43 0.12 252);
+  --primary-foreground: oklch(0.985 0.006 84);
+  --secondary: oklch(0.955 0.008 84);
+  --secondary-foreground: oklch(0.29 0.02 252);
+  --muted: oklch(0.955 0.008 84);
+  --muted-foreground: oklch(0.50 0.024 252);
+  --accent: oklch(0.94 0.018 252);
+  --accent-foreground: oklch(0.35 0.10 252);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.875 0.012 84);
+  --input: oklch(0.875 0.012 84);
+  --ring: oklch(0.52 0.11 252);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.975 0.006 84);
+  --sidebar-foreground: oklch(0.235 0.018 252);
+  --sidebar-primary: oklch(0.43 0.12 252);
+  --sidebar-primary-foreground: oklch(0.985 0.006 84);
+  --sidebar-accent: oklch(0.94 0.018 252);
+  --sidebar-accent-foreground: oklch(0.29 0.02 252);
+  --sidebar-border: oklch(0.875 0.012 84);
+  --sidebar-ring: oklch(0.52 0.11 252);
 
-  /* ===== 统一设计系统 tokens ===== */
-  --accent-indigo: oklch(0.55 0.17 270);
-  --accent-pink: oklch(0.70 0.18 10);
-  --glow-1: rgba(99, 102, 241, 0.10);
-  --glow-2: rgba(236, 72, 153, 0.08);
-  --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 2px 8px -2px rgba(0, 0, 0, 0.08);
-  --glass-shadow-hover: 0 20px 60px -10px rgba(0, 0, 0, 0.25), 0 4px 16px -4px rgba(0, 0, 0, 0.12);
+  --accent-indigo: oklch(0.43 0.12 252);
+  --academic-link: oklch(0.43 0.12 252);
+  --academic-link-hover: oklch(0.35 0.12 252);
+  --academic-surface: oklch(0.995 0.003 84);
+  --academic-rule: oklch(0.875 0.012 84);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: oklch(0.18 0.018 252);
+  --foreground: oklch(0.91 0.008 84);
+  --card: oklch(0.205 0.019 252);
+  --card-foreground: oklch(0.91 0.008 84);
+  --popover: oklch(0.205 0.019 252);
+  --popover-foreground: oklch(0.91 0.008 84);
+  --primary: oklch(0.70 0.10 245);
+  --primary-foreground: oklch(0.18 0.018 252);
+  --secondary: oklch(0.24 0.018 252);
+  --secondary-foreground: oklch(0.91 0.008 84);
+  --muted: oklch(0.24 0.018 252);
+  --muted-foreground: oklch(0.69 0.018 84);
+  --accent: oklch(0.27 0.03 248);
+  --accent-foreground: oklch(0.86 0.06 245);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: oklch(0.34 0.018 252);
+  --input: oklch(0.34 0.018 252);
+  --ring: oklch(0.65 0.09 245);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: oklch(0.195 0.018 252);
+  --sidebar-foreground: oklch(0.91 0.008 84);
+  --sidebar-primary: oklch(0.70 0.10 245);
+  --sidebar-primary-foreground: oklch(0.18 0.018 252);
+  --sidebar-accent: oklch(0.27 0.03 248);
+  --sidebar-accent-foreground: oklch(0.91 0.008 84);
+  --sidebar-border: oklch(0.34 0.018 252);
+  --sidebar-ring: oklch(0.65 0.09 245);
 
-  /* 暗色下 glow 再强一点,因为黑底上需要更亮的光才能看出层次 */
-  --glow-1: rgba(129, 140, 248, 0.14);
-  --glow-2: rgba(244, 114, 182, 0.10);
-  --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.6), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
-  --glass-shadow-hover: 0 20px 60px -10px rgba(0, 0, 0, 0.7), 0 4px 16px -4px rgba(0, 0, 0, 0.5);
+  --accent-indigo: oklch(0.70 0.10 245);
+  --academic-link: oklch(0.73 0.09 245);
+  --academic-link-hover: oklch(0.82 0.07 245);
+  --academic-surface: oklch(0.205 0.019 252);
+  --academic-rule: oklch(0.34 0.018 252);
 }
 
 @layer base {
@@ -135,90 +132,529 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* 现代无衬线字体栈:
-       1. 拉丁 → Inter (next/font 自托管,清晰利落)
-       2. 系统 UI → -apple-system / BlinkMacSystemFont (Safari/Chrome SF Pro)
-       3. 中文 → 苹方 (PingFang SC,macOS/iOS 原生) / Hiragino Sans GB / Microsoft YaHei / Noto Sans SC
-       4. 兜底 sans + emoji */
+    /* 系统无衬线字体栈优先，避免 UI 字体阻塞首屏；
+       中文使用苹方 / 微软雅黑 / Noto Sans SC，最后回退 sans 与 emoji。 */
     font-family:
-      var(--font-inter),
       -apple-system, BlinkMacSystemFont,
       'PingFang SC', 'PingFang TC',
       'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', 'Noto Sans CJK SC',
       sans-serif,
       'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    min-height: 100vh;
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+    font-kerning: normal;
   }
 
-  /* ===== 玻璃卡片(整站统一) =====
-     - light: 白色梯度 + border,阴影柔
-     - dark : 半透明白叠到暗背景 */
-  .glass-card {
-    @apply rounded-2xl border backdrop-blur-xl transition-shadow duration-300;
-    background: linear-gradient(
-      to bottom right,
-      rgba(255, 255, 255, 0.9),
-      rgba(255, 255, 255, 0.7),
-      rgba(255, 255, 255, 0.6)
-    );
-    border-color: rgba(255, 255, 255, 0.6);
-    box-shadow: var(--glass-shadow);
-  }
-  .glass-card:hover {
-    box-shadow: var(--glass-shadow-hover);
-  }
-  .dark .glass-card {
-    background: linear-gradient(
-      to bottom right,
-      rgba(255, 255, 255, 0.10),
-      rgba(255, 255, 255, 0.05),
-      rgba(255, 255, 255, 0.02)
-    );
-    border-color: rgba(255, 255, 255, 0.15);
+  ::selection {
+    color: var(--foreground);
+    background: oklch(from var(--academic-link) l c h / 20%);
   }
 
-  /* 更轻量的玻璃面板,用于 TOC/文件树侧栏等大面积区域 */
-  .glass-panel {
-    @apply rounded-xl border backdrop-blur-md;
-    background: rgba(255, 255, 255, 0.55);
-    border-color: rgba(255, 255, 255, 0.5);
-  }
-  .dark .glass-panel {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
+  :focus-visible {
+    outline: 2px solid var(--academic-link);
+    outline-offset: 3px;
   }
 
-  /* 双径向柔光背景,挂到任何 section 的 ::before 或专用 div 上 */
-  .glow-bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: -1;
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    padding: 0.55rem 0.8rem;
+    color: var(--primary-foreground);
+    background: var(--primary);
+    font-size: 0.8rem;
+    transform: translateY(-200%);
   }
-  .glow-bg::before,
-  .glow-bg::after {
-    content: '';
-    position: absolute;
-    width: 32rem;
-    height: 32rem;
-    border-radius: 9999px;
-    filter: blur(96px);
-  }
-  .glow-bg::before {
-    top: -4rem;
-    left: 15%;
-    background: var(--glow-1);
-  }
-  .glow-bg::after {
-    bottom: -4rem;
-    right: 15%;
-    background: var(--glow-2);
+  .skip-link:focus {
+    transform: translateY(0);
   }
 
-  /* 微标签(分类/系列) */
   .micro-label {
-    @apply text-xs font-medium tracking-[0.15em] uppercase;
-    color: var(--accent-indigo);
+    @apply text-[11px] font-semibold tracking-[0.14em] uppercase;
+    color: var(--academic-link);
+  }
+
+  .academic-text-link {
+    color: var(--academic-link);
+    text-decoration-line: underline;
+    text-decoration-color: oklch(from var(--academic-link) l c h / 35%);
+    text-underline-offset: 0.22em;
+    transition: color 180ms ease, text-decoration-color 180ms ease;
+  }
+  .academic-text-link:hover {
+    color: var(--academic-link-hover);
+    text-decoration-color: currentColor;
+  }
+
+  .academic-button {
+    @apply inline-flex items-center justify-center gap-2 border px-4 py-2.5 text-sm font-medium;
+    border-radius: 2px;
+    transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+  }
+  .academic-button-primary {
+    color: var(--primary-foreground);
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+  .academic-button-primary:hover {
+    background: var(--academic-link-hover);
+    border-color: var(--academic-link-hover);
+  }
+
+  .academic-nav-link {
+    @apply border-b-2 border-transparent px-3 py-2 text-sm text-muted-foreground;
+    transition: color 180ms ease, border-color 180ms ease;
+  }
+  .academic-nav-link:hover {
+    color: var(--foreground);
+  }
+  .academic-nav-link-active {
+    color: var(--foreground);
+    border-bottom-color: var(--academic-link);
+  }
+
+  .academic-card {
+    @apply rounded-sm border;
+    background: var(--academic-surface);
+    border-color: var(--academic-rule);
+    box-shadow: none;
+    transition: border-color 180ms ease, background-color 180ms ease;
+  }
+  a:hover > .academic-card {
+    border-color: oklch(from var(--academic-link) l c h / 50%);
+  }
+
+  .academic-post-index > a:first-child article {
+    border-top: 1px solid var(--academic-rule);
+  }
+
+  .academic-topic-row {
+    @apply flex items-start justify-between gap-5 border-b border-border py-5;
+    transition: background-color 180ms ease;
+  }
+  .academic-topic-row:hover {
+    background: oklch(from var(--academic-link) l c h / 4%);
+  }
+
+  @media (min-width: 768px) {
+    .academic-topic-row {
+      padding: 1.5rem;
+    }
+    .academic-topic-row:nth-child(odd) {
+      border-right: 1px solid var(--academic-rule);
+    }
+  }
+
+  .academic-kicker {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em];
+    color: var(--academic-link);
+  }
+
+  /* 研究笔记索引 */
+  .notes-filter {
+    margin-bottom: 2.5rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--academic-rule);
+    border-bottom: 1px solid var(--academic-rule);
+  }
+  .notes-active-filters {
+    @apply mb-5 flex flex-wrap items-center gap-2 border-b border-border pb-4 text-xs text-muted-foreground;
+  }
+  .notes-active-filters button,
+  .notes-filter-options button {
+    @apply border border-border px-2.5 py-1 text-xs text-muted-foreground;
+    border-radius: 2px;
+    transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+  }
+  .notes-active-filters button:hover,
+  .notes-filter-options button:hover,
+  .notes-filter-options button[data-active='true'] {
+    color: var(--academic-link);
+    border-color: oklch(from var(--academic-link) l c h / 45%);
+    background: oklch(from var(--academic-link) l c h / 6%);
+  }
+  .notes-filter-row {
+    @apply grid gap-5 md:grid-cols-2 md:gap-10;
+  }
+  .notes-filter-options {
+    @apply mt-2 flex flex-wrap gap-2;
+  }
+  .notes-layout {
+    @apply flex items-start gap-8;
+  }
+  .notes-tree {
+    @apply hidden w-64 shrink-0 lg:block;
+  }
+  .notes-tree.is-collapsed {
+    display: none;
+  }
+  .notes-tree-inner {
+    @apply sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto border-t border-border pt-4;
+  }
+  .notes-results {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .notes-results-header {
+    @apply mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4 text-sm text-muted-foreground;
+  }
+  .notes-results-header > div {
+    @apply flex items-center gap-2;
+  }
+  .notes-results-header strong {
+    color: var(--foreground);
+    font-weight: 600;
+  }
+  .notes-tree-toggle {
+    @apply hidden items-center gap-2 border border-border px-3 py-2 text-xs text-muted-foreground lg:inline-flex;
+    border-radius: 2px;
+  }
+  .notes-tree-toggle:hover {
+    color: var(--foreground);
+    border-color: oklch(from var(--academic-link) l c h / 45%);
+  }
+  .notes-tree-toggle svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  .view-switcher {
+    @apply inline-flex border border-border;
+    border-radius: 2px;
+  }
+  .view-switcher button {
+    @apply inline-flex size-8 items-center justify-center text-muted-foreground;
+  }
+  .view-switcher button + button {
+    border-left: 1px solid var(--academic-rule);
+  }
+  .view-switcher button:hover,
+  .view-switcher button[aria-pressed='true'] {
+    color: var(--academic-link);
+    background: oklch(from var(--academic-link) l c h / 7%);
+  }
+  .view-switcher svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  .academic-post-grid {
+    @apply grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3;
+  }
+  .academic-post-list > a:first-child article {
+    border-top: 1px solid var(--academic-rule);
+  }
+  .notes-empty {
+    @apply flex min-h-64 flex-col items-center justify-center gap-3 border-y border-border py-12 text-center text-sm text-muted-foreground;
+  }
+  .notes-empty > svg {
+    width: 2rem;
+    height: 2rem;
+  }
+  .notes-empty strong {
+    color: var(--foreground);
+    font-weight: 600;
+  }
+  .notes-empty button {
+    color: var(--academic-link);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .notes-pagination {
+    @apply mt-10 flex items-center justify-center gap-4 border-t border-border pt-6 text-xs text-muted-foreground;
+  }
+  .notes-pagination button {
+    @apply inline-flex size-8 items-center justify-center border border-border;
+    border-radius: 2px;
+  }
+  .notes-pagination button:hover:not(:disabled) {
+    color: var(--academic-link);
+    border-color: oklch(from var(--academic-link) l c h / 45%);
+  }
+  .notes-pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+  }
+  .notes-pagination svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* 文章阅读布局 */
+  .academic-article-shell {
+    max-width: 96rem;
+    margin-inline: auto;
+    padding: 2.5rem 1rem 4rem;
+  }
+  .academic-article-grid {
+    @apply flex items-start gap-8;
+  }
+  .academic-article {
+    width: 100%;
+    max-width: 52rem;
+    min-width: 0;
+    margin-inline: auto;
+  }
+  .article-title-block {
+    margin-bottom: 2.75rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--academic-rule);
+  }
+  .article-title-block h1 {
+    margin-top: 0.75rem;
+    max-width: 20ch;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 650;
+    line-height: 1.14;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+  .article-cover {
+    width: 100%;
+    height: auto;
+    margin-bottom: 2rem;
+    border: 1px solid var(--academic-rule);
+    border-radius: 2px;
+    box-shadow: none;
+  }
+  .article-deck {
+    max-width: 44rem;
+    margin-top: 1rem;
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--muted-foreground);
+  }
+  .article-meta {
+    @apply mt-6 flex flex-wrap items-center gap-x-2 gap-y-2 font-mono text-xs text-muted-foreground;
+  }
+  .article-meta a:hover {
+    color: var(--academic-link);
+  }
+  .article-tags {
+    @apply mt-5 flex flex-wrap gap-2;
+  }
+  .academic-tag {
+    @apply border border-border px-2.5 py-1 text-xs text-muted-foreground;
+    border-radius: 2px;
+  }
+  .academic-tag:hover {
+    color: var(--academic-link);
+    border-color: oklch(from var(--academic-link) l c h / 45%);
+  }
+  .academic-article > .prose.prose {
+    max-width: 74ch;
+  }
+  .article-inline-toc {
+    margin: 2rem 0;
+    padding: 1.25rem;
+    border-top: 1px solid var(--academic-rule);
+    border-bottom: 1px solid var(--academic-rule);
+    font-family:
+      -apple-system, BlinkMacSystemFont,
+      'PingFang SC', sans-serif;
+  }
+  .article-inline-toc ol {
+    margin: 0.8rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .article-inline-toc li {
+    margin: 0.35rem 0;
+    font-size: 0.875rem;
+  }
+  .article-inline-toc li[data-level='3'] {
+    padding-left: 1rem;
+  }
+  .article-inline-toc li[data-level='4'] {
+    padding-left: 2rem;
+  }
+  .article-inline-toc a {
+    color: var(--muted-foreground);
+    text-decoration: none;
+  }
+  .article-inline-toc a:hover {
+    color: var(--academic-link);
+  }
+  .article-pagination {
+    @apply mt-14 grid gap-px border-y border-border sm:grid-cols-2;
+    background: var(--academic-rule);
+  }
+  .article-pagination > a,
+  .article-pagination > span {
+    min-height: 7rem;
+    padding: 1.25rem;
+    background: var(--background);
+  }
+  .article-pagination > a:last-child {
+    text-align: right;
+  }
+  .article-pagination span {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.7rem;
+    color: var(--muted-foreground);
+  }
+  .article-pagination strong {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .article-pagination a:hover strong {
+    color: var(--academic-link);
+  }
+  .article-author {
+    @apply mt-10 flex items-center gap-4 border-y border-border py-5;
+    color: inherit;
+    text-decoration: none;
+  }
+  .article-author:hover {
+    color: var(--academic-link);
+  }
+
+  @media (min-width: 640px) {
+    .academic-article-shell {
+      padding-inline: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .academic-article-shell {
+      padding-inline: 2rem;
+    }
+  }
+  @media (max-width: 639px) {
+    .article-pagination > a:last-child {
+      text-align: left;
+    }
+    .article-title-block h1 {
+      font-size: 2.25rem;
+    }
+  }
+
+  /* 全文搜索 */
+  .search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: min(12vh, 7rem) 1rem 1rem;
+    background: oklch(0.10 0.015 252 / 58%);
+  }
+  .search-dialog {
+    width: min(42rem, 100%);
+    max-height: min(76vh, 42rem);
+    overflow: hidden;
+    border: 1px solid var(--academic-rule);
+    border-radius: 2px;
+    background: var(--background);
+    box-shadow: 0 1.5rem 4rem oklch(0.08 0.02 252 / 28%);
+  }
+  .search-dialog > header {
+    @apply flex items-start justify-between gap-5 border-b border-border px-5 py-4;
+  }
+  .search-dialog h2 {
+    margin-top: 0.2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .search-dialog > header button {
+    @apply inline-flex size-8 items-center justify-center border border-transparent text-muted-foreground;
+  }
+  .search-dialog > header button:hover {
+    color: var(--foreground);
+    border-color: var(--academic-rule);
+  }
+  .search-dialog > header svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  .search-input {
+    @apply m-5 flex items-center gap-3 border border-border px-3.5 py-3;
+    border-radius: 2px;
+    background: var(--academic-surface);
+  }
+  .search-input:focus-within {
+    border-color: var(--academic-link);
+    box-shadow: 0 0 0 1px var(--academic-link);
+  }
+  .search-input > svg {
+    width: 1rem;
+    height: 1rem;
+    color: var(--muted-foreground);
+  }
+  .search-input input {
+    min-width: 0;
+    flex: 1 1 auto;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 0.95rem;
+  }
+  .search-input input::placeholder {
+    color: var(--muted-foreground);
+  }
+  .search-input kbd {
+    @apply border border-border px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground;
+  }
+  .search-results {
+    max-height: calc(min(76vh, 42rem) - 10.5rem);
+    overflow-y: auto;
+    border-top: 1px solid var(--academic-rule);
+  }
+  .search-results > a {
+    display: block;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--academic-rule);
+  }
+  .search-results > a:hover,
+  .search-results > a:focus-visible {
+    background: oklch(from var(--academic-link) l c h / 6%);
+  }
+  .search-results > a > span {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--academic-link);
+  }
+  .search-results > a > strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .search-results > a > p {
+    display: -webkit-box;
+    margin-top: 0.3rem;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--muted-foreground);
+  }
+  .search-state {
+    padding: 2.5rem 1.25rem;
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--muted-foreground);
+  }
+  .search-error {
+    color: var(--destructive);
+  }
+
+  @media (max-width: 639px) {
+    .search-overlay {
+      padding-top: 1rem;
+    }
+    .search-dialog {
+      max-height: calc(100dvh - 2rem);
+    }
+    .search-results {
+      max-height: calc(100dvh - 12.5rem);
+    }
   }
 
   /* ===== Obsidian 风格 Callout =====
@@ -229,23 +665,15 @@
     /* 惰性解析:每个 .callout-X 覆盖 --callout-accent 时,下面两个会自动重算 */
     --callout-accent-soft: oklch(from var(--callout-accent) l c h / 10%);
     --callout-accent-border: oklch(from var(--callout-accent) l c h / 25%);
-    @apply my-6 rounded-xl border backdrop-blur-md overflow-hidden;
-    background: linear-gradient(
-      135deg,
-      var(--callout-accent-soft),
-      rgba(255, 255, 255, 0.5) 80%
-    );
+    @apply my-6 overflow-hidden rounded-sm border;
+    background: var(--callout-accent-soft);
     border-color: var(--callout-accent-border);
-    border-left-width: 4px;
+    border-left-width: 3px;
     border-left-color: var(--callout-accent);
-    box-shadow: 0 4px 20px -8px var(--callout-accent-border);
+    box-shadow: none;
   }
   .dark .callout {
-    background: linear-gradient(
-      135deg,
-      var(--callout-accent-soft),
-      rgba(255, 255, 255, 0.03) 80%
-    );
+    background: var(--callout-accent-soft);
   }
 
   /* 类型主题色 */
@@ -256,6 +684,8 @@
   .callout-success  { --callout-accent: oklch(0.62 0.18 145);  }  /* 绿 */
   .callout-question { --callout-accent: oklch(0.60 0.20 300);  }  /* 紫 */
   .callout-warning  { --callout-accent: oklch(0.70 0.17 65);   }  /* 橙 */
+  .callout-caution  { --callout-accent: oklch(0.67 0.19 55);   }  /* 深橙 */
+  .callout-important{ --callout-accent: oklch(0.55 0.18 285);  }  /* 紫 */
   .callout-danger   { --callout-accent: oklch(0.60 0.22 25);   }  /* 红 */
   .callout-bug      { --callout-accent: oklch(0.55 0.22 15);   }  /* 红 */
   .callout-example  { --callout-accent: oklch(0.60 0.20 320);  }  /* 品红 */
@@ -334,14 +764,14 @@
   /* raw <details><summary> 兜底:没写 callout 语法、直接写 HTML 时也能美化 */
   .prose details:not(.callout),
   article details:not(.callout) {
-    @apply my-6 rounded-xl border px-4 py-3 backdrop-blur-md;
-    background: rgba(255, 255, 255, 0.5);
-    border-color: rgba(0, 0, 0, 0.08);
+    @apply my-6 rounded-sm border px-4 py-3;
+    background: var(--academic-surface);
+    border-color: var(--academic-rule);
   }
   .dark .prose details:not(.callout),
   .dark article details:not(.callout) {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
+    background: var(--academic-surface);
+    border-color: var(--academic-rule);
   }
   .prose details:not(.callout) > summary,
   article details:not(.callout) > summary {
@@ -359,14 +789,95 @@
       'Hiragino Mincho ProN', 'Yu Mincho', serif;
   }
 
+  /* 正文采用适合长篇阅读的中西文衬线组合，界面与标题仍保持无衬线。 */
+  .prose {
+    max-width: 74ch;
+    margin-inline: auto;
+    font-family:
+      'Source Serif 4', 'Iowan Old Style', 'Palatino Linotype', Palatino,
+      'Songti SC', 'STSong', 'Noto Serif CJK SC', serif;
+    font-size: 1.0625rem;
+    line-height: 1.82;
+    --tw-prose-body: var(--foreground);
+    --tw-prose-headings: var(--foreground);
+    --tw-prose-links: var(--academic-link);
+    --tw-prose-bold: var(--foreground);
+    --tw-prose-counters: var(--muted-foreground);
+    --tw-prose-bullets: var(--muted-foreground);
+    --tw-prose-hr: var(--academic-rule);
+    --tw-prose-quotes: var(--foreground);
+    --tw-prose-quote-borders: var(--academic-rule);
+    --tw-prose-captions: var(--muted-foreground);
+    --tw-prose-code: var(--foreground);
+    --tw-prose-pre-code: var(--foreground);
+    --tw-prose-pre-bg: var(--muted);
+    --tw-prose-th-borders: var(--academic-rule);
+    --tw-prose-td-borders: var(--academic-rule);
+  }
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    font-family:
+      -apple-system, BlinkMacSystemFont,
+      'PingFang SC', 'Microsoft YaHei', sans-serif;
+    letter-spacing: -0.02em;
+    scroll-margin-top: 6rem;
+  }
+  .prose h2 {
+    margin-top: 2.4em;
+    padding-top: 0.35em;
+    border-top: 1px solid var(--academic-rule);
+  }
+  .prose h3 {
+    margin-top: 1.9em;
+  }
+  .prose a {
+    color: var(--academic-link);
+    text-decoration-color: oklch(from var(--academic-link) l c h / 35%);
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+  .prose a:hover {
+    color: var(--academic-link-hover);
+    text-decoration-color: currentColor;
+  }
+  .prose blockquote:not(.callout) {
+    margin-inline: 0;
+    padding: 0.2rem 0 0.2rem 1.25rem;
+    border-left: 2px solid var(--academic-rule);
+    color: var(--muted-foreground);
+    font-style: normal;
+  }
+  .prose img {
+    border-radius: 2px;
+  }
+  .prose figcaption {
+    margin-top: 0.7rem;
+    text-align: center;
+    font-family:
+      -apple-system, BlinkMacSystemFont,
+      'PingFang SC', sans-serif;
+    font-size: 0.8rem;
+  }
+  .prose .footnotes {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--academic-rule);
+    font-size: 0.88em;
+    color: var(--muted-foreground);
+  }
+
   /* 代码块样式 */
   pre {
-    @apply rounded-lg p-4 my-6 overflow-x-auto;
-    background-color: #f6f8fa;
+    @apply my-6 overflow-x-auto rounded-sm border border-border p-4;
+    background-color: oklch(0.955 0.006 252);
   }
 
   .dark pre {
-    background-color: #161b22;
+    background-color: oklch(0.155 0.018 252);
   }
 
   pre code {
@@ -467,69 +978,45 @@
     @apply inline-block w-8 mr-4 text-right text-gray-500 dark:text-gray-500;
   }
 
-  /* Typora 风格表格样式 */
+  /* booktabs 风格表格：只保留必要横线，不使用渐变、阴影和纵向边框。 */
+  .table-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+
   table {
-    @apply my-6 mx-auto border-collapse shadow-sm rounded-lg overflow-hidden;
+    @apply mx-auto my-7 border-collapse;
     width: auto;
+    max-width: 100%;
+    border-top: 1.5px solid var(--foreground);
+    border-bottom: 1.5px solid var(--foreground);
+    border-radius: 0;
+    box-shadow: none;
   }
 
   thead {
-    @apply border-b-2;
-    background: linear-gradient(to bottom, oklch(0.98 0 0), oklch(0.95 0 0));
-    border-color: oklch(0.88 0 0);
-  }
-
-  .dark thead {
-    background: linear-gradient(to bottom, oklch(0.25 0 0), oklch(0.22 0 0));
-    border-color: oklch(0.35 0 0);
+    border-bottom: 1px solid var(--foreground);
+    background: transparent;
   }
 
   th {
-    @apply px-4 py-3 font-semibold text-left;
-    border-right: 1px solid oklch(0 0 0 / 5%);
-  }
-
-  .dark th {
-    border-right: 1px solid oklch(1 0 0 / 5%);
-  }
-
-  th:last-child {
-    border-right: none;
+    @apply px-4 py-2.5 text-left font-semibold;
+    border: 0;
+    background: transparent;
   }
 
   tbody tr {
-    @apply border-b transition-colors;
-    border-color: var(--border);
-  }
-
-  tbody tr:nth-child(odd) {
-    background-color: oklch(0 0 0 / 2%);
-  }
-
-  .dark tbody tr:nth-child(odd) {
-    background-color: oklch(1 0 0 / 2%);
-  }
-
-  tbody tr:hover {
-    background-color: oklch(0.6 0.15 250 / 8%);
-  }
-
-  .dark tbody tr:hover {
-    background-color: oklch(0.6 0.15 250 / 12%);
+    border: 0;
+    background: transparent;
   }
 
   td {
-    @apply px-4 py-3;
+    @apply px-4 py-2.5;
     color: oklch(from var(--foreground) l c h / 90%);
-    border-right: 1px solid oklch(0 0 0 / 5%);
-  }
-
-  .dark td {
-    border-right: 1px solid oklch(1 0 0 / 5%);
-  }
-
-  td:last-child {
-    border-right: none;
+    border: 0;
+    background: transparent;
   }
 
   /* 响应式表格 */
@@ -547,8 +1034,8 @@
   /* View Transitions API 样式 */
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation-duration: 0.3s;
-    animation-timing-function: ease-in-out;
+    animation-duration: 0.18s;
+    animation-timing-function: ease-out;
   }
 
   ::view-transition-old(root) {
@@ -556,7 +1043,7 @@
   }
 
   ::view-transition-new(root) {
-    animation-name: fade-in, slide-up;
+    animation-name: fade-in;
   }
 
   @keyframes fade-out {
@@ -577,72 +1064,15 @@
     }
   }
 
-  @keyframes slide-up {
-    from {
-      transform: translateY(20px);
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      view-transition-name: none !important;
     }
-    to {
-      transform: translateY(0);
-    }
-  }
-
-  /* 文章页入场动画(替代 framer-motion template) */
-  @keyframes page-fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  .animate-page-fade-in {
-    animation: page-fade-in 0.15s ease-out;
-  }
-
-  /* 鼠标点击装饰:扩散光环 */
-  @keyframes click-ripple-ring {
-    from {
-      width: 0;
-      height: 0;
-      opacity: 0.6;
-    }
-    to {
-      width: 80px;
-      height: 80px;
-      opacity: 0;
-    }
-  }
-  .click-ripple-ring {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    translate: -50% -50%;
-    border-radius: 9999px;
-    border: 2px solid var(--primary);
-    animation: click-ripple-ring 0.6s ease-out forwards;
-  }
-
-  /* 鼠标点击装饰:散开粒子 */
-  @keyframes click-ripple-particle {
-    from {
-      transform: translate(0, 0) scale(1);
-      opacity: 1;
-    }
-    to {
-      transform: translate(var(--px), var(--py)) scale(0.3);
-      opacity: 0;
-    }
-  }
-  .click-ripple-particle {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 0.375rem;
-    height: 0.375rem;
-    margin-left: -0.1875rem;
-    margin-top: -0.1875rem;
-    border-radius: 9999px;
-    background-color: var(--primary);
-    animation: click-ripple-particle 0.5s ease-out forwards;
   }
 }

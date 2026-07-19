@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { TOCItem } from '@/lib/toc';
-import { ChevronDown, ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 
 interface TableOfContentsProps {
   items: TOCItem[];
@@ -12,7 +12,6 @@ interface TableOfContentsProps {
 
 export function TableOfContents({ items, minLevel = 2, maxLevel = 4 }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>('');
-  const [collapsed, setCollapsed] = useState<{ [key: string]: boolean }>({});
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   // 监听滚动，高亮当前标题
@@ -48,27 +47,26 @@ export function TableOfContents({ items, minLevel = 2, maxLevel = 4 }: TableOfCo
     const element = document.getElementById(id);
     if (element) {
       const top = element.offsetTop - 80;
-      window.scrollTo({ top, behavior: 'smooth' });
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth';
+      window.scrollTo({ top, behavior });
     }
   };
 
-  // 切换折叠状态
-  const toggleCollapse = (id: string) => {
-    setCollapsed((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
+  const visibleItems = items.filter(
+    (item) => item.level >= minLevel && item.level <= maxLevel,
+  );
 
-  if (items.length === 0) {
+  if (visibleItems.length === 0) {
     return null;
   }
 
   return (
     <nav
       className={`
-        glass-panel relative sticky top-24 max-h-[calc(100vh-7rem)] p-4
-        transition-all duration-300 ease-in-out
+        relative sticky top-24 max-h-[calc(100vh-7rem)] rounded-sm border border-border bg-background p-4
+        transition-[width] duration-200 ease-out
         ${isOpen ? 'w-[300px] overflow-y-auto' : 'w-14 overflow-hidden'}
       `}
     >
@@ -78,8 +76,8 @@ export function TableOfContents({ items, minLevel = 2, maxLevel = 4 }: TableOfCo
         className="
           absolute top-3 right-3
           p-1.5 rounded-md
-          hover:bg-white/60 dark:hover:bg-white/10
-          transition-colors
+          hover:text-[var(--academic-link)]
+          transition-colors duration-200
           z-10
         "
         aria-label={isOpen ? '收起目录' : '展开目录'}
@@ -100,34 +98,17 @@ export function TableOfContents({ items, minLevel = 2, maxLevel = 4 }: TableOfCo
       >
           <h2 className="micro-label px-2">On this page</h2>
           <ul className="space-y-1">
-            {items.map((item, index) => {
-              const hasChildren = items[index + 1]?.level > item.level;
-              const isCollapsed = collapsed[item.id];
-
-              return (
+            {visibleItems.map((item) => (
                 <li key={item.id} className="relative">
                   <div className="flex items-center gap-1">
-                    {hasChildren && (
-                      <button
-                        onClick={() => toggleCollapse(item.id)}
-                        className="p-0.5 rounded text-muted-foreground hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
-                        aria-label={isCollapsed ? '展开' : '收起'}
-                      >
-                        {isCollapsed ? (
-                          <ChevronRight className="w-3 h-3" />
-                        ) : (
-                          <ChevronDown className="w-3 h-3" />
-                        )}
-                      </button>
-                    )}
                     <a
                       href={`#${item.id}`}
                       onClick={(e) => handleClick(e, item.id)}
                       className={`
                         flex-1 text-sm py-1 px-2 rounded transition-colors
                         ${activeId === item.id
-                          ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 font-medium'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-white/40 dark:hover:bg-white/5'
+                          ? 'bg-muted font-medium text-[var(--academic-link)]'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/70'
                         }
                       `}
                       style={{ paddingLeft: `${(item.level - minLevel) * 12 + 8}px` }}
@@ -136,8 +117,7 @@ export function TableOfContents({ items, minLevel = 2, maxLevel = 4 }: TableOfCo
                     </a>
                   </div>
                 </li>
-              );
-            })}
+              ))}
           </ul>
         </div>
     </nav>

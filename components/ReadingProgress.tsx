@@ -1,31 +1,43 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export function ReadingProgress() {
-  const [progress, setProgress] = useState(0);
+  const progressRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let frame = 0;
     const updateProgress = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = (scrollTop / docHeight) * 100;
-      setProgress(scrollPercent);
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = scrollable > 0
+          ? Math.min(1, Math.max(0, window.scrollY / scrollable))
+          : 0;
+        if (progressRef.current) {
+          progressRef.current.style.transform = `scaleX(${progress})`;
+        }
+      });
     };
 
-    window.addEventListener('scroll', updateProgress);
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress, { passive: true });
     updateProgress();
 
     return () => {
       window.removeEventListener('scroll', updateProgress);
+      window.removeEventListener('resize', updateProgress);
+      if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200 dark:bg-gray-800">
+    <div className="fixed inset-x-0 top-0 z-[60] h-0.5 bg-border" aria-hidden>
       <div
-        className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-150"
-        style={{ width: `${progress}%` }}
+        ref={progressRef}
+        className="h-full origin-left bg-[var(--academic-link)]"
+        style={{ transform: 'scaleX(0)' }}
       />
     </div>
   );

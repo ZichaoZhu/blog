@@ -1,13 +1,17 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
+
+const subscribeToHydration = () => () => {};
 
 export function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(
+    subscribeToHydration,
+    () => true,
+    () => false
+  );
+  const { resolvedTheme, setTheme } = useTheme();
 
   if (!mounted) {
     return (
@@ -22,11 +26,12 @@ export function ThemeToggle() {
 
   return (
     <button
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      type="button"
+      onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
       className="p-2 rounded-lg bg-muted hover:bg-muted/80 transition-colors"
       aria-label="切换主题"
     >
-      {theme === 'dark' ? (
+      {resolvedTheme === 'dark' ? (
         <svg
           className="w-5 h-5"
           fill="none"

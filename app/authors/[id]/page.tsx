@@ -1,11 +1,12 @@
+import type { Metadata } from 'next';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { getAllAuthors, getAuthorById } from '@/lib/authors';
-import { getPostsByAuthor } from '@/lib/posts';
+import { ArrowUpRight, Globe } from 'lucide-react';
 import { FeaturedPostCard } from '@/components/FeaturedPostCard';
-import { PageHero } from '@/components/PageHero';
-import { Globe } from 'lucide-react';
+import { getAuthorById } from '@/lib/authors';
+import { getPostsByAuthor } from '@/lib/posts';
+import { absoluteUrl, siteConfig } from '@/lib/site';
 
-// lucide 已 deprecate Github/Twitter 图标,这里直接内联品牌 SVG
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
@@ -14,83 +15,95 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
+function XIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
       <path d="M18.244 2H21.5l-7.5 8.57L23 22h-6.914l-5.41-6.74L4.5 22H1.24l8.03-9.18L1 2h7.1l4.89 6.16L18.244 2zm-1.21 18h1.88L6.09 4H4.1l12.933 16z" />
     </svg>
   );
 }
-import Image from 'next/image';
-import type { Metadata } from 'next';
 
 interface AuthorPageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateStaticParams() {
-  const authors = getAllAuthors();
-  return authors.map(author => ({
-    id: author.id,
-  }));
+export function generateStaticParams() {
+  return [{ id: siteConfig.primaryAuthorId }];
 }
+
+export const dynamicParams = false;
 
 export async function generateMetadata({ params }: AuthorPageProps): Promise<Metadata> {
   const { id } = await params;
   const author = getAuthorById(id);
 
-  if (!author) {
-    return {
-      title: '作者未找到',
-    };
-  }
+  if (!author) return { title: '作者未找到' };
 
   return {
-    title: `${author.name} - 我的博客`,
+    title: author.name,
     description: author.bio,
+    alternates: { canonical: absoluteUrl(`/authors/${author.id}`) },
+    openGraph: {
+      type: 'profile',
+      title: author.name,
+      description: author.bio,
+      url: absoluteUrl(`/authors/${author.id}`),
+    },
   };
 }
 
 export default async function AuthorPage({ params }: AuthorPageProps) {
   const { id } = await params;
   const author = getAuthorById(id);
-
-  if (!author) {
-    notFound();
-  }
+  if (!author) notFound();
 
   const posts = await getPostsByAuthor(id);
+  const website =
+    author.social?.website && author.social.website !== 'https://example.com'
+      ? author.social.website
+      : undefined;
 
   return (
-    <>
-      <PageHero
-        eyebrow="Author"
-        title={author.name}
-        subtitle={author.bio}
-        minHeight="min-h-[320px]"
-      >
-        <div className="flex flex-col items-center gap-6">
-          {author.avatar && (
-            <Image
-              src={author.avatar}
-              alt={author.name}
-              width={112}
-              height={112}
-              className="rounded-full border-4 border-white/50 dark:border-white/10 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.25)]"
-            />
+    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
+      <header className="grid gap-8 border-b border-border pb-12 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-12 md:pb-16">
+        {author.avatar ? (
+          <Image
+            src={author.avatar}
+            alt={author.name}
+            width={160}
+            height={160}
+            priority
+            quality={80}
+            sizes="160px"
+            className="size-32 rounded-sm border border-border object-cover grayscale-[18%] md:size-40"
+          />
+        ) : (
+          <div className="flex size-32 items-center justify-center border border-border bg-muted font-serif text-4xl text-muted-foreground md:size-40">
+            {author.name.slice(0, 1)}
+          </div>
+        )}
+
+        <div className="max-w-3xl self-center">
+          <p className="micro-label mb-3">Author profile</p>
+          <h1 className="text-4xl font-semibold tracking-[-0.035em] sm:text-5xl">
+            {author.name}
+          </h1>
+          {author.bio && (
+            <p className="mt-4 text-lg leading-8 text-foreground/80">{author.bio}</p>
           )}
 
           {author.social && (
-            <div className="flex gap-3">
+            <div className="mt-6 flex flex-wrap gap-x-5 gap-y-3 text-sm">
               {author.social.github && (
                 <a
                   href={`https://github.com/${author.social.github}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="GitHub"
-                  className="p-3 rounded-full glass-panel hover:scale-105 transition-transform"
+                  className="academic-text-link inline-flex items-center gap-2"
                 >
-                  <GithubIcon className="w-5 h-5" />
+                  <GithubIcon className="size-4" />
+                  GitHub
+                  <ArrowUpRight className="size-3.5" aria-hidden />
                 </a>
               )}
               {author.social.twitter && (
@@ -98,53 +111,55 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                   href={`https://twitter.com/${author.social.twitter}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Twitter"
-                  className="p-3 rounded-full glass-panel hover:scale-105 transition-transform"
+                  className="academic-text-link inline-flex items-center gap-2"
                 >
-                  <TwitterIcon className="w-5 h-5" />
+                  <XIcon className="size-4" />
+                  X
+                  <ArrowUpRight className="size-3.5" aria-hidden />
                 </a>
               )}
-              {author.social.website && (
+              {website && (
                 <a
-                  href={author.social.website}
+                  href={website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Website"
-                  className="p-3 rounded-full glass-panel hover:scale-105 transition-transform"
+                  className="academic-text-link inline-flex items-center gap-2"
                 >
-                  <Globe className="w-5 h-5" />
+                  <Globe className="size-4" />
+                  Website
+                  <ArrowUpRight className="size-3.5" aria-hidden />
                 </a>
               )}
             </div>
           )}
         </div>
-      </PageHero>
+      </header>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="flex items-end justify-between mb-8">
+      <section className="py-12 md:py-16">
+        <div className="mb-6 flex items-baseline justify-between gap-4 border-b border-border pb-4">
           <div>
-            <p className="micro-label mb-2">Posts</p>
-            <h2 className="text-3xl md:text-4xl font-bold">
-              文章列表
-              <span className="ml-3 text-muted-foreground text-2xl font-normal">
-                ({posts.length})
-              </span>
+            <p className="micro-label mb-2">Notes</p>
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              公开笔记
             </h2>
           </div>
+          <p className="text-sm tabular-nums text-muted-foreground">
+            {posts.length} 篇
+          </p>
         </div>
 
         {posts.length === 0 ? (
-          <div className="glass-card p-12 text-center text-muted-foreground">
-            暂无文章
-          </div>
+          <p className="border-b border-border py-10 text-sm text-muted-foreground">
+            暂无公开文章。
+          </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="academic-post-index">
             {posts.map((post) => (
-              <FeaturedPostCard key={post.path} post={post} variant="grid" />
+              <FeaturedPostCard key={post.path} post={post} variant="list" />
             ))}
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 }

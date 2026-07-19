@@ -9,7 +9,7 @@ interface BreadcrumbProps {
 export function Breadcrumb({ post }: BreadcrumbProps) {
   const pathParts = post.parentPath?.split('/') ?? [];
   const linkClass =
-    'text-muted-foreground hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors';
+    'text-muted-foreground hover:text-[var(--academic-link)] transition-colors duration-200';
 
   return (
     <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">

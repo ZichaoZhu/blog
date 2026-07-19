@@ -16,12 +16,13 @@ export function getAllAuthors(): Author[] {
       .filter(Boolean) as Author[];
     
     return authors;
-  } catch (error) {
+  } catch {
     return [];
   }
 }
 
 export function getAuthorById(id: string): Author | null {
+  if (!/^[a-z0-9_-]+$/i.test(id)) return null;
   try {
     const fullPath = path.join(authorsDirectory, `${id}.json`);
     const fileContents = fs.readFileSync(fullPath, 'utf8');
@@ -31,7 +32,7 @@ export function getAuthorById(id: string): Author | null {
       id,
       ...author
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }

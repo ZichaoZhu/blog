@@ -1,32 +1,37 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { ArrowUp } from 'lucide-react';
 
+function subscribeToScroll(onStoreChange: () => void) {
+  let frame = 0;
+  const listener = () => {
+    if (frame) return;
+    frame = window.requestAnimationFrame(() => {
+      frame = 0;
+      onStoreChange();
+    });
+  };
+  window.addEventListener('scroll', listener, { passive: true });
+  return () => {
+    window.removeEventListener('scroll', listener);
+    if (frame) window.cancelAnimationFrame(frame);
+  };
+}
+
 export function BackToTop() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      // 滚动超过 300px 时显示按钮
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener('scroll', toggleVisibility);
-
-    return () => {
-      window.removeEventListener('scroll', toggleVisibility);
-    };
-  }, []);
+  const isVisible = useSyncExternalStore(
+    subscribeToScroll,
+    () => window.scrollY > 300,
+    () => false,
+  );
 
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth',
     });
   };
 
@@ -34,16 +39,15 @@ export function BackToTop() {
     <button
       onClick={scrollToTop}
       className={`
-        fixed bottom-8 right-8 z-50 p-3 rounded-full
-        bg-indigo-500 dark:bg-indigo-600 text-white
-        shadow-[0_10px_30px_-10px_rgba(99,102,241,0.5)] hover:shadow-[0_16px_40px_-10px_rgba(99,102,241,0.7)]
-        hover:scale-110 active:scale-95
-        transition-all duration-300
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16 pointer-events-none'}
+        fixed bottom-8 right-8 z-50 inline-flex size-11 items-center justify-center
+        rounded-sm border border-border bg-background text-foreground shadow-sm
+        hover:border-[var(--academic-link)] hover:text-[var(--academic-link)]
+        transition-[opacity,transform,color,border-color] duration-200
+        ${isVisible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'}
       `}
       aria-label="返回顶部"
     >
-      <ArrowUp className="w-5 h-5" />
+      <ArrowUp className="size-5" aria-hidden />
     </button>
   );
 }

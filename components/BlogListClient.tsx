@@ -1,45 +1,84 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
+import { FolderTree, FileSearch, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ViewSwitcher } from '@/components/ViewSwitcher';
 import { FeaturedPostCard } from '@/components/FeaturedPostCard';
 import { FileTreeView } from '@/components/FileTreeView';
-import { FolderTree, FileSearch } from 'lucide-react';
-import type { Post, ViewType, FileTreeItem } from '@/types';
+import type { FileTreeItem, PostSummary, ViewType } from '@/types';
 
 interface Filters {
   tag?: string;
   category?: string;
   folder?: string;
+  page?: number;
+  view?: ViewType;
 }
 
 interface BlogListClientProps {
-  allPosts: Post[];
+  allPosts: PostSummary[];
   allTags: string[];
   allCategories: string[];
   fileTree?: FileTreeItem[];
   initialFilters: Filters;
 }
 
-/** 从当前 filters 构建 URL 查询串(保持可分享/可刷新) */
+const PAGE_SIZE = 12;
+const URL_EVENT = 'blog-url-change';
+const TREE_EVENT = 'blog-tree-change';
+
 function filtersToQuery(filters: Filters): string {
   const search = new URLSearchParams();
   if (filters.category) search.set('category', filters.category);
   if (filters.tag) search.set('tag', filters.tag);
   if (filters.folder) search.set('folder', filters.folder);
-  const qs = search.toString();
-  return qs ? `?${qs}` : '';
+  if (filters.page && filters.page > 1) search.set('page', String(filters.page));
+  if (filters.view && filters.view !== 'list') search.set('view', filters.view);
+  const query = search.toString();
+  return query ? `?${query}` : '';
 }
 
-/**
- * 判断 post 是否属于指定 folder。
- * 与 lib/posts.ts 的 getPostsByFolder 逻辑保持一致:
- * 顶层文件用 slug 作 folder,嵌套文件用第一层目录作 folder。
- */
-function postInFolder(post: Post, folder: string): boolean {
-  const parts = post.path.split('/');
-  const postFolder = parts.length > 1 ? parts[0] : post.slug;
-  return postFolder === folder;
+function parseFilters(search: string): Filters {
+  const params = new URLSearchParams(search);
+  const rawPage = Number(params.get('page'));
+  const rawView = params.get('view');
+  return {
+    category: params.get('category') || undefined,
+    tag: params.get('tag') || undefined,
+    folder: params.get('folder') || undefined,
+    page: Number.isInteger(rawPage) && rawPage > 1 ? rawPage : 1,
+    view: rawView === 'card' ? 'card' : 'list',
+  };
+}
+
+function subscribeToUrl(callback: () => void) {
+  window.addEventListener('popstate', callback);
+  window.addEventListener(URL_EVENT, callback);
+  return () => {
+    window.removeEventListener('popstate', callback);
+    window.removeEventListener(URL_EVENT, callback);
+  };
+}
+
+function getUrlSnapshot() {
+  return window.location.search;
+}
+
+function postInFolder(post: PostSummary, folder: string): boolean {
+  return post.path === folder || post.path.startsWith(`${folder}/`);
+}
+
+function subscribeToTreePreference(callback: () => void) {
+  window.addEventListener('storage', callback);
+  window.addEventListener(TREE_EVENT, callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+    window.removeEventListener(TREE_EVENT, callback);
+  };
+}
+
+function getTreePreference() {
+  return localStorage.getItem('showFileTree') !== 'false';
 }
 
 export function BlogListClient({
@@ -49,225 +88,187 @@ export function BlogListClient({
   fileTree,
   initialFilters,
 }: BlogListClientProps) {
-  const [filters, setFilters] = useState<Filters>(initialFilters);
-  const [view, setView] = useState<ViewType>('list');
-  const [showTree, setShowTree] = useState(() => {
-    if (typeof window === 'undefined') return true;
-    const saved = localStorage.getItem('showFileTree');
-    return saved !== null ? saved === 'true' : true;
-  });
+  const initialSearch = filtersToQuery(initialFilters);
+  const urlSearch = useSyncExternalStore(subscribeToUrl, getUrlSnapshot, () => initialSearch);
+  const filters = useMemo(() => parseFilters(urlSearch), [urlSearch]);
+  const showTree = useSyncExternalStore(
+    subscribeToTreePreference,
+    getTreePreference,
+    () => true,
+  );
 
-  useEffect(() => {
-    localStorage.setItem('showFileTree', String(showTree));
-  }, [showTree]);
+  const replaceFilters = useCallback((next: Filters) => {
+    window.history.replaceState(null, '', `/blog${filtersToQuery(next)}`);
+    window.dispatchEvent(new Event(URL_EVENT));
+  }, []);
 
-  // 同步 URL 但不触发 Next.js 导航(replaceState 零成本,只改浏览器地址栏)
-  useEffect(() => {
-    const qs = filtersToQuery(filters);
-    const next = `/blog${qs}`;
-    if (window.location.pathname + window.location.search !== next) {
-      window.history.replaceState(null, '', next);
-    }
-  }, [filters]);
+  const updateFilters = useCallback((patch: Partial<Filters>) => {
+    replaceFilters({ ...filters, ...patch });
+  }, [filters, replaceFilters]);
 
-  // 客户端筛选 —— useMemo 保证只在 filters 或 allPosts 变化时重算
-  // allPosts 进来是树顺序(.folder.json order + frontmatter.order + 文件名自然序):
-  //   - 有 folder 筛选时:保持树顺序(Lec1 → Lec10 符合直觉)
-  //   - 无 folder 筛选时:按日期倒序(首页/全量视图要"最新")
   const filteredPosts = useMemo(() => {
     let result = allPosts;
-    if (filters.folder) {
-      result = result.filter((p) => postInFolder(p, filters.folder!));
-    }
+    if (filters.folder) result = result.filter((post) => postInFolder(post, filters.folder!));
     if (filters.category) {
-      result = result.filter((p) => p.frontmatter.category === filters.category);
+      result = result.filter((post) => post.frontmatter.category === filters.category);
     }
     if (filters.tag) {
-      result = result.filter((p) => p.frontmatter.tags.includes(filters.tag!));
+      result = result.filter((post) => post.frontmatter.tags.includes(filters.tag!));
     }
     if (!filters.folder) {
       result = [...result].sort(
-        (a, b) =>
-          new Date(b.frontmatter.date).getTime() -
-          new Date(a.frontmatter.date).getTime(),
+        (a, b) => Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date),
       );
     }
     return result;
-  }, [allPosts, filters]);
+  }, [allPosts, filters.category, filters.folder, filters.tag]);
 
-  const setCategory = useCallback((category: string | undefined) => {
-    setFilters((f) => ({ ...f, category: f.category === category ? undefined : category }));
-  }, []);
+  const pageCount = Math.max(1, Math.ceil(filteredPosts.length / PAGE_SIZE));
+  const currentPage = Math.min(filters.page ?? 1, pageCount);
+  const visiblePosts = filteredPosts.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+  const view = filters.view ?? 'list';
+  const hasTree = Boolean(fileTree?.length);
 
-  const setTag = useCallback((tag: string | undefined) => {
-    setFilters((f) => ({ ...f, tag: f.tag === tag ? undefined : tag }));
-  }, []);
-
-  const clearFilter = useCallback((key: keyof Filters) => {
-    setFilters((f) => ({ ...f, [key]: undefined }));
-  }, []);
-
-  const clearAll = useCallback(() => {
-    setFilters({});
-  }, []);
-
-  const activeFilters: Array<{ key: keyof Filters; label: string }> = [];
-  if (filters.folder) activeFilters.push({ key: 'folder', label: `文件夹: ${filters.folder}` });
+  const activeFilters: Array<{ key: 'folder' | 'category' | 'tag'; label: string }> = [];
+  if (filters.folder) activeFilters.push({ key: 'folder', label: `目录: ${filters.folder}` });
   if (filters.category) activeFilters.push({ key: 'category', label: `分类: ${filters.category}` });
   if (filters.tag) activeFilters.push({ key: 'tag', label: `标签: #${filters.tag}` });
 
-  const hasTree = fileTree && fileTree.length > 0;
+  const clearAll = () => replaceFilters({ view });
+  const toggleTree = () => {
+    localStorage.setItem('showFileTree', String(!showTree));
+    window.dispatchEvent(new Event(TREE_EVENT));
+  };
 
   return (
     <>
-      {/* 筛选区 glass panel */}
-      <div className="glass-panel p-5 mb-8 space-y-4">
+      <section className="notes-filter" aria-label="文章筛选">
         {activeFilters.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2 pb-3 border-b border-border/50">
-            <span className="text-xs text-muted-foreground mr-1">当前筛选：</span>
+          <div className="notes-active-filters">
+            <span>当前筛选</span>
             {activeFilters.map(({ key, label }) => (
               <button
                 key={key}
                 type="button"
-                onClick={() => clearFilter(key)}
-                className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/20 transition-colors"
+                onClick={() => updateFilters({ [key]: undefined, page: 1 })}
               >
-                {label}
-                <span aria-hidden>×</span>
+                {label} <span aria-hidden>×</span>
               </button>
             ))}
-            <button
-              type="button"
-              onClick={clearAll}
-              className="px-3 py-1 rounded-full text-xs bg-muted hover:bg-muted/80 transition-colors"
-            >
-              清除全部
-            </button>
+            <button type="button" onClick={clearAll}>清除全部</button>
           </div>
         )}
 
-        <div className="flex flex-wrap gap-x-8 gap-y-4">
+        <div className="notes-filter-row">
           <div>
-            <h3 className="micro-label mb-2">Categories</h3>
-            <div className="flex flex-wrap gap-2">
+            <h2 className="academic-kicker">Categories</h2>
+            <div className="notes-filter-options">
               <button
                 type="button"
-                onClick={() => setCategory(undefined)}
-                className={`px-3 py-1 rounded-full text-xs transition-colors ${
-                  !filters.category
-                    ? 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-500/30'
-                    : 'bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10'
-                }`}
-              >
-                全部
-              </button>
+                data-active={!filters.category}
+                onClick={() => updateFilters({ category: undefined, page: 1 })}
+              >全部</button>
               {allCategories.map((category) => (
                 <button
                   key={category}
                   type="button"
-                  onClick={() => setCategory(category)}
-                  className={`px-3 py-1 rounded-full text-xs transition-colors ${
-                    filters.category === category
-                      ? 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-500/30'
-                      : 'bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10'
-                  }`}
-                >
-                  {category}
-                </button>
+                  data-active={filters.category === category}
+                  onClick={() => updateFilters({
+                    category: filters.category === category ? undefined : category,
+                    page: 1,
+                  })}
+                >{category}</button>
               ))}
             </div>
           </div>
 
           {allTags.length > 0 && (
             <div>
-              <h3 className="micro-label mb-2">Tags</h3>
-              <div className="flex flex-wrap gap-2">
+              <h2 className="academic-kicker">Tags</h2>
+              <div className="notes-filter-options">
                 {allTags.slice(0, 12).map((tag) => (
                   <button
                     key={tag}
                     type="button"
-                    onClick={() => setTag(tag)}
-                    className={`px-3 py-1 rounded-full text-xs transition-colors ${
-                      filters.tag === tag
-                        ? 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-500/30'
-                        : 'bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10'
-                    }`}
-                  >
-                    #{tag}
-                  </button>
+                    data-active={filters.tag === tag}
+                    onClick={() => updateFilters({
+                      tag: filters.tag === tag ? undefined : tag,
+                      page: 1,
+                    })}
+                  >#{tag}</button>
                 ))}
               </div>
             </div>
           )}
         </div>
-      </div>
+      </section>
 
-      <div className="flex gap-6">
-        {/* 左侧文件树(可选) */}
+      <div className="notes-layout">
         {hasTree && (
-          <aside
-            className={`
-              flex-shrink-0 hidden lg:block overflow-hidden
-              transition-all duration-300 ease-in-out
-              ${showTree ? 'w-72 opacity-100' : 'w-0 opacity-0'}
-            `}
-          >
-            <div className="sticky top-24 w-72">
-              <div className="glass-panel p-4">
-                <h3 className="micro-label mb-4">Folders</h3>
-                <FileTreeView items={fileTree} />
-              </div>
+          <aside className={`notes-tree ${showTree ? '' : 'is-collapsed'}`}>
+            <div className="notes-tree-inner">
+              <h2 className="academic-kicker">Topics</h2>
+              <FileTreeView items={fileTree!} />
             </div>
           </aside>
         )}
 
-        {/* 主内容区 */}
-        <div className="flex-1 min-w-0 transition-all duration-300 ease-in-out">
-          <div className="flex justify-between items-center mb-6">
-            <p className="text-sm text-muted-foreground">
-              共 <span className="font-semibold text-foreground">{filteredPosts.length}</span> 篇文章
-            </p>
-            <div className="flex gap-2">
+        <div className="notes-results">
+          <header className="notes-results-header">
+            <p>共 <strong>{filteredPosts.length}</strong> 篇笔记</p>
+            <div>
               {hasTree && (
-                <button
-                  onClick={() => setShowTree(!showTree)}
-                  className="hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-full glass-panel text-sm hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
-                >
-                  <FolderTree className="w-4 h-4" />
-                  <span>{showTree ? '隐藏' : '显示'}文件树</span>
+                <button type="button" className="notes-tree-toggle" onClick={toggleTree}>
+                  <FolderTree aria-hidden />
+                  {showTree ? '隐藏目录' : '显示目录'}
                 </button>
               )}
-              <ViewSwitcher onViewChange={setView} />
+              <ViewSwitcher
+                view={view}
+                onViewChange={(nextView) => updateFilters({ view: nextView, page: 1 })}
+              />
             </div>
-          </div>
+          </header>
 
-          {filteredPosts.length === 0 ? (
-            <div className="glass-card p-12 text-center">
-              <FileSearch className="w-12 h-12 mx-auto mb-4 text-muted-foreground/60" />
-              <p className="font-semibold text-foreground mb-1">没有找到匹配的文章</p>
-              <p className="text-sm text-muted-foreground">
-                试试调整筛选条件,或{' '}
-                <button
-                  type="button"
-                  onClick={clearAll}
-                  className="text-indigo-600 dark:text-indigo-400 hover:underline"
-                >
-                  清除全部筛选
-                </button>
-              </p>
+          {visiblePosts.length === 0 ? (
+            <div className="notes-empty">
+              <FileSearch aria-hidden />
+              <strong>没有找到匹配的笔记</strong>
+              <button type="button" onClick={clearAll}>清除筛选</button>
             </div>
           ) : view === 'list' ? (
-            <div className="space-y-4">
-              {filteredPosts.map((post) => (
+            <div className="academic-post-list">
+              {visiblePosts.map((post) => (
                 <FeaturedPostCard key={post.path} post={post} variant="list" />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredPosts.map((post) => (
+            <div className="academic-post-grid">
+              {visiblePosts.map((post) => (
                 <FeaturedPostCard key={post.path} post={post} variant="grid" />
               ))}
             </div>
+          )}
+
+          {pageCount > 1 && (
+            <nav className="notes-pagination" aria-label="文章分页">
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => updateFilters({ page: currentPage - 1 })}
+                aria-label="上一页"
+              ><ChevronLeft aria-hidden /></button>
+              <span>{currentPage} / {pageCount}</span>
+              <button
+                type="button"
+                disabled={currentPage === pageCount}
+                onClick={() => updateFilters({ page: currentPage + 1 })}
+                aria-label="下一页"
+              ><ChevronRight aria-hidden /></button>
+            </nav>
           )}
         </div>
       </div>

@@ -9,7 +9,7 @@ interface MermaidProps {
 
 /**
  * 客户端渲染 mermaid 图表。
- * 来源:Typora ```mermaid 代码块 → MDX 通过 components.code 路由到此组件。
+ * 来源：Typora ```mermaid 代码块 → Unified AST 自定义节点路由到此组件。
  *
  * mermaid 是 ~700KB 的客户端依赖,这里用动态 import,只有真正用到的页面才会加载。
  * 跟随 next-themes 切换主题。
@@ -29,7 +29,8 @@ export function Mermaid({ chart }: MermaidProps) {
         mermaid.initialize({
           startOnLoad: false,
           theme: resolvedTheme === 'dark' ? 'dark' : 'default',
-          securityLevel: 'loose',
+          // 笔记内容最终会进入 SVG；strict 模式禁用 HTML 标签与可执行链接。
+          securityLevel: 'strict',
         });
         const { svg } = await mermaid.render(id, chart);
         if (!cancelled && ref.current) {

@@ -5,7 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react';
 import { FileText, Newspaper } from 'lucide-react';
@@ -20,6 +20,25 @@ import { FileText, Newspaper } from 'lucide-react';
 export type ReadingTheme = 'default' | 'latex';
 
 const STORAGE_KEY = 'reading-theme';
+const CHANGE_EVENT = 'reading-theme-change';
+
+const subscribeToTheme = (onStoreChange: () => void) => {
+  window.addEventListener('storage', onStoreChange);
+  window.addEventListener(CHANGE_EVENT, onStoreChange);
+
+  return () => {
+    window.removeEventListener('storage', onStoreChange);
+    window.removeEventListener(CHANGE_EVENT, onStoreChange);
+  };
+};
+
+const getThemeSnapshot = (): ReadingTheme => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  return saved === 'latex' ? 'latex' : 'default';
+};
+
+const getServerThemeSnapshot = (): ReadingTheme => 'default';
+const subscribeToHydration = () => () => {};
 
 interface Ctx {
   theme: ReadingTheme;
@@ -34,19 +53,30 @@ const ReadingThemeCtx = createContext<Ctx>({
 });
 
 export function ReadingThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ReadingTheme>('default');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === 'latex' || saved === 'default') setThemeState(saved);
-    setMounted(true);
-  }, []);
+  const theme = useSyncExternalStore(
+    subscribeToTheme,
+    getThemeSnapshot,
+    getServerThemeSnapshot
+  );
+  const mounted = useSyncExternalStore(
+    subscribeToHydration,
+    () => true,
+    () => false
+  );
 
   const setTheme = useCallback((t: ReadingTheme) => {
-    setThemeState(t);
     localStorage.setItem(STORAGE_KEY, t);
+    window.dispatchEvent(new Event(CHANGE_EVENT));
   }, []);
+
+  useEffect(() => {
+    if (theme !== 'latex' || document.getElementById('reading-theme-styles')) return;
+    const stylesheet = document.createElement('link');
+    stylesheet.id = 'reading-theme-styles';
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = '/reading-theme.css';
+    document.head.append(stylesheet);
+  }, [theme]);
 
   return (
     <ReadingThemeCtx.Provider value={{ theme, setTheme, mounted }}>
@@ -68,9 +98,9 @@ export function ArticleBody({ children }: { children: ReactNode }) {
 
   return (
     <div
-      className={
-        useLatex ? 'theme-latex' : 'prose prose-lg dark:prose-invert max-w-none'
-      }
+      className={`prose prose-lg dark:prose-invert max-w-none ${
+        useLatex ? 'theme-latex' : ''
+      }`}
     >
       {children}
     </div>
@@ -95,10 +125,11 @@ export function ReadingThemeToggle() {
       aria-label={label}
       title={label}
       className="
-        fixed bottom-24 right-8 z-40 p-3 rounded-full
-        bg-background border border-border shadow-lg
+        fixed bottom-24 right-8 z-40 inline-flex size-11 items-center justify-center rounded-sm
+        bg-background border border-border shadow-sm
         text-foreground/80 hover:text-foreground
-        hover:shadow-xl transition-all
+        hover:border-[var(--academic-link)] hover:text-[var(--academic-link)]
+        transition-[color,border-color] duration-200
       "
     >
       <Icon className="w-5 h-5" />
