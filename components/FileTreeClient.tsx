@@ -1,40 +1,25 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useState, useEffect } from 'react';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { FileTreeView } from '@/components/FileTreeView';
 import type { FileTreeItem } from '@/types';
 
 interface FileTreeClientProps {
   fileTree: FileTreeItem[];
+  currentSlug?: string;
 }
 
-const TREE_EVENT = 'post-tree-change';
+export function FileTreeClient({ fileTree, currentSlug }: FileTreeClientProps) {
+  const [isOpen, setIsOpen] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    const saved = localStorage.getItem('showFileTreeInPost');
+    return saved !== null ? saved === 'true' : true;
+  });
 
-function subscribeToPreference(onStoreChange: () => void) {
-  window.addEventListener('storage', onStoreChange);
-  window.addEventListener(TREE_EVENT, onStoreChange);
-  return () => {
-    window.removeEventListener('storage', onStoreChange);
-    window.removeEventListener(TREE_EVENT, onStoreChange);
-  };
-}
-
-function getPreference() {
-  return localStorage.getItem('showFileTreeInPost') !== 'false';
-}
-
-export function FileTreeClient({ fileTree }: FileTreeClientProps) {
-  const isOpen = useSyncExternalStore(
-    subscribeToPreference,
-    getPreference,
-    () => true,
-  );
-
-  const toggleTree = () => {
-    localStorage.setItem('showFileTreeInPost', String(!isOpen));
-    window.dispatchEvent(new Event(TREE_EVENT));
-  };
+  useEffect(() => {
+    localStorage.setItem('showFileTreeInPost', String(isOpen));
+  }, [isOpen]);
 
   if (!fileTree || fileTree.length === 0) {
     return null;
@@ -43,20 +28,19 @@ export function FileTreeClient({ fileTree }: FileTreeClientProps) {
   return (
     <nav
       className={`
-        relative sticky top-24 max-h-[calc(100vh-7rem)] rounded-sm border border-border bg-background p-4
-        transition-[width] duration-200 ease-out
+        glass-panel relative sticky top-24 max-h-[calc(100vh-7rem)] p-4
+        transition-all duration-300 ease-in-out
         ${isOpen ? 'w-72 overflow-y-auto' : 'w-14 overflow-hidden'}
       `}
     >
       {/* 切换按钮 */}
       <button
-        type="button"
-        onClick={toggleTree}
+        onClick={() => setIsOpen(!isOpen)}
         className="
           absolute top-3 right-3
           p-1.5 rounded-md
-          hover:text-[var(--academic-link)]
-          transition-colors duration-200
+          hover:bg-white/60 dark:hover:bg-white/10
+          transition-colors
           z-10
         "
         aria-label={isOpen ? '收起文件树' : '展开文件树'}

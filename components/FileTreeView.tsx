@@ -49,13 +49,12 @@ function FolderItem({ folder, level }: { folder: Folder; level: number }) {
   return (
     <div>
       <button
-        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-left transition-colors duration-200 hover:bg-muted/70"
+        className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-left transition-colors hover:bg-white/60 dark:hover:bg-white/10"
         style={{ paddingLeft: `${level * 1.5 + 0.75}rem` }}
       >
         <ChevronRight
-          className={`size-4 shrink-0 text-muted-foreground transition-transform duration-200 ${
+          className={`w-4 h-4 flex-shrink-0 text-muted-foreground transition-transform duration-200 ${
             isOpen ? 'rotate-90' : ''
           }`}
         />
@@ -63,7 +62,7 @@ function FolderItem({ folder, level }: { folder: Folder; level: number }) {
         {folder.metadata.icon ? (
           <span className="text-lg leading-none">{folder.metadata.icon}</span>
         ) : (
-          <FolderIcon className="size-4 text-muted-foreground" />
+          <FolderIcon className="w-4 h-4 text-amber-500" />
         )}
 
         <span className="font-medium flex-1 text-foreground">
@@ -77,7 +76,7 @@ function FolderItem({ folder, level }: { folder: Folder; level: number }) {
 
       {folder.children.length > 0 && (
         <div 
-          className="grid transition-[grid-template-rows] duration-200 ease-out"
+          className="grid transition-[grid-template-rows] duration-300 ease-in-out"
           style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
         >
           <div className="overflow-hidden">
@@ -99,25 +98,25 @@ function PostItem({ post, level }: { post: Post; level: number }) {
     <Link
       href={`/blog/${post.path}`}
       className={`
-        group flex items-center gap-2 rounded-sm px-3 py-2 transition-colors duration-200
+        flex items-center gap-2 px-3 py-2 rounded-md transition-colors group
         ${isActive
-          ? 'bg-muted text-[var(--academic-link)]'
-          : 'hover:bg-muted/70'
+          ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+          : 'hover:bg-white/60 dark:hover:bg-white/10'
         }
       `}
       style={{ paddingLeft: `${level * 1.5 + 2.25}rem` }}
     >
       <FileText
-        className={`size-4 shrink-0 ${
-          isActive ? 'text-[var(--academic-link)]' : 'text-muted-foreground'
+        className={`w-4 h-4 flex-shrink-0 ${
+          isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground'
         }`}
       />
       <span
         className={`
           flex-1 text-sm transition-colors truncate
           ${isActive
-            ? 'font-medium text-[var(--academic-link)]'
-            : 'text-foreground/80 group-hover:text-[var(--academic-link)]'
+            ? 'font-medium text-indigo-600 dark:text-indigo-400'
+            : 'text-foreground/80 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
           }
         `}
       >

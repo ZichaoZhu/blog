@@ -1,205 +1,230 @@
-# 世界は優しい
+# 个人博客
 
-一个部署在 Vercel 的“个人学术主页 + 研究笔记博客”。站点使用 Next.js App Router、TypeScript 与 Markdown，首页突出作者和真实研究/学习主题，正文适合长篇科研日志、论文阅读与课程笔记。
+基于 **Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 + MDX** 的个人博客，对 **Typora 笔记完全友好**。
 
-## 主要能力
+## 功能一览
 
-- 学术人员博客风格：首页个人介绍、最近笔记、真实主题统计；无营销 Hero、视频背景、玻璃卡片或粒子效果。
-- 静态优先：首页、笔记索引、关于页、作者页与全部文章在 Vercel 构建时预渲染；不使用 `output: "export"`。
-- 轻量内容边界：列表和文件树只携带 `PostSummary`，文章正文由 `getPostDocument(path)` 在构建当前文章时读取。
-- Typora 兼容：GFM、任务列表、脚注、KaTeX、代码高亮、emoji、`==mark==`、`~sub~`、`^sup^`、`[toc]`、Mermaid、Callout 和 Typora 图片缩放。
-- 安全 Markdown：Unified AST 管线，不执行 MDX JSX、`import` 或 JavaScript 表达式；原始 HTML 使用白名单清洗，Mermaid 使用 strict 安全模式。
-- 构建期媒体管线：文章图片生成内容哈希、宽高和静态 URL manifest，再由 `next/image` 与 Vercel CDN 提供。
-- 静态全文搜索：FlexSearch 中英索引在构建期生成，只有首次打开 `Ctrl/⌘ + K` 时才加载代码和索引；结果可定位到匹配章节。
-- SEO：从正式域名生成 canonical、Open Graph、`sitemap.xml`、`robots.txt` 和 `rss.xml`；Vercel Preview 自动禁止索引。
-- 可观测性：接入 Vercel Speed Insights。
+- **首页 Hero**：渐变背景、视差滚动、打字动画、Canvas 粒子层
+- **博客列表**：文件树导航 + 分类/标签/文件夹筛选 + 列表/卡片视图切换
+- **文章页**：嵌套目录、右侧 TOC（与渲染的 heading id 对齐）、面包屑、阅读进度条、返回顶部
+- **MDX 渲染**：代码高亮（`rehype-pretty-code`，双主题 Shiki）、数学公式（KaTeX）、GFM
+- **Typora 扩展语法**：`==高亮==` / `H~2~O` 下标 / `mc^2^` 上标 / `:smile:` emoji / `[toc]` 文章内目录 / ` ```mermaid ` 流程图 / Typora `<img style="zoom:N%">`
+- **LaTeX 论文风阅读主题**：右下角一键切换，自动编号标题、Times serif、A4 纸张感，跟随明暗模式
+- **暗色模式**（`next-themes`，系统主题检测）
+- **多作者**（JSON 配置 + 作者页）
+- **全站点击涟漪动画**
 
-## 本地运行
-
-需要 Node.js 20+。
+## 运行
 
 ```bash
 npm install
-npm run dev
-```
-
-`predev` 会先生成文章资源 manifest 与搜索索引，并执行全量内容检查。开发地址为 <http://localhost:3000>。
-
-常用检查：
-
-```bash
+npm run dev      # http://localhost:3000
+npm run build    # 生产构建
 npm run lint
-npm run typecheck
-npm test
-npm run test:coverage
-npm run check:content
-npm run build
-npm run test:e2e
 ```
 
-Playwright 默认使用已有 `.next` 构建并通过 `npm run start` 启动站点；第一次运行可执行：
+## 目录结构
 
-```bash
-npx playwright install chromium
 ```
-
-## 内容结构
-
-```text
 app/
-  page.tsx                    首页
-  blog/page.tsx               静态笔记索引
-  blog/[...slug]/page.tsx     静态文章页
-  about/page.tsx              关于页
-  authors/[id]/page.tsx       作者页
-  sitemap.ts / robots.ts      SEO 路由
-  rss.xml/route.ts            RSS
+  page.tsx                      # 首页
+  about/page.tsx                # 关于
+  blog/page.tsx                 # 博客列表
+  blog/[...slug]/page.tsx       # 文章页（支持嵌套路径）
+  authors/[id]/page.tsx         # 作者页
+  api/images/[...path]/route.ts # 文章内相对路径图片代理
+  globals.css                   # 站点全局样式
+  latex-theme.css               # LaTeX 论文风阅读主题（scoped 在 .theme-latex 下）
 components/
-  BlogListClient.tsx          URL 筛选、分页与视图交互
-  SearchDialog.tsx            按需全文搜索
-  MDXComponents.tsx           Markdown React 组件映射
-  Mermaid.tsx                 按需图表渲染
+  Hero/                         # 首页 Hero（动画、粒子、打字）
+  layouts/                      # ListLayout / CardLayout
+  ui/                           # shadcn/ui（dialog、button、input）
+  ClickEffect.tsx               # 全站点击动画
+  ReadingTheme.tsx              # 阅读主题 Provider + ArticleBody + 切换按钮
+  ArticleTOC.tsx                # [toc] 渲染出的客户端目录组件
+  Mermaid.tsx                   # mermaid 代码块的客户端渲染（懒加载）
+  MDXComponents.tsx             # MDX 元素映射 + 图片路径解析
+  FileTreeView.tsx              # 侧边文件树
+  TableOfContents.tsx           # 文章右侧 TOC
+  Breadcrumb.tsx, MobileTOC.tsx, BackToTop.tsx, ReadingProgress.tsx
+  Navigation.tsx, SearchDialog.tsx, ThemeToggle.tsx, ViewSwitcher.tsx
 lib/
-  posts.ts                    PostSummary/PostDocument 与目录索引
-  mdx.ts                      Unified Markdown AST 管线
-  assets.ts                   内容资源 manifest 与安全路径解析
-  site.ts                     正式域名和站点配置
+  posts.ts                      # 扫描 content/posts，构建文件树、加载文章
+  authors.ts                    # 读取作者 JSON
+  mdx.ts                        # MDX 编译管线 + Typora 兼容预处理 + 自定义 remark 插件
+  toc.ts                        # 从 markdown 提取目录
+  utils.ts                      # cn() 工具
 content/
-  posts/                      Markdown 与同目录附件
-  authors/                    作者 JSON
+  posts/                        # 文章源（Markdown，支持嵌套文件夹）
+  authors/                      # 作者 JSON
 scripts/
-  prepare-content-assets.ts   构建哈希静态资源
-  build-search-index.ts       构建 CJK/Latin 搜索索引
-  check-content.ts            校验全部真实内容
+  sync-md-to-mdx.ts             # 将散装 .md 同步成文件夹形式
+  watch-md.ts                   # 监听 content/posts/**/*.md 自动 sync
+types/index.ts                  # Post / Folder / FileTree 等类型
 ```
 
 ## 写文章
 
-`content/posts` 支持散装 Markdown 和文件夹 `index.md`，两者可混用：
+### 目录约定
 
-```text
+`content/posts/` 下的每个子文件夹都是一个「文章文件夹」，可嵌套。两种放文章的方式：
+
+**方式 A：文件夹下直接放 `.md`**
+
+```
 content/posts/
-└── Coure-Notebook/
-    ├── .folder.json
-    ├── index.md                    /blog/Coure-Notebook
-    ├── Operating_System/
-    │   ├── Lec1.md                 /blog/Coure-Notebook/Operating_System/Lec1
-    │   └── assets/
-    │       └── memory layout (1).png
-    └── Compiler_Principle/
-        └── index.md                /blog/Coure-Notebook/Compiler_Principle
+└── Compiler_Principle/         # 一个文件夹 = 一个系列
+    ├── .folder.json            # 文件夹元数据（显示名、图标、排序等）
+    ├── index.md                # 系列首页 → 路由 /blog/Compiler_Principle
+    ├── Lec1.md                 # → /blog/Compiler_Principle/Lec1
+    ├── Lec2.md                 # → /blog/Compiler_Principle/Lec2
+    └── assets/                 # 同目录图片
+        └── image-xxx.png
 ```
 
-Frontmatter：
+**方式 B：每篇文章独立文件夹**
+
+```
+content/posts/
+└── hello-world/
+    └── index.md                # → /blog/hello-world
+```
+
+两种方式可以混用。`index.md` 的路由等于它所在的文件夹路径。
+
+> 文件夹/文件名建议用下划线或连字符（`Operating_System` / `compiler-principle`），别用空格 —— URL 里要 encode，分享/复制粘贴容易断。
+
+### Frontmatter
+
+所有字段都是可选的 —— 缺失字段会在加载时填默认值（参见 [lib/posts.ts](lib/posts.ts) 的 `loadPost`），所以 Typora 笔记直接复制过来也能跑。
 
 ```markdown
 ---
-title: "文章标题"
-date: "2026-07-11"
+title: "文章标题"              # 缺省时用文件名
+date: "2026-03-06"            # 缺省时用文件 mtime
 description: "一句话摘要"
-tags: ["标签 1", "标签 2"]
-category: "课程笔记"
-author: "zhuzichao"
-draft: false
-order: 1
+tags: ["标签1", "标签2"]
+category: "分类"               # 缺省时为「未分类」
+author: "zhuzichao"           # 对应 content/authors/zhuzichao.json
+coverImage: "/images/xxx.jpg" # 可选
+draft: false                  # true 时跳过
 ---
+
+## 正文从 h2 开始
+
+支持 GFM、KaTeX 公式、`==高亮==`、代码块、相对路径图片。
 ```
 
-- `title` 缺省为文件名。
-- `date` 缺省为文件修改日期。
-- `category` 缺省为“未分类”。
-- `author` 缺省为 `siteConfig.primaryAuthorId`。
-- `draft: true` 不生成公开路由、RSS、sitemap 或搜索结果。
-- `description` 缺省时会在构建期从正文生成纯文本摘要。
-
-文件夹显示信息由 `.folder.json` 提供：
+### 文件夹元数据 `.folder.json`
 
 ```json
 {
-  "displayName": "操作系统",
+  "displayName": "编译原理",
   "icon": "📚",
   "order": 1,
   "collapsed": false
 }
 ```
 
-旧目录名会保留在 URL 中。例如 `Reaserch_Note` 不应直接重命名；界面显示名称可通过 `.folder.json` 修正，避免已有链接失效。
+### Typora 扩展语法
 
-## Markdown 与 Typora
+[lib/mdx.ts](lib/mdx.ts) 里的预处理 + 自定义 remark 插件让 Typora 笔记可以**原样**扔进来：
 
-常用语法：
+| 写法 | 渲染结果 | 说明 |
+|---|---|---|
+| `==高亮==` | <mark>高亮</mark> | 行内 `<mark>` |
+| `H~2~O` | H<sub>2</sub>O | 下标。⚠️ 同时关掉了 `remark-gfm` 的 `singleTilde` |
+| `mc^2^` | mc<sup>2</sup> | 上标 |
+| `:smile: :rocket:` | 😄 🚀 | `remark-emoji` |
+| `[toc]`（独占一行）| 文章内嵌目录 | [ArticleTOC.tsx](components/ArticleTOC.tsx) 客户端扫描已渲染的 h2~h4 生成 |
+| ` ```mermaid ` 代码块 | 流程图 | [Mermaid.tsx](components/Mermaid.tsx) 客户端懒加载 mermaid（~700KB），跟随明暗主题 |
+| `<img style="zoom:50%">` | 等价 `width="50%"` | 字符串 `style` 在 React JSX 里会报错，预处理时自动改写 |
+| `<segment, offset>`、`a < b`、`count <>0` | 自动转义为 `&lt;` | MDX 默认会把这些误当 JSX 标签开头炸掉 |
+| `~~delete~~` | <del>delete</del> | GFM 标准 |
+| `$x$` / `$$x$$` | LaTeX 公式 | KaTeX |
+| `- [x]` 任务列表、表格、脚注 | GFM 标准 | 全部支持 |
 
-| 写法 | 结果 |
-| --- | --- |
-| `==高亮==` | `<mark>` |
-| `H~2~O` | 下标 |
-| `x^2^` | 上标 |
-| `[toc]` 独占一行 | 使用正文同一 AST heading ID 的文章目录 |
-| ```` ```mermaid ```` | 按需 Mermaid 图表 |
-| `> [!IMPORTANT] 标题` | Typora/Obsidian Callout |
-| `$x$` / `$$x$$` | KaTeX 行内/块公式 |
-| 脚注、表格、`- [x]` | GFM |
+如果遇到没覆盖的 Typora corner case，规则就在 [lib/mdx.ts](lib/mdx.ts) 的 `preprocessMarkdown` 和 `remarkTyporaInline` / `remarkMermaid` / `remarkTocPlaceholder` 几个函数里，加一行就行。
 
-支持以下本地图片形式：
+### 图片
 
-```markdown
-![结果](image.png)
-![结果](./assets/image.png)
-![结果](../shared/image.png?raw=1#figure)
-![结果](./assets/NotebookLM Mind Map (2).png)
-<img src="./assets/图 1.png" style="zoom:50%;" alt="结果">
+文章里的相对路径图片（`./assets/xxx.png`）由 [components/MDXComponents.tsx](components/MDXComponents.tsx) 改写成 `/api/images/<文件夹>/assets/xxx.png`，再由 [app/api/images/\[...path\]/route.ts](app/api/images/[...path]/route.ts) 从 `content/posts/` 下读出来返回。**图片跟 Markdown 放一起就行，不需要塞进 `public/`。**
+
+### Markdown 同步脚本（可选）
+
+如果你习惯先在 Typora 里写散装 `.md`，`scripts/sync-md-to-mdx.ts` 会把 `Foo.md` 挪成 `Foo/index.md` 形式。
+
+```bash
+npm run sync:md          # 全量同步
+npm run sync:md Foo.md   # 单文件同步
+npm run watch:md         # 监听自动同步
 ```
 
-中文、空格、括号、URL 编码、query/hash 和 Typora zoom 都会在构建期处理。外部未知主机图片使用原生 lazy `<img>`，不会消耗 Vercel Image Optimization 配额。
+> 当前的 `lib/posts.ts` 已经能直接加载文件夹里的散装 `.md`（作为兄弟文件，见方式 A），所以这个脚本对大多数场景可有可无。
 
-Markdown 内容不是 MDX。诸如 `{window.alert(1)}`、JSX、`import` 和事件属性不会执行；`script`、`iframe`、危险 URL 等会被过滤。
+## 阅读主题
 
-## 图片构建流程
+文章页右下角有两个浮动按钮：
 
-```text
-content/posts/**/*.{png,jpg,...}
-            ↓ prepare-content-assets
-.generated/content-assets.json
-            ↓
-public/_content/<sha256>.<ext>
-            ↓
-next/image + Vercel CDN
+- **回到顶部**（默认主题样式）
+- **📰 切换 LaTeX 论文风** ↔ **📄 切换默认主题**
+
+LaTeX 主题改编自 Typora 经典的 [LaTeX 主题](https://github.com/lyj0309/latex-typora)，重写为博客可用的 scoped CSS（[app/latex-theme.css](app/latex-theme.css)），保留：
+
+- Times serif + 中文宋体的字体栈
+- 标题自动编号（`1`、`1.1`、`1.1.1`...）
+- booktabs 三线表
+- 自定义无序/有序列表标记（`–` `◦` / `(a)` `i.`）
+- A4 纸宽 + 阴影 + 居中
+
+切换是局部的（`<ArticleBody>` 在默认 prose 和 `.theme-latex` 之间换 className），不会影响导航栏、TOC、首页 Hero 等任何站点其他部分。选择存在 `localStorage['reading-theme']`。暗色模式 + LaTeX 主题正交可叠加。
+
+## 作者
+
+`content/authors/<id>.json`：
+
+```json
+{
+  "name": "朱子超",
+  "bio": "一句话简介",
+  "avatar": "/avatars/me.jpg",
+  "social": {
+    "github": "username",
+    "twitter": "username",
+    "website": "https://example.com"
+  }
+}
 ```
 
-`.generated`、`public/_content` 与 `public/_search` 是可重复生成的构建产物，不提交 Git。构建会检测损坏图片与未拉取的 Git LFS pointer；缺失引用会由 `check:content` 阻止部署。
+文章的 `author` 字段填文件名里的 `<id>` 即可，自动关联。
 
-原 83 MB Hero 视频和 6.5 MB 头像原图由 `.vercelignore` 排除；线上使用约 20 KB 的 WebP 头像，首页不请求视频。
+## 自定义
 
-## Vercel 部署
+| 想改的东西 | 去哪改 |
+|---|---|
+| 主题色、暗色变量 | [app/globals.css](app/globals.css) 里的 CSS 变量 |
+| LaTeX 主题字体/字号/纸张 | [app/latex-theme.css](app/latex-theme.css) 顶部 `--latex-*` 变量 |
+| 导航栏标题/菜单 | [components/Navigation.tsx](components/Navigation.tsx) |
+| 首页文案、打字动画 | [components/Hero/AnimatedHero.tsx](components/Hero/AnimatedHero.tsx) |
+| 点击动画颜色/粒子数 | [components/ClickEffect.tsx](components/ClickEffect.tsx) |
+| 站点元数据 | [app/layout.tsx](app/layout.tsx) 的 `metadata` |
+| MDX 渲染映射、Typora 语法 | [components/MDXComponents.tsx](components/MDXComponents.tsx)、[lib/mdx.ts](lib/mdx.ts) |
 
-生产部署继续使用 Vercel Git Integration，不需要 GitHub Pages，也不要设置 `output: "export"`。
+## 部署
 
-在 Vercel Project Settings 中配置：
+任何支持 Next.js 的平台都行。注意：
 
-```text
-NEXT_PUBLIC_SITE_URL=https://你的正式域名
-```
+- `/api/images/[...path]` 是动态路由，**不能静态导出**（`output: 'export'`）。如果要走 GitHub Pages 纯静态方案，需要先把文章图片复制到 `public/` 并调整 `MDXComponents.tsx` 的路径改写逻辑。
+- Vercel 直接 import 仓库即可，无需额外配置。
 
-这个变量在 Production 中应视为必填。canonical、Open Graph、RSS、sitemap 和 robots 都以它为准；Preview 会继续指向正式域名并自动 `noindex`。
+## 技术栈
 
-仓库中的文章媒体使用 Git LFS。还需要在 Vercel 的 Project Settings → Git 中启用 Git LFS，然后重新部署；否则构建期资源检查会发现 pointer 并主动失败。
-
-GitHub Actions 只运行 CI，生产发布由 Vercel 完成。建议 Vercel Build Command 保持默认 `npm run build`，Output Directory 留空（使用 `.next`）。
-
-## 测试与验收
-
-- Vitest：内容索引、摘要/正文边界、Typora AST、安全 HTML、图片路径、哈希资源和搜索。
-- Testing Library：客户端筛选、分页、URL、主题和导航交互。
-- Playwright：首页、笔记页、真实文章、404、移动端、暗色、reduced-motion 和搜索按需加载。
-- Axe：E2E 页面不得有 serious/critical 无障碍问题。
-- `check:content`：遍历全部 Markdown，检查解析、重复路由、作者、头像、封面、图片与内部链接。
-
-CI 以 lint、类型检查、90%/85% 核心覆盖率、内容检查、生产构建和 E2E 为门禁。
-
-## 站点配置
-
-- 品牌、主作者和 URL：`lib/site.ts`
-- 作者资料：`content/authors/<id>.json`
-- 学术配色与排版：`app/globals.css`
-- LaTeX 阅读主题：`app/latex-theme.css`
-- Vercel 排除项：`.vercelignore`
+- Next.js 16 · React 19 · TypeScript 5
+- Tailwind CSS v4 · shadcn/ui (dialog/button/input) · `tw-animate-css`
+- MDX：`next-mdx-remote` + `remark-gfm` + `remark-math` + `remark-emoji` + `rehype-katex` + `rehype-slug` + `rehype-autolink-headings` + `rehype-pretty-code` (Shiki)
+- 图表：`mermaid`（懒加载，仅出现 ` ```mermaid ` 块的页面才下载）
+- 内容：`gray-matter` + `reading-time` + `github-slugger`
+- 动画：`framer-motion`
+- 图标：`lucide-react`
+- 主题：`next-themes`
+- 日期：`date-fns`

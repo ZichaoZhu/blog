@@ -6,7 +6,7 @@ tags: ["博客", "介绍", "Hello World"]
 category: "随笔"
 author: "zhangsan"
 coverImage: "/images/hello-world.jpg"
-draft: true
+draft: false
 ---
 
 ## 欢迎

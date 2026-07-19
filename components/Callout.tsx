@@ -24,8 +24,6 @@ type CalloutType =
   | 'success'
   | 'question'
   | 'warning'
-  | 'important'
-  | 'caution'
   | 'danger'
   | 'bug'
   | 'example'
@@ -54,8 +52,7 @@ const TYPE_ALIASES: Record<string, CalloutType> = {
   faq: 'question',
   warning: 'warning',
   attention: 'warning',
-  important: 'important',
-  caution: 'caution',
+  caution: 'warning',
   danger: 'danger',
   error: 'danger',
   bug: 'bug',
@@ -73,8 +70,6 @@ const CALLOUT_CONFIG: Record<CalloutType, CalloutConfig> = {
   success: { icon: CheckCircle2, label: 'Success' },
   question: { icon: HelpCircle, label: 'Question' },
   warning: { icon: AlertTriangle, label: 'Warning' },
-  important: { icon: AlertTriangle, label: 'Important' },
-  caution: { icon: Zap, label: 'Caution' },
   danger: { icon: Zap, label: 'Danger' },
   bug: { icon: Bug, label: 'Bug' },
   example: { icon: List, label: 'Example' },

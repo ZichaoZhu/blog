@@ -1,614 +1,324 @@
-import { Fragment, type ReactNode } from 'react';
-import { jsx, jsxs } from 'react/jsx-runtime';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
+import { compileMDX } from 'next-mdx-remote/rsc';
+import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import remarkEmoji from 'remark-emoji';
-import rehypeRaw from 'rehype-raw';
-import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
-import rehypeKatex from 'rehype-katex';
-import rehypePrettyCode, {
-  type CharsElement,
-  type LineElement,
-  type Options as PrettyCodeOptions,
-} from 'rehype-pretty-code';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import { toJsxRuntime, type Components } from 'hast-util-to-jsx-runtime';
-import { toString } from 'mdast-util-to-string';
-import GithubSlugger from 'github-slugger';
+import type { PostFrontmatter } from '@/types';
+import { createMDXComponents } from '@/components/MDXComponents';
 import { visit } from 'unist-util-visit';
-import type { Element, Root as HastRoot } from 'hast';
-import type {
-  Blockquote,
-  Code,
-  Heading,
-  Html,
-  Paragraph,
-  Root as MdastRoot,
-  Text,
-} from 'mdast';
-import type { Node, Parent } from 'unist';
-import type { ContentDiagnostic } from '@/types';
-import type { ContentAssetManifest } from '@/lib/assets';
-import { isExternalAssetReference, resolveContentAsset } from '@/lib/assets';
-import type { TOCItem } from '@/lib/toc';
-import { createMarkdownComponents } from '@/components/MDXComponents';
 
+/**
+ * Typora 扩展行内语法 → JSX 元素映射:
+ *   - ==高亮==  →  <mark>高亮</mark>
+ *   - ~下标~    →  <sub>下标</sub>
+ *   - ^上标^    →  <sup>上标</sup>
+ *
+ * 必须用 `mdxJsxTextElement` (MDX 行内 JSX 节点),不能用 hast 风格的
+ * `{type:'element', tagName:...}` —— 那是 rehype 格式,MDX 会 fallback 成块级 div,
+ * 导致 `<p><div>` 嵌套引发 hydration error。
+ *
+ * 内容里不能含空白和该分隔符自身,以免误匹配 `~/path/to/file~` 之类。
+ */
+// 注意:GFM 的 ~~删除线~~ 由 remark-gfm 提前处理掉,所以 ~ 规则只需要避开 `~~` 边界
+// 即可。要求 ~/^ 内部不含空白和分隔符自身,以避免误匹配 `~/path/file~` 之类。
 const TYPORA_INLINE_RULES = [
-  { regex: /==([^=\s][^=]*?[^=\s]|[^=\s])==/g, tag: 'mark' },
-  { regex: /(?<!~)~([^~\s][^~]*?[^~\s]|[^~\s])~(?!~)/g, tag: 'sub' },
-  { regex: /(?<!\^)\^([^\^\s][^\^]*?[^\^\s]|[^\^\s])\^(?!\^)/g, tag: 'sup' },
+  { regex: /==([^=\s][^=]*?[^=\s]|[^=\s])==/g, name: 'mark' },
+  { regex: /(?<!~)~([^~\s][^~]*?[^~\s]|[^~\s])~(?!~)/g, name: 'sub' },
+  { regex: /(?<!\^)\^([^\^\s][^\^]*?[^\^\s]|[^\^\s])\^(?!\^)/g, name: 'sup' },
 ] as const;
 
-function findImageDestinationStart(line: string, start: number): number {
-  let bracketDepth = 1;
-  for (let index = start + 2; index < line.length; index += 1) {
-    if (line[index] === '\\') {
-      index += 1;
-      continue;
-    }
-    if (line[index] === '[') bracketDepth += 1;
-    if (line[index] !== ']') continue;
-    bracketDepth -= 1;
-    if (bracketDepth === 0) {
-      return line[index + 1] === '(' ? index + 1 : -1;
-    }
-  }
-  return -1;
-}
-
-function findClosingParenthesis(line: string, opening: number): number {
-  let depth = 1;
-  let quote: '"' | "'" | null = null;
-  for (let index = opening + 1; index < line.length; index += 1) {
-    const character = line[index];
-    if (character === '\\') {
-      index += 1;
-      continue;
-    }
-    if (quote) {
-      if (character === quote) quote = null;
-      continue;
-    }
-    if (character === '"' || character === "'") {
-      quote = character;
-      continue;
-    }
-    if (character === '(') depth += 1;
-    if (character !== ')') continue;
-    depth -= 1;
-    if (depth === 0) return index;
-  }
-  return -1;
-}
-
-function splitImageTitle(value: string): { destination: string; title: string } {
-  const trimmed = value.trim();
-  const match = /^(.*?)(\s+(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'))$/.exec(trimmed);
-  return match
-    ? { destination: match[1].trim(), title: match[2] }
-    : { destination: trimmed, title: '' };
-}
-
-function normalizeTyporaImageLine(line: string): string {
-  let output = '';
-  let cursor = 0;
-
-  while (cursor < line.length) {
-    if (line[cursor] === '`') {
-      const tickStart = cursor;
-      while (line[cursor] === '`') cursor += 1;
-      const delimiter = line.slice(tickStart, cursor);
-      const closing = line.indexOf(delimiter, cursor);
-      if (closing < 0) return output + line.slice(tickStart);
-      output += line.slice(tickStart, closing + delimiter.length);
-      cursor = closing + delimiter.length;
-      continue;
-    }
-
-    if (line[cursor] !== '!' || line[cursor + 1] !== '[') {
-      output += line[cursor];
-      cursor += 1;
-      continue;
-    }
-
-    const opening = findImageDestinationStart(line, cursor);
-    const closing = opening >= 0 ? findClosingParenthesis(line, opening) : -1;
-    if (opening < 0 || closing < 0) {
-      output += line[cursor];
-      cursor += 1;
-      continue;
-    }
-
-    const raw = line.slice(opening + 1, closing);
-    const { destination, title } = splitImageTitle(raw);
-    const alreadyWrapped = destination.startsWith('<') && destination.endsWith('>');
-    const needsTyporaCompatibility = /\s|[()]/.test(destination);
-    if (!destination || alreadyWrapped || !needsTyporaCompatibility) {
-      output += line.slice(cursor, closing + 1);
-    } else {
-      output += `${line.slice(cursor, opening + 1)}<${destination}>${title})`;
-    }
-    cursor = closing + 1;
-  }
-
-  return output;
+/**
+ * 把 ```mermaid 代码块替换成 <Mermaid chart="..." /> JSX,
+ * 这样 rehype-pretty-code 就不会再把它当代码语法高亮。
+ */
+function remarkMermaid() {
+  return (tree: any) => {
+    visit(tree, 'code', (node: any, index: number | undefined, parent: any) => {
+      if (index === undefined || !parent) return;
+      if (node.lang !== 'mermaid') return;
+      parent.children.splice(index, 1, {
+        type: 'mdxJsxFlowElement',
+        name: 'Mermaid',
+        attributes: [
+          { type: 'mdxJsxAttribute', name: 'chart', value: node.value },
+        ],
+        children: [],
+      });
+    });
+  };
 }
 
 /**
- * Typora accepts spaces and balanced parentheses in image destinations while
- * CommonMark requires angle brackets. Normalize only image tokens outside
- * fenced/inline code, then let the typed Markdown AST handle everything else.
+ * Obsidian 风格 callout / admonition 语法:
+ *
+ *   > [!note] 标题        ← 普通提示块
+ *   > 内容
+ *
+ *   > [!note]- 标题       ← 可折叠,默认收起
+ *   > 内容
+ *
+ *   > [!note]+ 标题       ← 可折叠,默认展开
+ *   > 内容
+ *
+ * 关键:保留 blockquote 原始 AST children 作为 Callout 的 children,
+ * 这样内部的列表、公式、代码块、图片都能继续被 MDX 正常渲染。
  */
-export function normalizeTyporaImageDestinations(source: string): string {
-  let fence: { marker: '`' | '~'; length: number } | null = null;
-  return source
-    .split('\n')
-    .map((line) => {
-      const fenceMatch = /^\s{0,3}(`{3,}|~{3,})/.exec(line);
-      if (fenceMatch) {
-        const marker = fenceMatch[1][0] as '`' | '~';
-        if (!fence) fence = { marker, length: fenceMatch[1].length };
-        else if (fence.marker === marker && fenceMatch[1].length >= fence.length) fence = null;
-        return line;
+function remarkCallout() {
+  return (tree: any) => {
+    visit(tree, 'blockquote', (node: any, index: number | undefined, parent: any) => {
+      if (index === undefined || !parent) return;
+
+      const firstPara = node.children?.[0];
+      if (!firstPara || firstPara.type !== 'paragraph') return;
+
+      const firstText = firstPara.children?.[0];
+      if (!firstText || firstText.type !== 'text') return;
+
+      const match = firstText.value.match(/^\[!(\w+)\]([+-]?)[ \t]*([^\n]*)/);
+      if (!match) return;
+
+      const [fullMatch, rawType, modifier, rawTitle] = match;
+      const type = rawType.toLowerCase();
+      const title = rawTitle.trim();
+      const collapsible = modifier === '+' || modifier === '-';
+      const defaultOpen = modifier === '+';
+
+      // 剥离匹配的标记部分,保留后续内容
+      firstText.value = firstText.value.slice(fullMatch.length).replace(/^\n/, '');
+      if (firstText.value === '') {
+        firstPara.children.shift();
+        // 顺带去掉紧跟的 soft break
+        if (firstPara.children[0]?.type === 'break') firstPara.children.shift();
       }
-      return fence ? line : normalizeTyporaImageLine(line);
-    })
-    .join('\n');
-}
+      if (firstPara.children.length === 0) {
+        node.children.shift();
+      }
 
-interface CustomMdastNode extends Node, Parent {
-  data: {
-    hName: string;
-    hProperties?: Record<string, string>;
+      const attributes: any[] = [
+        { type: 'mdxJsxAttribute', name: 'type', value: type },
+      ];
+      if (title) {
+        attributes.push({ type: 'mdxJsxAttribute', name: 'title', value: title });
+      }
+      if (collapsible) {
+        attributes.push({ type: 'mdxJsxAttribute', name: 'collapsible', value: 'true' });
+      }
+      if (defaultOpen) {
+        attributes.push({ type: 'mdxJsxAttribute', name: 'defaultOpen', value: 'true' });
+      }
+
+      parent.children.splice(index, 1, {
+        type: 'mdxJsxFlowElement',
+        name: 'Callout',
+        attributes,
+        children: node.children,
+      });
+    });
   };
-  children: Node[];
 }
 
-function customNode(
-  type: string,
-  hName: string,
-  children: Node[] = [],
-  properties?: Record<string, string>,
-): CustomMdastNode {
-  return {
-    type,
-    data: { hName, hProperties: properties },
-    children,
+/**
+ * Typora 的 [toc] 渲染成文章内嵌目录。
+ * 匹配独占一段且只含 `[toc]` (大小写不敏感) 的段落,替换为 <ArticleTOC /> JSX。
+ */
+function remarkTocPlaceholder() {
+  return (tree: any) => {
+    visit(tree, 'paragraph', (node: any, index: number | undefined, parent: any) => {
+      if (index === undefined || !parent) return;
+      if (node.children.length !== 1 || node.children[0].type !== 'text') return;
+      if (!/^\s*\[toc\]\s*$/i.test(node.children[0].value)) return;
+      parent.children.splice(index, 1, {
+        type: 'mdxJsxFlowElement',
+        name: 'ArticleTOC',
+        attributes: [],
+        children: [],
+      });
+    });
   };
 }
 
 function remarkTyporaInline() {
-  return (tree: MdastRoot) => {
-    visit(tree, 'text', (node: Text, index, parent) => {
+  return (tree: any) => {
+    visit(tree, 'text', (node: any, index: number | undefined, parent: any) => {
       if (index === undefined || !parent) return;
+      if (parent.type === 'code' || parent.type === 'inlineCode') return;
 
-      type Hit = { start: number; end: number; tag: string; inner: string };
+      // 收集所有规则在当前文本节点上的所有匹配
+      type Hit = { start: number; end: number; name: string; inner: string };
       const hits: Hit[] = [];
-      for (const { regex, tag } of TYPORA_INLINE_RULES) {
+      for (const { regex, name } of TYPORA_INLINE_RULES) {
         regex.lastIndex = 0;
-        let match: RegExpExecArray | null;
-        while ((match = regex.exec(node.value)) !== null) {
-          hits.push({
-            start: match.index,
-            end: match.index + match[0].length,
-            tag,
-            inner: match[1],
-          });
+        let m;
+        while ((m = regex.exec(node.value)) !== null) {
+          hits.push({ start: m.index, end: m.index + m[0].length, name, inner: m[1] });
         }
       }
       if (hits.length === 0) return;
 
-      hits.sort((a, b) => a.start - b.start || b.end - a.end);
+      // 按起点排序,丢弃彼此重叠的(后来者优先级更低)
+      hits.sort((a, b) => a.start - b.start);
       const accepted: Hit[] = [];
       let cursor = 0;
-      for (const hit of hits) {
-        if (hit.start >= cursor) {
-          accepted.push(hit);
-          cursor = hit.end;
+      for (const h of hits) {
+        if (h.start >= cursor) {
+          accepted.push(h);
+          cursor = h.end;
         }
       }
 
-      const replacements: Node[] = [];
-      let last = 0;
-      for (const hit of accepted) {
-        if (hit.start > last) {
-          replacements.push({ type: 'text', value: node.value.slice(last, hit.start) } as Text);
+      const children: any[] = [];
+      let lastIndex = 0;
+      for (const h of accepted) {
+        if (h.start > lastIndex) {
+          children.push({ type: 'text', value: node.value.slice(lastIndex, h.start) });
         }
-        replacements.push(
-          customNode(`typora-${hit.tag}`, hit.tag, [
-            { type: 'text', value: hit.inner } as Text,
-          ]),
-        );
-        last = hit.end;
+        children.push({
+          type: 'mdxJsxTextElement',
+          name: h.name,
+          attributes: [],
+          children: [{ type: 'text', value: h.inner }],
+        });
+        lastIndex = h.end;
       }
-      if (last < node.value.length) {
-        replacements.push({ type: 'text', value: node.value.slice(last) } as Text);
+      if (lastIndex < node.value.length) {
+        children.push({ type: 'text', value: node.value.slice(lastIndex) });
       }
 
-      (parent as Parent).children.splice(index, 1, ...replacements);
-      return index + replacements.length;
+      parent.children.splice(index, 1, ...children);
+      return index + children.length;
     });
   };
 }
 
-function remarkCallouts() {
-  return (tree: MdastRoot) => {
-    visit(tree, 'blockquote', (node: Blockquote, index, parent) => {
-      if (index === undefined || !parent) return;
-      const firstParagraph = node.children[0] as Paragraph | undefined;
-      if (firstParagraph?.type !== 'paragraph') return;
-      const firstText = firstParagraph.children[0] as Text | undefined;
-      if (firstText?.type !== 'text') return;
-
-      const match = /^\[!(\w+)\]([+-]?)[ \t]*([^\n]*)/.exec(firstText.value);
-      if (!match) return;
-
-      const [, rawType, modifier, rawTitle] = match;
-      firstText.value = firstText.value.slice(match[0].length).replace(/^\n/, '');
-      if (!firstText.value) firstParagraph.children.shift();
-      if (firstParagraph.children.length === 0) node.children.shift();
-
-      const properties: Record<string, string> = { type: rawType.toLowerCase() };
-      if (rawTitle.trim()) properties.title = rawTitle.trim();
-      if (modifier) properties.collapsible = 'true';
-      if (modifier === '+') properties.defaultopen = 'true';
-
-      (parent as Parent).children.splice(
-        index,
-        1,
-        customNode('callout', 'callout-block', node.children, properties),
-      );
-    });
-  };
-}
-
-function remarkSpecialBlocks() {
-  return (tree: MdastRoot) => {
-    visit(tree, (node, index, parent) => {
-      if (index === undefined || !parent) return;
-
-      if (node.type === 'code' && (node as Code).lang?.toLowerCase() === 'mermaid') {
-        const code = node as Code;
-        (parent as Parent).children.splice(
-          index,
-          1,
-          customNode('mermaid', 'mermaid-chart', [], { chart: code.value }),
-        );
-        return;
-      }
-
-      if (node.type === 'paragraph') {
-        const paragraph = node as Paragraph;
-        if (
-          paragraph.children.length === 1 &&
-          paragraph.children[0].type === 'text' &&
-          /^\s*\[toc\]\s*$/i.test(paragraph.children[0].value)
-        ) {
-          (parent as Parent).children.splice(
-            index,
-            1,
-            customNode('articleToc', 'article-toc'),
-          );
-        }
-      }
-    });
-  };
-}
-
-function createHeadingCollector(toc: TOCItem[]) {
-  return function remarkHeadingCollector() {
-    return (tree: MdastRoot) => {
-      const slugger = new GithubSlugger();
-      visit(tree, 'heading', (node: Heading) => {
-        const title = toString(node).trim();
-        const id = `section-${slugger.slug(title)}`;
-        node.data = node.data ?? {};
-        node.data.hProperties = {
-          ...(node.data.hProperties ?? {}),
-          'data-generated-heading': 'true',
-        };
-        if (node.depth >= 2 && node.depth <= 4) {
-          toc.push({ id, title, level: node.depth });
-        }
-      });
-    };
-  };
-}
-
-function createHtmlCompatibility(diagnostics: ContentDiagnostic[], sourceFile: string) {
-  return function remarkHtmlCompatibility() {
-    return (tree: MdastRoot) => {
-      visit(tree, 'html', (node: Html) => {
-        if (/<\/?(?:script|iframe|object|embed)\b/i.test(node.value)) {
-          diagnostics.push({
-            severity: 'warning',
-            file: sourceFile,
-            line: node.position?.start.line,
-            message: '已过滤不安全的 HTML 嵌入标签。',
-          });
-        }
-        node.value = node.value.replace(
-          /\sstyle=(['"])\s*zoom:\s*([\d.]+%?)\s*;?\s*\1/gi,
-          ' width="$2"',
-        );
-      });
-    };
-  };
-}
-
-function createAssetResolver(
-  manifest: ContentAssetManifest | undefined,
-  sourceFile: string,
-  diagnostics: ContentDiagnostic[],
-) {
-  return function rehypeContentAssets() {
-    return (tree: HastRoot) => {
-      visit(tree, 'element', (node: Element) => {
-        if (node.tagName !== 'img') return;
-        const rawSource = node.properties.src;
-        if (typeof rawSource !== 'string' || !rawSource) return;
-        if (!manifest || isExternalAssetReference(rawSource)) return;
-
-        const entry = resolveContentAsset(rawSource, sourceFile, manifest);
-        if (!entry) {
-          // 站点 public 绝对路径不属于文章附件，原样保留。
-          if (!rawSource.startsWith('/')) {
-            diagnostics.push({
-              severity: 'warning',
-              file: sourceFile,
-              line: node.position?.start.line,
-              message: `未找到本地图片: ${rawSource}`,
-            });
-          }
-          return;
-        }
-
-        const requestedWidth = node.properties.width;
-        if (typeof requestedWidth === 'string' && requestedWidth.endsWith('%')) {
-          node.properties['data-display-width'] = requestedWidth;
-        }
-        node.properties.src = entry.url;
-        node.properties.width = entry.width;
-        node.properties.height = entry.height;
-        node.properties['data-content-asset'] = 'true';
-        node.properties['data-content-ext'] = entry.ext;
-        node.properties['data-content-size'] = entry.size;
-      });
-    };
-  };
-}
-
-function rehypeAcademicFigures() {
-  return (tree: HastRoot) => {
-    visit(tree, 'element', (node: Element, index, parent) => {
-      if (index === undefined || !parent || node.tagName !== 'p') return;
-      if (node.children.length !== 1) return;
-      const image = node.children[0];
-      if (image.type !== 'element' || image.tagName !== 'img') return;
-      const title = image.properties.title;
-      if (typeof title !== 'string' || !title.trim()) return;
-
-      (parent as Element | HastRoot).children.splice(index, 1, {
-        type: 'element',
-        tagName: 'figure',
-        properties: { className: ['article-figure'] },
-        children: [
-          image,
-          {
-            type: 'element',
-            tagName: 'figcaption',
-            properties: {},
-            children: [{ type: 'text', value: title.trim() }],
-          },
-        ],
-      });
-    });
-  };
-}
-
-function headingText(node: Element): string {
-  return node.children
-    .map((child) => {
-      if (child.type === 'text') return child.value;
-      if (child.type === 'element') return headingText(child);
-      return '';
-    })
-    .join('')
-    .trim();
-}
-
-/** Restore only renderer-generated heading IDs after untrusted HTML is sanitized. */
-function rehypeTrustedHeadingIds() {
-  return (tree: HastRoot) => {
-    const slugger = new GithubSlugger();
-    visit(tree, 'element', (node: Element) => {
-      if (!/^h[1-6]$/.test(node.tagName)) return;
-      const marker = node.properties.dataGeneratedHeading;
-      if (marker !== 'true' && marker !== true) return;
-      node.properties.id = `section-${slugger.slug(headingText(node))}`;
-      delete node.properties.dataGeneratedHeading;
-    });
-  };
-}
-
-/**
- * remark-rehype already gives generated footnotes a user-content prefix.
- * rehype-sanitize defensively adds the same prefix to IDs once more, while
- * fragment hrefs remain unchanged. Collapse only these known generated IDs so
- * references and backlinks continue to resolve.
- */
-function rehypeNormalizeFootnoteIds() {
-  return (tree: HastRoot) => {
-    visit(tree, 'element', (node: Element) => {
-      const id = node.properties.id;
-      if (
-        typeof id === 'string' &&
-        /^user-content-user-content-fn(?:ref)?-/.test(id)
-      ) {
-        node.properties.id = id.replace(
-          /^user-content-user-content-/,
-          'user-content-',
-        );
-      }
-    });
-  };
-}
-
-/** Preserve fenced-code metadata through the sanitizer for pretty-code. */
-function rehypePreserveCodeMeta() {
-  return (tree: HastRoot) => {
-    visit(tree, 'element', (node: Element) => {
-      if (node.tagName !== 'code') return;
-      const meta = node.data?.meta;
-      if (typeof meta === 'string' && meta) {
-        node.properties.metastring = meta;
-      }
-    });
-  };
-}
-
-const sanitizeSchema = {
-  ...defaultSchema,
-  tagNames: [
-    ...(defaultSchema.tagNames ?? []),
-    'article-toc',
-    'callout-block',
-    'mermaid-chart',
-    'details',
-    'summary',
-    'video',
-    'source',
-    'u',
-    'kbd',
-    'mark',
-    'sub',
-    'sup',
-  ],
-  attributes: {
-    ...defaultSchema.attributes,
-    '*': [
-      ...(defaultSchema.attributes?.['*'] ?? []),
-      'className',
-      'title',
-      'ariaLabel',
-    ],
-    h1: [...(defaultSchema.attributes?.h1 ?? []), 'dataGeneratedHeading'],
-    h2: [...(defaultSchema.attributes?.h2 ?? []), 'dataGeneratedHeading'],
-    h3: [...(defaultSchema.attributes?.h3 ?? []), 'dataGeneratedHeading'],
-    h4: [...(defaultSchema.attributes?.h4 ?? []), 'dataGeneratedHeading'],
-    h5: [...(defaultSchema.attributes?.h5 ?? []), 'dataGeneratedHeading'],
-    h6: [...(defaultSchema.attributes?.h6 ?? []), 'dataGeneratedHeading'],
-    img: [
-      ...(defaultSchema.attributes?.img ?? []),
-      'src',
-      'alt',
-      'title',
-      'width',
-      'height',
-      'loading',
-    ],
-    code: [...(defaultSchema.attributes?.code ?? []), 'metastring'],
-    video: ['src', 'poster', 'controls', 'preload', 'width', 'height'],
-    source: ['src', 'type', 'media'],
-    'callout-block': ['type', 'title', 'collapsible', 'defaultopen'],
-    'mermaid-chart': ['chart'],
+const rehypePrettyCodeOptions = {
+  theme: {
+    light: 'github-light',
+    dark: 'github-dark',
   },
-  protocols: {
-    ...defaultSchema.protocols,
-    href: ['http', 'https', 'mailto'],
-    src: ['http', 'https'],
-    poster: ['http', 'https'],
-  },
-};
+  keepBackground: true,
 
-const prettyCodeOptions: PrettyCodeOptions = {
-  theme: { light: 'github-light', dark: 'github-dark' },
-  keepBackground: false,
-  onVisitLine(node: LineElement) {
-    if (node.children.length === 0) node.children.push({ type: 'text', value: ' ' });
+  // 防止空行折叠
+  onVisitLine(node: any) {
+    if (node.children.length === 0) {
+      node.children = [{ type: 'text', value: ' ' }];
+    }
   },
-  onVisitHighlightedLine(node: LineElement) {
+
+  // 高亮行样式
+  onVisitHighlightedLine(node: any) {
     node.properties.className = ['highlighted'];
   },
-  onVisitHighlightedChars(node: CharsElement) {
+
+  // 高亮字符样式
+  onVisitHighlightedChars(node: any) {
     node.properties.className = ['highlighted-chars'];
   },
 };
 
-export interface RenderMarkdownOptions {
-  source: string;
-  sourceFile: string;
-  assetManifest?: ContentAssetManifest;
-}
+// 仅匹配真正的 HTML/JSX 标签开头:<tagname>、<tagname ...>、</tagname>、<!--
+// tagname 必须是字母开头,后面只能跟字母数字,且必须以空白/`/`/`>` 收尾。
+// 这样 `<segment-number, offset>`、`<>`、`a < b` 等元组/比较写法都会被排除。
+const TAG_START = /<(\/?[a-zA-Z][a-zA-Z0-9]*(?=[\s/>])|!--)/g;
+const SENTINEL = '\u0000';
 
-export interface RenderMarkdownResult {
-  content: ReactNode;
-  toc: TOCItem[];
-  diagnostics: ContentDiagnostic[];
-  features: {
-    math: boolean;
-  };
+/**
+ * 根据文章 path 计算它的"图片文件夹":
+ *   "Operating_System/Lec0"  → "Operating_System"  (嵌套子文章用父目录)
+ *   "hello-world"            → "hello-world"       (顶层文章用自身)
+ * 与 components/MDXComponents.tsx 里 createMDXImage 的算法保持一致。
+ */
+function imageFolderForPost(postPath: string): string {
+  const parts = postPath.replace(/^\//, '').split('/');
+  return parts.length > 1 ? parts.slice(0, -1).join('/') : parts[0];
 }
 
 /**
- * 纯 Markdown 渲染管线：不启用 remark-mdx，因此笔记中的 JSX / JS
- * 表达式始终是文本。用户 HTML 先 sanitize，受信任的 KaTeX/高亮
- * 插件在之后执行，避免安全规则破坏它们生成的标记。
+ * 处理 Typora 等编辑器导出的散装 markdown,使其能被 MDX 编译:
+ *
+ * 1. 把 raw HTML `<img src="./assets/x.png">` 的相对路径重写为 /api/images/...
+ *    —— MDX 的 components.img 覆盖只对 markdown ![]() 生效,对 raw HTML img 无效,
+ *    所以必须在源串阶段就把相对路径换掉,否则浏览器会请求 /blog/.../assets/x.png 而 404。
+ * 2. 把 `style="zoom:NN%"` 重写成 `width="NN%"` 并剥掉其他 style 字符串属性
+ *    —— React JSX 不接受字符串 style,必须是对象;Typora 的 `zoom` 也只在 Webkit 生效。
+ * 3. 把不像合法标签开头的 `<` 转义成 `&lt;`(`count <>0`、`<segment, offset>` 等)。
+ *
+ * 围栏代码块(```)和行内代码(`)内的内容原样保留。
  */
-export async function renderMarkdown({
-  source,
-  sourceFile,
-  assetManifest,
-}: RenderMarkdownOptions): Promise<RenderMarkdownResult> {
-  const toc: TOCItem[] = [];
-  const diagnostics: ContentDiagnostic[] = [];
-
-  const processor = unified()
-    .use(remarkParse)
-    .use(remarkGfm, { singleTilde: false })
-    .use(remarkMath)
-    .use(remarkEmoji)
-    .use(createHtmlCompatibility(diagnostics, sourceFile))
-    .use(remarkCallouts)
-    .use(remarkSpecialBlocks)
-    .use(remarkTyporaInline)
-    .use(createHeadingCollector(toc))
-    .use(remarkRehype, { allowDangerousHtml: true })
-    .use(rehypePreserveCodeMeta)
-    .use(rehypeRaw)
-    .use(rehypeSanitize, sanitizeSchema)
-    .use(rehypeNormalizeFootnoteIds)
-    .use(rehypeTrustedHeadingIds)
-    .use(createAssetResolver(assetManifest, sourceFile, diagnostics))
-    .use(rehypeAcademicFigures)
-    .use(rehypeKatex, { strict: false })
-    .use(rehypePrettyCode, prettyCodeOptions)
-    .use(rehypeAutolinkHeadings, {
-      behavior: 'wrap',
-      properties: { className: ['anchor'] },
-    });
-
-  const mdast = processor.parse(normalizeTyporaImageDestinations(source));
-  let hasMath = false;
-  visit(mdast, (node) => {
-    if (node.type === 'math' || node.type === 'inlineMath') hasMath = true;
-  });
-  const hast = (await processor.run(mdast)) as HastRoot;
-  const components = createMarkdownComponents({ sourceFile, toc, assetManifest });
-  const content = toJsxRuntime(hast, {
-    Fragment,
-    jsx,
-    jsxs,
-    components: components as Components,
-  });
-
-  return { content, toc, diagnostics, features: { math: hasMath } };
+function preprocessMarkdown(source: string, postPath?: string): string {
+  const folder = postPath ? imageFolderForPost(postPath) : null;
+  const segments = source.split(/(```[\s\S]*?```)/g);
+  return segments
+    .map((seg, i) => {
+      if (i % 2 === 1) return seg;
+      const inlineParts = seg.split(/(`[^`\n]*`)/g);
+      return inlineParts
+        .map((part, j) => {
+          if (j % 2 === 1) return part;
+          let out = part;
+          // raw HTML <img src="./..."> → /api/images/<folder>/...
+          if (folder) {
+            out = out.replace(
+              /(<img\b[^>]*\bsrc=")\.\/([^"]+)"/gi,
+              (_m, prefix, rel) => `${prefix}/api/images/${encodeURI(folder)}/${encodeURI(rel)}"`
+            );
+          }
+          out = out
+            .replace(/\sstyle="zoom:\s*([\d.]+%?)\s*;?\s*"/gi, ' width="$1"')
+            .replace(/\sstyle="[^"]*"/gi, '');
+          out = out.replace(TAG_START, SENTINEL + '$1');
+          out = out.replace(/</g, '&lt;');
+          out = out.replace(new RegExp(SENTINEL, 'g'), '<');
+          return out;
+        })
+        .join('');
+    })
+    .join('');
 }
 
-/** 旧入口兼容；新代码应使用 renderMarkdown。 */
-export async function compileMDXContent(source: string, sourceFile = 'unknown.md') {
-  return renderMarkdown({ source, sourceFile });
+async function compileMDXInternal(source: string, postPath?: string) {
+  const components = createMDXComponents(postPath);
+  const sanitizedSource = preprocessMarkdown(source, postPath);
+
+  return await compileMDX<PostFrontmatter>({
+    source: sanitizedSource,
+    components,
+    options: {
+      parseFrontmatter: true,
+      mdxOptions: {
+        remarkPlugins: [
+          // 关掉 GFM 的 singleTilde,把单 ~ 留给我们的 sub 语法;~~strike~~ 仍然有效
+          [remarkGfm, { singleTilde: false }],
+          remarkMath,
+          remarkEmoji,
+          remarkMermaid,
+          remarkCallout,
+          remarkTocPlaceholder,
+          remarkTyporaInline,
+        ],
+        rehypePlugins: [
+          rehypeKatex,
+          rehypeSlug,
+          [rehypePrettyCode, rehypePrettyCodeOptions],
+          [
+            rehypeAutolinkHeadings,
+            {
+              behavior: 'wrap',
+              properties: {
+                className: ['anchor'],
+              },
+            },
+          ],
+        ],
+      },
+    },
+  });
+}
+
+// Export the compilation function directly
+// Note: React elements cannot be cached with unstable_cache
+export async function compileMDXContent(source: string, postPath?: string) {
+  return await compileMDXInternal(source, postPath);
 }

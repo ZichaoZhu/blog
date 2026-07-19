@@ -12,8 +12,6 @@
 
 # testing
 /coverage
-/playwright-report/
-/test-results/
 
 # next.js
 /.next/
@@ -21,10 +19,6 @@
 
 # production
 /build
-/public/_content/
-/public/_search/
-/public/.content-assets-*
-/.generated/
 
 # misc
 .DS_Store
@@ -45,3 +39,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
