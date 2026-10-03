@@ -1,7 +1,11 @@
 ---
-import MainGridLayout from './MainGridLayout.astro';
-interface Props {title:string;description?:string}
-const {title,description}=Astro.props;
+import MainGridLayout from "./MainGridLayout.astro";
+
+interface Props {
+	title: string;
+	description?: string;
+}
+const { title, description } = Astro.props;
 ---
 <MainGridLayout title={title} description={description} hideHeading={true}>
  <section class="knowledge-shell"><header class="card-base p-6"><h1>{title}</h1>{description && <p>{description}</p>}</header><slot /></section>

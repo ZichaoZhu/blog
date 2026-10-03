@@ -1,10 +1,10 @@
 # Astro 迁移计划
 
-日期：2026-10-03。状态：**迁移计划已按最新偏好修订；独立分支与 worktree 已建立，尚未开始 Astro 代码迁移**。
+日期：2026-10-03。状态：**已在独立分支实施并完成本地内容、搜索、媒体和规模验证；未正式发布**。
 
 依据：当前工作区、[AUDIT.md](AUDIT.md)、[REDESIGN.md](REDESIGN.md)、用户提供的教程和 [CuteLeaf/Firefly](https://github.com/CuteLeaf/Firefly)，以及 Astro、Pagefind 的维护者文档。根据最新模板参考，将原先的 AstroPaper 首选改为 **Firefly 原型路线**。本文在框架与实现路径上替代 REDESIGN.md 中“继续使用 Next.js”的建议；原有内容优先、稳定地址、课程顺序和主题分类原则继续适用。
 
-最新决定：**采用 Firefly 模板风格，开启视频、音乐和装饰效果，在 feat/astro-firefly 分支迁移。** 这取代上一版方案以及 REDESIGN.md 中禁用视频、渐变、毛玻璃和动画的视觉约束。内容完整、导航清楚、正文可读的要求继续作为验收标准。本轮只制定计划和建立分支，不初始化模板、不安装依赖、不修改网站源码。
+最新决定：**采用 Firefly 模板风格，开启视频、音乐和装饰效果，在 feat/astro-firefly 分支迁移。** 这取代上一版方案以及 REDESIGN.md 中禁用视频、渐变、毛玻璃和动画的视觉约束。内容完整、导航清楚、正文可读的要求继续作为验收标准。用户已批准 Native 执行。实现位于独立 worktree，交付状态与实测证据见 [ACCEPTANCE](docs/migration/ACCEPTANCE.md)。
 
 ## 1. 建议采用什么
 
@@ -16,7 +16,7 @@ Astro 可以简化内容渲染和部署；它不会自动解决分类不清、�
 
 Firefly 提供可配置侧栏、文章列表、中文 UI、深浅色和 Pagefind 等基础能力，适合用作这次界面原型。课程顺序、研究分类、unlisted 状态和当前 URL 仍需适配，不能宣称复制文章后全部自动具备。[Firefly README](https://github.com/CuteLeaf/Firefly/blob/master/README.md)
 
-当前评估阅读了 README、依赖、Astro 配置、内容 schema、内容/URL 工具及相关功能配置和 Mermaid 插件。尚未安装、运行生产构建或完成视觉验收，源码中存在功能不等于本站内容兼容已经通过。
+当前评估阅读了 README、依赖、Astro 配置、内容 schema、内容/URL 工具及相关功能配置和 Mermaid 插件。现已安装锁定依赖、运行静态构建及浏览器验收；53 份正文与 578 张原始图片核对完成。
 
 选择框架的目标是减少需要长期维护的代码，并以真实文章验证阅读体验。性能改善需要在原型中测量，不采用教程中通用的提速比例或 Lighthouse 分数作为本站承诺。
 

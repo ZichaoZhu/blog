@@ -2,24 +2,47 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { getCategoryUrl } from "@utils/url-utils";
-
-import {isPublicNote, getRoutableNotes, assertCatalog, compareNoteDates, type NoteRecord, getCourseNeighbors} from "./note-model";
-import {courses,topics} from "../data/catalog";
-export function asNoteRecord(post:CollectionEntry<"posts">):NoteRecord {return {entryId:post.id,data:post.data,hasBody:!!post.body?.trim()};}
-async function getRawSortedPosts():Promise<CollectionEntry<"posts">[]> {
- const all=await getCollection("posts");
- assertCatalog(all.map(asNoteRecord),{courses,topics});
- return all.filter(p=>isPublicNote(asNoteRecord(p))).sort((a,b)=>Number(b.data.pinned)-Number(a.data.pinned)||compareNoteDates(asNoteRecord(a),asNoteRecord(b)));
+import { courses, topics } from "../data/catalog";
+import {
+	assertCatalog,
+	compareNoteDates,
+	getCourseNeighbors,
+	getRoutableNotes,
+	isPublicNote,
+	type NoteRecord,
+} from "./note-model";
+export function asNoteRecord(post: CollectionEntry<"posts">): NoteRecord {
+	return { entryId: post.id, data: post.data, hasBody: !!post.body?.trim() };
 }
-export async function getRoutablePosts():Promise<CollectionEntry<"posts">[]> {
- const all=await getCollection("posts");const ids=new Set(getRoutableNotes(all.map(asNoteRecord)).map(n=>n.entryId));
- return all.filter(p=>ids.has(p.id));
+async function getRawSortedPosts(): Promise<CollectionEntry<"posts">[]> {
+	const all = await getCollection("posts");
+	assertCatalog(all.map(asNoteRecord), { courses, topics });
+	return all
+		.filter((p) => isPublicNote(asNoteRecord(p)))
+		.sort(
+			(a, b) =>
+				Number(b.data.pinned) - Number(a.data.pinned) ||
+				compareNoteDates(asNoteRecord(a), asNoteRecord(b)),
+		);
+}
+export async function getRoutablePosts(): Promise<CollectionEntry<"posts">[]> {
+	const all = await getCollection("posts");
+	const ids = new Set(
+		getRoutableNotes(all.map(asNoteRecord)).map((n) => n.entryId),
+	);
+	return all.filter((p) => ids.has(p.id));
 }
 export async function getSortedPosts(): Promise<CollectionEntry<"posts">[]> {
 	const sorted = await getRawSortedPosts();
 
- const records=sorted.map(asNoteRecord);
- for(const post of sorted){const {previous,next}=getCourseNeighbors(records,post.data.slug);post.data.prevSlug=previous?.slug??'';post.data.prevTitle=previous?.title??'';post.data.nextSlug=next?.slug??'';post.data.nextTitle=next?.title??'';}
+	const records = sorted.map(asNoteRecord);
+	for (const post of sorted) {
+		const { previous, next } = getCourseNeighbors(records, post.data.slug);
+		post.data.prevSlug = previous?.slug ?? "";
+		post.data.prevTitle = previous?.title ?? "";
+		post.data.nextSlug = next?.slug ?? "";
+		post.data.nextTitle = next?.title ?? "";
+	}
 
 	return sorted;
 }
@@ -63,7 +86,8 @@ export async function getSortedProjects(): Promise<
 		}
 
 		return (
-			(b.data.published?.getTime() ?? -Infinity) - (a.data.published?.getTime() ?? -Infinity) ||
+			(b.data.published?.getTime() ?? Number.NEGATIVE_INFINITY) -
+				(a.data.published?.getTime() ?? Number.NEGATIVE_INFINITY) ||
 			a.data.title.localeCompare(b.data.title)
 		);
 	});
@@ -85,7 +109,8 @@ function sortBySeriesOrder(a: PostForList, b: PostForList): number {
 	}
 	// tiebreaker: 相同序号或都未设置时，按发布日期降序、标题兜底
 	return (
-		(b.data.published?.getTime() ?? -Infinity) - (a.data.published?.getTime() ?? -Infinity) ||
+		(b.data.published?.getTime() ?? Number.NEGATIVE_INFINITY) -
+			(a.data.published?.getTime() ?? Number.NEGATIVE_INFINITY) ||
 		a.data.title.localeCompare(b.data.title)
 	);
 }
@@ -268,7 +293,8 @@ export async function getRelatedPosts(
 
 		// timeFreshnessScore (0-30): 6 个月半衰期
 		const daysSincePublished =
-			(now - (post.data.published?.getTime() ?? -Infinity)) / (1000 * 60 * 60 * 24);
+			(now - (post.data.published?.getTime() ?? Number.NEGATIVE_INFINITY)) /
+			(1000 * 60 * 60 * 24);
 		const timeFreshnessScore =
 			30 * Math.exp((-Math.LN2 * daysSincePublished) / 180);
 

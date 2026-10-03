@@ -1,8 +1,8 @@
-import { noteDataSchema, type PostData } from "./content/schema";
 import { defineCollection } from "astro:content";
 import type { CollectionConfig } from "astro/content/config";
 import { glob } from "astro/loaders";
 import { type ZodType, z } from "astro/zod";
+import { noteDataSchema, type PostData } from "./content/schema";
 
 type DynamicData = {
 	published: Date;

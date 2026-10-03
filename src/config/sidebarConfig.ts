@@ -1,2 +1,22 @@
-import type {SidebarLayoutConfig} from '../types/sidebarConfig';
-export const sidebarLayoutConfig:SidebarLayoutConfig={enable:true,position:'both',tabletSidebar:'left',hideSidebarOnPostPage:false,noSidebarContentWidth:1,leftComponents:[{type:'profile',enable:true,position:'top',showOnPostPage:true},{type:'music',enable:true,position:'top',showOnPostPage:true}],rightComponents:[{type:'sidebarToc',enable:true,position:'sticky',showOnPostPage:true,hideOnNonPostPage:true}],mobileBottomComponents:[]};
+import type { SidebarLayoutConfig } from "../types/sidebarConfig";
+export const sidebarLayoutConfig: SidebarLayoutConfig = {
+	enable: true,
+	position: "both",
+	tabletSidebar: "left",
+	hideSidebarOnPostPage: false,
+	noSidebarContentWidth: 1,
+	leftComponents: [
+		{ type: "profile", enable: true, position: "top", showOnPostPage: true },
+		{ type: "music", enable: true, position: "top", showOnPostPage: true },
+	],
+	rightComponents: [
+		{
+			type: "sidebarToc",
+			enable: true,
+			position: "sticky",
+			showOnPostPage: true,
+			hideOnNonPostPage: true,
+		},
+	],
+	mobileBottomComponents: [],
+};

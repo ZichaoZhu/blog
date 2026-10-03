@@ -1,25 +1,67 @@
 ---
-import {render} from 'astro:content';
-import MainGridLayout from '../../layouts/MainGridLayout.astro';
-import Markdown from '../../components/common/Markdown.astro';
-import KatexManager from '../../components/features/KatexManager.astro';
-import {getRoutablePosts,getSortedPosts,asNoteRecord} from '../../utils/content-utils';
-import {getCourseNeighbors,orderCourseNotes,toSummary} from '../../utils/note-model';
-import {courses,topics} from '../../data/catalog';
-import {siteConfig} from '../../config';
-import {siteContext} from '../../config/siteContext';
-export async function getStaticPaths(){return (await getRoutablePosts()).map(entry=>({params:{slug:entry.data.slug},props:{entry}}));}
-const {entry}=Astro.props;
-const {Content,headings,remarkPluginFrontmatter}=await render(entry);
-const records=(await getSortedPosts()).map(asNoteRecord);
-const neighbors=getCourseNeighbors(records,entry.data.slug);
-const course=entry.data.course?courses.find(c=>c.id===entry.data.course?.id):undefined;
-const courseContext=course?{courseId:course.id,currentSlug:entry.data.slug,notes:orderCourseNotes(records,course.id).map(toSummary)}:undefined;
-const paper=entry.data.paper;
-const sources=paper?[['论文',paper.paperUrl],['arXiv',paper.arxivUrl],['DOI',paper.doiUrl],['代码',paper.codeUrl]].filter((s):s is [string,string]=>!!s[1]):[];
-const published=entry.data.visibility==='published';
-const canonical=new URL(`/notes/${entry.data.slug}/`,siteConfig.site_url).href;
-const schema={'@context':'https://schema.org','@type':'BlogPosting',headline:entry.data.title,description:entry.data.description,url:canonical,author:{'@type':'Person',name:entry.data.author,url:new URL('/about/',siteConfig.site_url).href},...(entry.data.date?{datePublished:entry.data.date}:{}),...(entry.data.updatedAt?{dateModified:entry.data.updatedAt}:{})};
+import { render } from "astro:content";
+import Markdown from "../../components/common/Markdown.astro";
+import KatexManager from "../../components/features/KatexManager.astro";
+import { siteConfig } from "../../config";
+import { siteContext } from "../../config/siteContext";
+import { courses, topics } from "../../data/catalog";
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import {
+	asNoteRecord,
+	getRoutablePosts,
+	getSortedPosts,
+} from "../../utils/content-utils";
+import {
+	getCourseNeighbors,
+	orderCourseNotes,
+	toSummary,
+} from "../../utils/note-model";
+export async function getStaticPaths() {
+	return (await getRoutablePosts()).map((entry) => ({
+		params: { slug: entry.data.slug },
+		props: { entry },
+	}));
+}
+const { entry } = Astro.props;
+const { Content, headings, remarkPluginFrontmatter } = await render(entry);
+const records = (await getSortedPosts()).map(asNoteRecord);
+const neighbors = getCourseNeighbors(records, entry.data.slug);
+const course = entry.data.course
+	? courses.find((c) => c.id === entry.data.course?.id)
+	: undefined;
+const courseContext = course
+	? {
+			courseId: course.id,
+			currentSlug: entry.data.slug,
+			notes: orderCourseNotes(records, course.id).map(toSummary),
+		}
+	: undefined;
+const paper = entry.data.paper;
+const sources = paper
+	? [
+			["论文", paper.paperUrl],
+			["arXiv", paper.arxivUrl],
+			["DOI", paper.doiUrl],
+			["代码", paper.codeUrl],
+		].filter((s): s is [string, string] => !!s[1])
+	: [];
+const published = entry.data.visibility === "published";
+const canonical = new URL(`/notes/${entry.data.slug}/`, siteConfig.site_url)
+	.href;
+const schema = {
+	"@context": "https://schema.org",
+	"@type": "BlogPosting",
+	headline: entry.data.title,
+	description: entry.data.description,
+	url: canonical,
+	author: {
+		"@type": "Person",
+		name: entry.data.author,
+		url: new URL("/about/", siteConfig.site_url).href,
+	},
+	...(entry.data.date ? { datePublished: entry.data.date } : {}),
+	...(entry.data.updatedAt ? { dateModified: entry.data.updatedAt } : {}),
+};
 ---
 <MainGridLayout hideHeading={true} title={entry.data.title} description={entry.data.description} postSlug={entry.data.slug} headings={headings} courseContext={courseContext} setOGTypeArticle={true}>
  <Fragment slot="head">

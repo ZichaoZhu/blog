@@ -1,6 +1,4 @@
 ---
-import {siteContext} from "../config/siteContext";
-import LegacyQueryCompat from "../components/common/LegacyQueryCompat.astro";
 import GoogleAnalytics from "@components/analytics/GoogleAnalytics.astro";
 import La51Analytics from "@components/analytics/La51Analytics.astro";
 import MicrosoftClarity from "@components/analytics/MicrosoftClarity.astro";
@@ -14,7 +12,6 @@ import MusicPlayerView from "@components/features/MusicPlayerView.astro";
 import SakuraEffect from "@components/features/SakuraEffect.astro";
 import WavesEffect from "@components/features/WavesEffect.astro";
 import ConfigCarrier from "@components/layout/ConfigCarrier.astro";
-
 import {
 	analyticsConfig,
 	backgroundWallpaper,
@@ -38,7 +35,9 @@ import { isHomePage } from "@/utils/layout-utils";
 import { getAuthorAvatarUrl, getSiteLogo } from "@/utils/schema-image";
 import { buildSiteGraph, toAbsoluteUrl } from "@/utils/schema-utils";
 import { getOgLocale } from "@/utils/site-config-utils";
-import {  url } from "@/utils/url-utils";
+import { url } from "@/utils/url-utils";
+import LegacyQueryCompat from "../components/common/LegacyQueryCompat.astro";
+import { siteContext } from "../config/siteContext";
 
 import "@/styles/main.css";
 import "@/styles/immersive-reading.css";
@@ -131,7 +130,7 @@ const aboutUrl =
 const siteLogo = await getSiteLogo();
 
 // canonical：对 /archive/ 与 /search/ 剥离查询串，避免筛选视图自我 canonical 到 ?tag= 等
-const canonicalUrl = new URL(Astro.url.pathname,siteContext.origin).href;
+const canonicalUrl = new URL(Astro.url.pathname, siteContext.origin).href;
 
 // OG 图片：文章走生成图/封面，非文章页回退到站点 logo
 let ogImageUrl: string | undefined;

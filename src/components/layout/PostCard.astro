@@ -95,7 +95,9 @@ const bottomTags = metaTagCount > 0 ? tagList.slice(0, metaTagCount) : tagList;
 const hiddenTags = tagList.slice(bottomTags.length);
 const hiddenTagCount = hiddenTags.length;
 
-const remarkPluginFrontmatter = entry ? (await render(entry)).remarkPluginFrontmatter : null;
+const remarkPluginFrontmatter = entry
+	? (await render(entry)).remarkPluginFrontmatter
+	: null;
 const descriptionText = description || remarkPluginFrontmatter?.excerpt || "";
 const words = remarkPluginFrontmatter?.words;
 const minutes = remarkPluginFrontmatter?.minutes;

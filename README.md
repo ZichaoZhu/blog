@@ -1,230 +1,86 @@
-# 个人博客
+# ZZC Research Notes
 
-基于 **Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 + MDX** 的个人博客，对 **Typora 笔记完全友好**。
+个人科研知识主页，采用 Astro 静态构建、Markdown Content Collections、Svelte 交互和 Pagefind 搜索。基于真实 [Firefly](https://github.com/CuteLeaf/Firefly/tree/6d82554bfe1cb3d4b43adb0969dad1d43ac6dee3) 模板 6.16.8，锁定提交 `6d82554bfe1cb3d4b43adb0969dad1d43ac6dee3`；保留上游 MIT 许可与致谢。
 
-## 功能一览
+迁移在 `feat/astro-firefly` 分支实施，原 Next 工作区保留。内容与验收证据见 [ACCEPTANCE](docs/migration/ACCEPTANCE.md)，恢复步骤见 [ROLLBACK](docs/migration/ROLLBACK.md)。本地预览已完成，生产域名、托管平台与个人媒体尚待确定。
 
-- **首页 Hero**：渐变背景、视差滚动、打字动画、Canvas 粒子层
-- **博客列表**：文件树导航 + 分类/标签/文件夹筛选 + 列表/卡片视图切换
-- **文章页**：嵌套目录、右侧 TOC（与渲染的 heading id 对齐）、面包屑、阅读进度条、返回顶部
-- **MDX 渲染**：代码高亮（`rehype-pretty-code`，双主题 Shiki）、数学公式（KaTeX）、GFM
-- **Typora 扩展语法**：`==高亮==` / `H~2~O` 下标 / `mc^2^` 上标 / `:smile:` emoji / `[toc]` 文章内目录 / ` ```mermaid ` 流程图 / Typora `<img style="zoom:N%">`
-- **LaTeX 论文风阅读主题**：右下角一键切换，自动编号标题、Times serif、A4 纸张感，跟随明暗模式
-- **暗色模式**（`next-themes`，系统主题检测）
-- **多作者**（JSON 配置 + 作者页）
-- **全站点击涟漪动画**
+## 运行与检查
 
-## 运行
+使用 Node **22.23.0** 和 pnpm **11.22.0**。只有 `pnpm-lock.yaml`；首次 checkout 需要 Git LFS 取得真实图片，CI 设置了 `lfs: true`。
 
 ```bash
-npm install
-npm run dev      # http://localhost:3000
-npm run build    # 生产构建
-npm run lint
+pnpm install --frozen-lockfile
+pnpm dev                       # 开发预览，不含生产 Pagefind 索引
+pnpm test
+pnpm lint:check                 # 只读；主动格式化使用 pnpm format
+pnpm check
+pnpm type-check
+pnpm build                     # 默认 preview，全站 noindex
+pnpm verify:site                # 原文/图片 hash、渲染与本地链接检查
+pnpm exec playwright install chromium
+pnpm test:e2e
+pnpm preview --host 127.0.0.1 --port 4321
 ```
 
-## 目录结构
+Astro 7 的 preview 会启动后台服务；可用 `pnpm preview stop` 停止。搜索验收必须使用 build 后的 preview。CI 验证相同步骤，**不会自动发布**。
 
-```
-app/
-  page.tsx                      # 首页
-  about/page.tsx                # 关于
-  blog/page.tsx                 # 博客列表
-  blog/[...slug]/page.tsx       # 文章页（支持嵌套路径）
-  authors/[id]/page.tsx         # 作者页
-  api/images/[...path]/route.ts # 文章内相对路径图片代理
-  globals.css                   # 站点全局样式
-  latex-theme.css               # LaTeX 论文风阅读主题（scoped 在 .theme-latex 下）
-components/
-  Hero/                         # 首页 Hero（动画、粒子、打字）
-  layouts/                      # ListLayout / CardLayout
-  ui/                           # shadcn/ui（dialog、button、input）
-  ClickEffect.tsx               # 全站点击动画
-  ReadingTheme.tsx              # 阅读主题 Provider + ArticleBody + 切换按钮
-  ArticleTOC.tsx                # [toc] 渲染出的客户端目录组件
-  Mermaid.tsx                   # mermaid 代码块的客户端渲染（懒加载）
-  MDXComponents.tsx             # MDX 元素映射 + 图片路径解析
-  FileTreeView.tsx              # 侧边文件树
-  TableOfContents.tsx           # 文章右侧 TOC
-  Breadcrumb.tsx, MobileTOC.tsx, BackToTop.tsx, ReadingProgress.tsx
-  Navigation.tsx, SearchDialog.tsx, ThemeToggle.tsx, ViewSwitcher.tsx
-lib/
-  posts.ts                      # 扫描 content/posts，构建文件树、加载文章
-  authors.ts                    # 读取作者 JSON
-  mdx.ts                        # MDX 编译管线 + Typora 兼容预处理 + 自定义 remark 插件
-  toc.ts                        # 从 markdown 提取目录
-  utils.ts                      # cn() 工具
-content/
-  posts/                        # 文章源（Markdown，支持嵌套文件夹）
-  authors/                      # 作者 JSON
-scripts/
-  sync-md-to-mdx.ts             # 将散装 .md 同步成文件夹形式
-  watch-md.ts                   # 监听 content/posts/**/*.md 自动 sync
-types/index.ts                  # Post / Folder / FileTree 等类型
-```
+## 写作
 
-## 写文章
-
-### 目录约定
-
-`content/posts/` 下的每个子文件夹都是一个「文章文件夹」，可嵌套。两种放文章的方式：
-
-**方式 A：文件夹下直接放 `.md`**
-
-```
-content/posts/
-└── Compiler_Principle/         # 一个文件夹 = 一个系列
-    ├── .folder.json            # 文件夹元数据（显示名、图标、排序等）
-    ├── index.md                # 系列首页 → 路由 /blog/Compiler_Principle
-    ├── Lec1.md                 # → /blog/Compiler_Principle/Lec1
-    ├── Lec2.md                 # → /blog/Compiler_Principle/Lec2
-    └── assets/                 # 同目录图片
-        └── image-xxx.png
-```
-
-**方式 B：每篇文章独立文件夹**
-
-```
-content/posts/
-└── hello-world/
-    └── index.md                # → /blog/hello-world
-```
-
-两种方式可以混用。`index.md` 的路由等于它所在的文件夹路径。
-
-> 文件夹/文件名建议用下划线或连字符（`Operating_System` / `compiler-principle`），别用空格 —— URL 里要 encode，分享/复制粘贴容易断。
-
-### Frontmatter
-
-所有字段都是可选的 —— 缺失字段会在加载时填默认值（参见 [lib/posts.ts](lib/posts.ts) 的 `loadPost`），所以 Typora 笔记直接复制过来也能跑。
-
-```markdown
----
-title: "文章标题"              # 缺省时用文件名
-date: "2026-03-06"            # 缺省时用文件 mtime
-description: "一句话摘要"
-tags: ["标签1", "标签2"]
-category: "分类"               # 缺省时为「未分类」
-author: "zhuzichao"           # 对应 content/authors/zhuzichao.json
-coverImage: "/images/xxx.jpg" # 可选
-draft: false                  # true 时跳过
----
-
-## 正文从 h2 开始
-
-支持 GFM、KaTeX 公式、`==高亮==`、代码块、相对路径图片。
-```
-
-### 文件夹元数据 `.folder.json`
-
-```json
-{
-  "displayName": "编译原理",
-  "icon": "📚",
-  "order": 1,
-  "collapsed": false
-}
-```
-
-### Typora 扩展语法
-
-[lib/mdx.ts](lib/mdx.ts) 里的预处理 + 自定义 remark 插件让 Typora 笔记可以**原样**扔进来：
-
-| 写法 | 渲染结果 | 说明 |
-|---|---|---|
-| `==高亮==` | <mark>高亮</mark> | 行内 `<mark>` |
-| `H~2~O` | H<sub>2</sub>O | 下标。⚠️ 同时关掉了 `remark-gfm` 的 `singleTilde` |
-| `mc^2^` | mc<sup>2</sup> | 上标 |
-| `:smile: :rocket:` | 😄 🚀 | `remark-emoji` |
-| `[toc]`（独占一行）| 文章内嵌目录 | [ArticleTOC.tsx](components/ArticleTOC.tsx) 客户端扫描已渲染的 h2~h4 生成 |
-| ` ```mermaid ` 代码块 | 流程图 | [Mermaid.tsx](components/Mermaid.tsx) 客户端懒加载 mermaid（~700KB），跟随明暗主题 |
-| `<img style="zoom:50%">` | 等价 `width="50%"` | 字符串 `style` 在 React JSX 里会报错，预处理时自动改写 |
-| `<segment, offset>`、`a < b`、`count <>0` | 自动转义为 `&lt;` | MDX 默认会把这些误当 JSX 标签开头炸掉 |
-| `~~delete~~` | <del>delete</del> | GFM 标准 |
-| `$x$` / `$$x$$` | LaTeX 公式 | KaTeX |
-| `- [x]` 任务列表、表格、脚注 | GFM 标准 | 全部支持 |
-
-如果遇到没覆盖的 Typora corner case，规则就在 [lib/mdx.ts](lib/mdx.ts) 的 `preprocessMarkdown` 和 `remarkTyporaInline` / `remarkMermaid` / `remarkTocPlaceholder` 几个函数里，加一行就行。
-
-### 图片
-
-文章里的相对路径图片（`./assets/xxx.png`）由 [components/MDXComponents.tsx](components/MDXComponents.tsx) 改写成 `/api/images/<文件夹>/assets/xxx.png`，再由 [app/api/images/\[...path\]/route.ts](app/api/images/[...path]/route.ts) 从 `content/posts/` 下读出来返回。**图片跟 Markdown 放一起就行，不需要塞进 `public/`。**
-
-### Markdown 同步脚本（可选）
-
-如果你习惯先在 Typora 里写散装 `.md`，`scripts/sync-md-to-mdx.ts` 会把 `Foo.md` 挪成 `Foo/index.md` 形式。
+正文保存在 `src/content/posts/`，可以继续使用 Typora 和嵌套文件夹。文件夹影响编辑组织；地址由 frontmatter 的显式 `slug` 决定，改标题或移动文件不会改 URL。
 
 ```bash
-npm run sync:md          # 全量同步
-npm run sync:md Foo.md   # 单文件同步
-npm run watch:md         # 监听自动同步
+pnpm new-post "进程调度" --slug process-scheduling --type course --course operating-systems --order 14 --topics operating-systems
+pnpm new-post "论文阅读" --slug paper-reading-name --type paper --topics 3d-vision
+pnpm new-post "实验日志" --slug experiment-log-name --type log --topics robotics
 ```
 
-> 当前的 `lib/posts.ts` 已经能直接加载文件夹里的散装 `.md`（作为兄弟文件，见方式 A），所以这个脚本对大多数场景可有可无。
+默认生成 draft，不会公开。`--visibility published` 公开，`unlisted` 可凭地址访问但不进入公开列表、搜索、订阅和 sitemap；它不是访问控制，勿用于秘密内容。`--id` 可另设稳定标识，省略时等于 slug。重复 ID/slug、未知分类和重复课程讲次会报错。
 
-## 阅读主题
-
-文章页右下角有两个浮动按钮：
-
-- **回到顶部**（默认主题样式）
-- **📰 切换 LaTeX 论文风** ↔ **📄 切换默认主题**
-
-LaTeX 主题改编自 Typora 经典的 [LaTeX 主题](https://github.com/lyj0309/latex-typora)，重写为博客可用的 scoped CSS（[app/latex-theme.css](app/latex-theme.css)），保留：
-
-- Times serif + 中文宋体的字体栈
-- 标题自动编号（`1`、`1.1`、`1.1.1`...）
-- booktabs 三线表
-- 自定义无序/有序列表标记（`–` `◦` / `(a)` `i.`）
-- A4 纸宽 + 阴影 + 居中
-
-切换是局部的（`<ArticleBody>` 在默认 prose 和 `.theme-latex` 之间换 className），不会影响导航栏、TOC、首页 Hero 等任何站点其他部分。选择存在 `localStorage['reading-theme']`。暗色模式 + LaTeX 主题正交可叠加。
-
-## 作者
-
-`content/authors/<id>.json`：
-
-```json
-{
-  "name": "朱子超",
-  "bio": "一句话简介",
-  "avatar": "/avatars/me.jpg",
-  "social": {
-    "github": "username",
-    "twitter": "username",
-    "website": "https://example.com"
-  }
-}
+```yaml
+---
+id: process-scheduling
+slug: process-scheduling
+title: 进程调度
+description: 调度策略与权衡
+type: course
+topics: [operating-systems]
+visibility: draft
+course: { id: operating-systems, order: 14 }
+# date: 2026-10-03       # 只填真实日期；未知时省略
+# updatedAt: 2026-10-04  # 不使用文件 mtime 代替真实日期
+---
 ```
 
-文章的 `author` 字段填文件名里的 `<id>` 即可，自动关联。
+类型为 `course / paper / log / idea / experiment / note`；课程和主题在 [catalog.ts](src/data/catalog.ts) 维护。课程讲次允许 0，按数字排序，只连接同课程上下篇。合集简介使用 `contentKind: collection`，不冒充文章。空正文不计入公开笔记。未知日期保持未知，RSS/Atom 只收录有真实日期的公开文章。
 
-## 自定义
+论文可添加 `paper: { title, authors, year, venue, paperUrl, arxivUrl, doiUrl, codeUrl }`；只填已核实信息。研究日志、想法和实验使用各自类型；项目尚无公开条目，保留真实空状态。
 
-| 想改的东西 | 去哪改 |
-|---|---|
-| 主题色、暗色变量 | [app/globals.css](app/globals.css) 里的 CSS 变量 |
-| LaTeX 主题字体/字号/纸张 | [app/latex-theme.css](app/latex-theme.css) 顶部 `--latex-*` 变量 |
-| 导航栏标题/菜单 | [components/Navigation.tsx](components/Navigation.tsx) |
-| 首页文案、打字动画 | [components/Hero/AnimatedHero.tsx](components/Hero/AnimatedHero.tsx) |
-| 点击动画颜色/粒子数 | [components/ClickEffect.tsx](components/ClickEffect.tsx) |
-| 站点元数据 | [app/layout.tsx](app/layout.tsx) 的 `metadata` |
-| MDX 渲染映射、Typora 语法 | [components/MDXComponents.tsx](components/MDXComponents.tsx)、[lib/mdx.ts](lib/mdx.ts) |
+## 图片、渲染与搜索
 
-## 部署
+图片继续和 Markdown 放在一起，例如 `![示意](./assets/图 + 1.png)`。构建时安全解析原路径并生成响应式图片；保留原始字节和原图查看链接，支持中文、空格、加号与百分号路径，拒绝越界。Typora 高亮/上下标、zoom 图片、数学公式、代码和 Mermaid 通过构建时插件兼容；原文不做批量改写。
 
-任何支持 Next.js 的平台都行。注意：
+旧 `/blog/...`、筛选查询、标题锚点和 `/api/images/...` 在静态预览提供兼容访问。旧地址映射见 [legacy-routes.json](src/data/legacy-routes.json) 和 [LINK_REPORT](docs/migration/LINK_REPORT.md)。正式 HTTP 301/308 规则需选定托管平台后生成和验证；静态兼容页不是 HTTP 重定向。
 
-- `/api/images/[...path]` 是动态路由，**不能静态导出**（`output: 'export'`）。如果要走 GitHub Pages 纯静态方案，需要先把文章图片复制到 `public/` 并调整 `MDXComponents.tsx` 的路径改写逻辑。
-- Vercel 直接 import 仓库即可，无需额外配置。
+Pagefind 索引仅含公开且非空的文章正文。`/search/` 支持关键词、类型、主题和课程筛选，以及返回/刷新状态。分页每页 25 条，搜索每批 20 条。无 JS 时仍可阅读、按课程/主题和分页导航；全文搜索需要 JS。检索的实际多语言限制见验收报告。
 
-## 技术栈
+## 风格与媒体
 
-- Next.js 16 · React 19 · TypeScript 5
-- Tailwind CSS v4 · shadcn/ui (dialog/button/input) · `tw-animate-css`
-- MDX：`next-mdx-remote` + `remark-gfm` + `remark-math` + `remark-emoji` + `rehype-katex` + `rehype-slug` + `rehype-autolink-headings` + `rehype-pretty-code` (Shiki)
-- 图表：`mermaid`（懒加载，仅出现 ` ```mermaid ` 块的页面才下载）
-- 内容：`gray-matter` + `reading-time` + `github-slugger`
-- 动画：`framer-motion`
-- 图标：`lucide-react`
-- 主题：`next-themes`
-- 日期：`date-fns`
+`src/config/` 配置 Firefly 导航、侧栏、主题、首页背景视频、音乐、樱花和波浪。导航上的动效按钮保存用户选择；减少动态和省流量偏好默认阻止背景视频，后台标签暂停装饰。音乐需用户点击播放，单实例跨 Swup 切页保持状态，刷新后不自动播放。替换 `backgroundWallpaper.ts` 的演示视频与 `musicConfig.ts` 的模板音频后，应重新测量媒体传输体积。主页人物头像使用共享 WebP 小图，原 PNG 保留。
+
+## 构建与模板升级
+
+构建保留实际使用的头像优化、LQIP、Astro、未启用看板娘资源裁剪、内联脚本压缩与 Pagefind。当前无 GitHub 指令卡片、VNDB 页面或自定义字体子集，默认流程省略其任务；启用后分别运行 `pnpm github-cards`、`node --import tsx scripts/generate-vndb-covers.ts`、`node --import tsx scripts/subset-fonts.ts`，再将必要步骤加回 build。OG 图片生成关闭。
+
+升级 Firefly 时另建分支对比锁定上游，重点核对内容 schema/公开判定、课程导航、搜索摘要与筛选、Markdown 插件顺序、SEO/旧链接和 Swup 媒体生命周期。保留本站适配，而不复制新示例内容或全量覆盖 config。升级 Node/Astro/pnpm 时同时更新锁文件、CI 和验收记录，再运行全部检查及 500 篇临时压力构建：
+
+```bash
+node --import tsx scripts/benchmark-content.ts --count 500 --output-dir /tmp/firefly-scale-new
+```
+
+压力数据只写入新的临时目录，绝不进入真实内容目录。实测结果代表本机与当时语料，不能承诺部署后的 CDN 性能。
+
+## 发布准备
+
+默认产物为 `dist/` 静态预览，全站 noindex。确认生产域名后，以 `SITE_MODE=production SITE_ORIGIN=https://已确认域名 pnpm build` 在同一提交重建；缺少有效 HTTPS origin 时直接失败。检查 canonical/OG/sitemap/RSS/Atom/robots 的域名一致性，再按所选平台设置旧地址永久重定向、验证旧链接及媒体。
+
+发布前需保存当前线上 release/产物与规则、执行 [回滚步骤](docs/migration/ROLLBACK.md)。本次交付没有 push、merge、部署或 DNS 操作。

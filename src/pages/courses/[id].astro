@@ -1,15 +1,26 @@
 ---
-import {getCollection,render} from 'astro:content';
-import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
-import NoteList from '../../components/knowledge/NoteList.astro';
-import Markdown from '../../components/common/Markdown.astro';
-import {courses} from '../../data/catalog';
-import {getSortedPosts,asNoteRecord} from '../../utils/content-utils';
-import {orderCourseNotes,toSummary} from '../../utils/note-model';
-export function getStaticPaths(){return courses.map(course=>({params:{id:course.id},props:{course}}));}
-const {course}=Astro.props;
-const notes=orderCourseNotes((await getSortedPosts()).map(asNoteRecord),course.id).map(toSummary);
-const intro=(await getCollection('posts')).find(p=>p.data.contentKind==='collection'&&p.data.course?.id===course.id);
-const rendered=intro?.body?.trim()?await render(intro):null;const Content=rendered?.Content;
+import { getCollection, render } from "astro:content";
+import Markdown from "../../components/common/Markdown.astro";
+import NoteList from "../../components/knowledge/NoteList.astro";
+import { courses } from "../../data/catalog";
+import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
+import { asNoteRecord, getSortedPosts } from "../../utils/content-utils";
+import { orderCourseNotes, toSummary } from "../../utils/note-model";
+export function getStaticPaths() {
+	return courses.map((course) => ({
+		params: { id: course.id },
+		props: { course },
+	}));
+}
+const { course } = Astro.props;
+const notes = orderCourseNotes(
+	(await getSortedPosts()).map(asNoteRecord),
+	course.id,
+).map(toSummary);
+const intro = (await getCollection("posts")).find(
+	(p) => p.data.contentKind === "collection" && p.data.course?.id === course.id,
+);
+const rendered = intro?.body?.trim() ? await render(intro) : null;
+const Content = rendered?.Content;
 ---
 <KnowledgeLayout title={course.title} description={course.description}><a href="/courses/">← 全部课程</a>{Content && <div class="card-base p-6"><Markdown class=""><Content/></Markdown></div>}<h2>讲次目录</h2><NoteList notes={notes}/></KnowledgeLayout>

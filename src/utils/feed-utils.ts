@@ -8,8 +8,8 @@ import { i18n } from "@i18n/translation";
 import { url } from "@utils/url-utils";
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import sanitizeHtml from "sanitize-html";
-import {getFeedNotes} from "./note-model";
-import {asNoteRecord} from "./content-utils";
+import { asNoteRecord } from "./content-utils";
+import { getFeedNotes } from "./note-model";
 
 /**
  * 归一化后的 feed 条目，供 RSS 与 Atom 共用。
@@ -97,14 +97,17 @@ export async function renderFeedEntries(
 	opts: { includeContent?: boolean } = {},
 ): Promise<FeedEntry[]> {
 	const { includeContent = true } = opts;
-	const renderers = includeContent ? await loadRenderers([
-		getMDXRenderer(),
-		getSvelteRenderer(),
-	]) : [];
-	const container = includeContent ? await AstroContainer.create({ renderers }) : null;
+	const renderers = includeContent
+		? await loadRenderers([getMDXRenderer(), getSvelteRenderer()])
+		: [];
+	const container = includeContent
+		? await AstroContainer.create({ renderers })
+		: null;
 	const entries: FeedEntry[] = [];
-	const ids=new Set(getFeedNotes(posts.map(asNoteRecord)).map(n=>n.entryId));
-	for (const post of posts.filter(p=>ids.has(p.id))) {
+	const ids = new Set(
+		getFeedNotes(posts.map(asNoteRecord)).map((n) => n.entryId),
+	);
+	for (const post of posts.filter((p) => ids.has(p.id))) {
 		if (!post.data.published) continue;
 		const link = url(`/notes/${post.data.slug}/`);
 		const updated = post.data.updated ?? post.data.published;

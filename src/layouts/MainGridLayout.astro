@@ -26,7 +26,11 @@ import Layout from "./Layout.astro";
 import "@/styles/expressive-code.css";
 
 interface Props {
- courseContext?:{courseId:string;currentSlug:string;notes:import("@/utils/note-model").NoteSummary[]};
+	courseContext?: {
+		courseId: string;
+		currentSlug: string;
+		notes: import("@/utils/note-model").NoteSummary[];
+	};
 	title?: string;
 	description?: string;
 	lang?: string;
@@ -69,7 +73,7 @@ const {
 	bannerPostMeta,
 	heading,
 	hideHeading = false,
- courseContext,
+	courseContext,
 } = Astro.props;
 
 const isHomePageCheck = isHomePage(Astro.url.pathname);

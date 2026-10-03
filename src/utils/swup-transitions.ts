@@ -24,7 +24,7 @@ import { pathsEqual, url } from "@/utils/url-utils";
  * 会触发整棵布局树同步重排，正是切页卡顿来源之一。
  */
 function startProgressBar(): void {
- if(document.documentElement.dataset.fireflyEffects === "off")return;
+	if (document.documentElement.dataset.fireflyEffects === "off") return;
 	const bar = document.getElementById("progress-bar");
 	if (!bar) return;
 	bar.getAnimations().forEach((a) => {
@@ -214,7 +214,7 @@ function registerSwupHooks(): void {
 		}
 	});
 	window.swup.hooks.on("page:view", () => {
- window.dispatchEvent(new Event("firefly:page-view"));
+		window.dispatchEvent(new Event("firefly:page-view"));
 		// 更新网格列数和侧边栏组件可见性
 		updateMainGridCols();
 		updateSidebarComponentsVisibility();

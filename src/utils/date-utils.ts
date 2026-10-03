@@ -11,7 +11,10 @@ export function formatDateI18n(
 	includeTime?: boolean,
 ): string {
 	if (!dateInput) return "";
-	const calendarOnly = typeof dateInput === "string" ? /^\d{4}-\d{2}-\d{2}$/.test(dateInput) : dateInput.toISOString().endsWith("T00:00:00.000Z");
+	const calendarOnly =
+		typeof dateInput === "string"
+			? /^\d{4}-\d{2}-\d{2}$/.test(dateInput)
+			: dateInput.toISOString().endsWith("T00:00:00.000Z");
 	const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
 	const lang = siteConfig.lang || "en";
 

@@ -1,9 +1,14 @@
 ---
-import type {NoteSummary} from '../../utils/note-model';
-import {courses} from '../../data/catalog';
-interface Props {courseId:string;currentSlug:string;notes:NoteSummary[]}
-const {courseId,currentSlug,notes}=Astro.props;
-const course=courses.find(c=>c.id===courseId);
+import { courses } from "../../data/catalog";
+import type { NoteSummary } from "../../utils/note-model";
+
+interface Props {
+	courseId: string;
+	currentSlug: string;
+	notes: NoteSummary[];
+}
+const { courseId, currentSlug, notes } = Astro.props;
+const course = courses.find((c) => c.id === courseId);
 ---
 <nav aria-label="课程讲次" class="card-base p-4 course-nav" data-pagefind-ignore>
  <a href={`/courses/${courseId}/`} class="font-bold">{course?.title} · 返回课程</a>

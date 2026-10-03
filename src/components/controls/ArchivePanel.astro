@@ -12,7 +12,11 @@ const sortedPostsList = await getSortedPostsList();
 // 严格按发布时间倒序（不受置顶影响），镜像原 Svelte 版行为
 const posts = sortedPostsList
 	.slice()
-	.sort((a, b) => (b.data.published?.getTime() ?? -Infinity) - (a.data.published?.getTime() ?? -Infinity));
+	.sort(
+		(a, b) =>
+			(b.data.published?.getTime() ?? Number.NEGATIVE_INFINITY) -
+			(a.data.published?.getTime() ?? Number.NEGATIVE_INFINITY),
+	);
 
 // 按年份分组
 const grouped = new Map<number, typeof posts>();

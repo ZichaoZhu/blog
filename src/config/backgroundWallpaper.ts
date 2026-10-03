@@ -79,7 +79,20 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			linksEnable: true,
 			// 首页横幅标题下方的链接图标（可选，支持 showName 显示文字）
 			// 图标支持 Iconify 格式：fa7-brands:github、fa7-solid:envelope、mdi:rss 等
-			links: [{name:"GitHub",icon:"fa7-brands:github",url:"https://github.com/ZichaoZhu",showName:true},{name:"About",icon:"material-symbols:person",url:"/about/",showName:true}],
+			links: [
+				{
+					name: "GitHub",
+					icon: "fa7-brands:github",
+					url: "https://github.com/ZichaoZhu",
+					showName: true,
+				},
+				{
+					name: "About",
+					icon: "material-symbols:person",
+					url: "/about/",
+					showName: true,
+				},
+			],
 		},
 		// 壁纸轮播配置，横幅壁纸和全屏壁纸共享，仅在配置多张图片时生效
 		carousel: {

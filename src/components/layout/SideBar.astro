@@ -1,5 +1,4 @@
 ---
-import CourseNav from "../knowledge/CourseNav.astro";
 import type { MarkdownHeading } from "astro";
 import Advertisement from "@/components/widget/Advertisement.astro";
 import Announcement from "@/components/widget/Announcement.astro";
@@ -19,9 +18,14 @@ import type {
 } from "@/types/config";
 import { isWidgetVisibleOnPageType } from "@/utils/responsive-utils";
 import { isArticleDetailPage } from "@/utils/url-utils";
+import CourseNav from "../knowledge/CourseNav.astro";
 
 interface Props {
- courseContext?:{courseId:string;currentSlug:string;notes:import("@/utils/note-model").NoteSummary[]};
+	courseContext?: {
+		courseId: string;
+		currentSlug: string;
+		notes: import("@/utils/note-model").NoteSummary[];
+	};
 	class?: string;
 	headings?: MarkdownHeading[];
 	encrypted?: boolean;

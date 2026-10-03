@@ -1,17 +1,253 @@
-import {cp,symlink,readFile,writeFile,readdir,stat,realpath} from 'node:fs/promises';import {existsSync} from 'node:fs';import {resolve,relative,dirname,join,extname} from 'node:path';import {tmpdir} from 'node:os';import {spawnSync} from 'node:child_process';import {pathToFileURL} from 'node:url';import {getPublicNotes,type NoteRecord,type NoteType} from '../src/utils/note-model';import {bodyOf,type MigrationManifest} from './migration/convert';
-const targets:Record<NoteType,number>={course:200,paper:180,log:50,idea:30,experiment:20,note:20};
-export function generateScaleNotes(originals:NoteRecord[],count:number):NoteRecord[]{if(count!==500)throw new Error('This representative fixture is defined for 500 notes');const publicNotes=getPublicNotes(originals),out:NoteRecord[]=[];
- for(const type of Object.keys(targets) as NoteType[]){const matching=publicNotes.filter(n=>n.data.type===type),pool=matching.length?matching:publicNotes;for(let i=matching.length;i<targets[type];i++){const source=pool[i%pool.length],id=`scale-${type}-${i}`;out.push({entryId:source.entryId,hasBody:true,data:{...source.data,id,slug:id,type,title:`${source.data.title} · 样本 ${i}${i%4===0?'：长期科研知识主页中课程、论文、实验与研究日志的长标题检索和阅读验收':''}`,visibility:'published',contentKind:'note',date:i%4===0?undefined:source.data.date,course:type==='course'?{id:source.data.course!.id,order:100+i}:undefined}});}}
- return out;}
-async function sizes(root:string):Promise<Record<string,{files:number;bytes:number}>>{const result:Record<string,{files:number;bytes:number}>={};async function walk(dir:string){for(const e of await readdir(dir,{withFileTypes:true})){const p=join(dir,e.name);if(e.isDirectory())await walk(p);else{const key=relative(root,p).startsWith('pagefind/')?'index':/\.(mp3|mp4|ogg)$/.test(p)?'media':/\.(png|webp|avif|jpg|jpeg|svg)$/.test(p)?'images':extname(p).slice(1)||'other';result[key]??={files:0,bytes:0};result[key].files++;result[key].bytes+=(await stat(p)).size;}}}await walk(root);return result;}
-export async function benchmarkContent(outputDir:string):Promise<Record<string,unknown>>{
- const dest=resolve(outputDir),temporary=await realpath(tmpdir()),roots=[temporary,...(existsSync('/tmp')?[await realpath('/tmp')]:[])],parent=await realpath(dirname(dest));if(!roots.some(root=>parent===root||parent.startsWith(root+'/')))throw new Error('Output must be a fresh temporary application directory');if(existsSync(dest))throw new Error('Refusing to overwrite an existing benchmark directory');
- const source=process.cwd(),exclude=new Set(['node_modules','.git','.worktrees','.superpowers','dist','.next','.astro','.agents','.codex','.vercel']);await cp(source,dest,{recursive:true,filter:path=>{const rel=relative(source,path);return !rel||(!exclude.has(rel.split('/')[0])&&!/^\.env(?!\.example)/.test(rel));}});await symlink(resolve('node_modules'),join(dest,'node_modules'),'dir');if(existsSync('.astro'))await cp('.astro',join(dest,'.astro'),{recursive:true});
- const manifest:MigrationManifest=JSON.parse(await readFile('migration/manifest.json','utf8')),originals=manifest.records.map(r=>({entryId:r.sourcePath,data:r,hasBody:r.hasBody}));const added=generateScaleNotes(originals,500);
- for(const note of added){const body=bodyOf(await readFile(join(source,'src/content/posts',note.entryId),'utf8'));const path=join(dest,'src/content/posts',dirname(note.entryId),note.data.slug+'.md');await writeFile(path,'---\n'+Object.entries(note.data).filter(([,v])=>v!==undefined).map(([k,v])=>`${k}: ${JSON.stringify(v)}`).join('\n')+'\n---\n'+body+`\n\n## 隔离验收样本 ${note.data.slug}\n\n此页仅存在于临时压力测试副本。\n`);}
- await writeFile(join(dest,'src/content/posts/scale-draft.md'),'---\nid: scale-draft\nslug: scale-draft\ntitle: Hidden Scale Draft\ntype: note\ntopics: []\nvisibility: draft\n---\nPrivateScaleSentinel\n');
- const start=Date.now(),timeArgs=process.platform==='darwin'?['-l']:['-v'];const build=spawnSync('/usr/bin/time',[...timeArgs,process.env.PNPM_BIN??'pnpm','--config.verify-deps-before-run=warn','build'],{cwd:dest,env:{...process.env,SITE_MODE:'preview',PUBLIC_SITE_MODE:'preview',PUBLIC_SITE_ORIGIN:'http://127.0.0.1:4321'},encoding:'utf8',maxBuffer:64*1024*1024});const seconds=(Date.now()-start)/1000,log=(build.stdout??'')+'\n'+(build.stderr??'');await writeFile(join(dest,'benchmark-build.log'),log);if(build.status!==0)throw new Error(`Benchmark build failed: ${join(dest,'benchmark-build.log')}`);
- const site=existsSync(join(dest,'dist/client'))?join(dest,'dist/client'):join(dest,'dist');const api=JSON.parse(await readFile(join(site,'api/allPostMeta.json'),'utf8'));const counts=Object.fromEntries(Object.keys(targets).map(type=>[type,api.filter((n:{type:string})=>n.type===type).length]));if(api.length!==500||JSON.stringify(counts)!==JSON.stringify(targets))throw new Error('Built public scope differs');if(existsSync(join(site,'notes/scale-draft/index.html')))throw new Error('Draft leaked into output');
- const report={count:api.length,counts,sourceBodies:new Set(added.map(n=>n.entryId)).size,pages:Math.ceil(api.length/25),seconds,maxResidentBytes:process.platform==='darwin'?Number(log.match(/(\d+)\s+maximum resident set size/)?.[1]??0):Number(log.match(/Maximum resident set size \(kbytes\): (\d+)/)?.[1]??0)*1024,artifacts:await sizes(site),outputDir:dest};await writeFile(join(dest,'benchmark-report.json'),JSON.stringify(report,null,2)+'\n');await writeFile(join(dest,'benchmark-report.md'),`# 500-note benchmark\n\n${report.count} public notes, ${report.pages} pages, ${report.sourceBodies} distinct source bodies. Build ${seconds}s; peak RSS ${report.maxResidentBytes} bytes.\n\nSee benchmark-report.json and benchmark-build.log for measurements.\n`);return report;
+import { spawnSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import {
+	cp,
+	readdir,
+	readFile,
+	realpath,
+	stat,
+	symlink,
+	writeFile,
+} from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { dirname, extname, join, relative, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import {
+	getPublicNotes,
+	type NoteRecord,
+	type NoteType,
+} from "../src/utils/note-model";
+import { bodyOf, type MigrationManifest } from "./migration/convert";
+
+const targets: Record<NoteType, number> = {
+	course: 200,
+	paper: 180,
+	log: 50,
+	idea: 30,
+	experiment: 20,
+	note: 20,
+};
+export function generateScaleNotes(
+	originals: NoteRecord[],
+	count: number,
+): NoteRecord[] {
+	if (count !== 500)
+		throw new Error("This representative fixture is defined for 500 notes");
+	const publicNotes = getPublicNotes(originals);
+	const out: NoteRecord[] = [];
+	for (const type of Object.keys(targets) as NoteType[]) {
+		const matching = publicNotes.filter((n) => n.data.type === type);
+		const pool = matching.length ? matching : publicNotes;
+		for (let i = matching.length; i < targets[type]; i++) {
+			const source = pool[i % pool.length];
+			const id = `scale-${type}-${i}`;
+			out.push({
+				entryId: source.entryId,
+				hasBody: true,
+				data: {
+					...source.data,
+					id,
+					slug: id,
+					type,
+					title: `${source.data.title} · 样本 ${i}${i % 4 === 0 ? "：长期科研知识主页中课程、论文、实验与研究日志的长标题检索和阅读验收" : ""}`,
+					visibility: "published",
+					contentKind: "note",
+					date: i % 4 === 0 ? undefined : source.data.date,
+					course:
+						type === "course"
+							? { id: source.data.course!.id, order: 100 + i }
+							: undefined,
+				},
+			});
+		}
+	}
+	return out;
 }
-if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){const args=process.argv.slice(2);if(args[args.indexOf('--count')+1]!=='500'||!args.includes('--output-dir'))throw new Error('Required --count 500 --output-dir <fresh temporary path>');console.log(JSON.stringify(await benchmarkContent(args[args.indexOf('--output-dir')+1]),null,2));}
+async function sizes(
+	root: string,
+): Promise<Record<string, { files: number; bytes: number }>> {
+	const result: Record<string, { files: number; bytes: number }> = {};
+	async function walk(dir: string) {
+		for (const e of await readdir(dir, { withFileTypes: true })) {
+			const p = join(dir, e.name);
+			if (e.isDirectory()) await walk(p);
+			else {
+				const key = relative(root, p).startsWith("pagefind/")
+					? "index"
+					: /\.(mp3|mp4|ogg)$/.test(p)
+						? "media"
+						: /\.(png|webp|avif|jpg|jpeg|svg)$/.test(p)
+							? "images"
+							: extname(p).slice(1) || "other";
+				result[key] ??= { files: 0, bytes: 0 };
+				result[key].files++;
+				result[key].bytes += (await stat(p)).size;
+			}
+		}
+	}
+	await walk(root);
+	return result;
+}
+export async function benchmarkContent(
+	outputDir: string,
+): Promise<Record<string, unknown>> {
+	const dest = resolve(outputDir);
+	const temporary = await realpath(tmpdir());
+	const roots = [
+		temporary,
+		...(existsSync("/tmp") ? [await realpath("/tmp")] : []),
+	];
+	const parent = await realpath(dirname(dest));
+	if (!roots.some((root) => parent === root || parent.startsWith(root + "/")))
+		throw new Error("Output must be a fresh temporary application directory");
+	if (existsSync(dest))
+		throw new Error("Refusing to overwrite an existing benchmark directory");
+	const source = process.cwd();
+	const exclude = new Set([
+		"node_modules",
+		".git",
+		".worktrees",
+		".superpowers",
+		"dist",
+		".next",
+		".astro",
+		".agents",
+		".codex",
+		".vercel",
+	]);
+	await cp(source, dest, {
+		recursive: true,
+		filter: (path) => {
+			const rel = relative(source, path);
+			return (
+				!rel ||
+				(!exclude.has(rel.split("/")[0]) && !/^\.env(?!\.example)/.test(rel))
+			);
+		},
+	});
+	await symlink(resolve("node_modules"), join(dest, "node_modules"), "dir");
+	if (existsSync(".astro"))
+		await cp(".astro", join(dest, ".astro"), { recursive: true });
+	const manifest: MigrationManifest = JSON.parse(
+		await readFile("migration/manifest.json", "utf8"),
+	);
+	const originals = manifest.records.map((r) => ({
+		entryId: r.sourcePath,
+		data: r,
+		hasBody: r.hasBody,
+	}));
+	const added = generateScaleNotes(originals, 500);
+	for (const note of added) {
+		const body = bodyOf(
+			await readFile(join(source, "src/content/posts", note.entryId), "utf8"),
+		);
+		const path = join(
+			dest,
+			"src/content/posts",
+			dirname(note.entryId),
+			note.data.slug + ".md",
+		);
+		await writeFile(
+			path,
+			"---\n" +
+				Object.entries(note.data)
+					.filter(([, v]) => v !== undefined)
+					.map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+					.join("\n") +
+				"\n---\n" +
+				body +
+				`\n\n## 隔离验收样本 ${note.data.slug}\n\n此页仅存在于临时压力测试副本。\n`,
+		);
+	}
+	await writeFile(
+		join(dest, "src/content/posts/scale-draft.md"),
+		"---\nid: scale-draft\nslug: scale-draft\ntitle: Hidden Scale Draft\ntype: note\ntopics: []\nvisibility: draft\n---\nPrivateScaleSentinel\n",
+	);
+	const start = Date.now();
+	const timeArgs = process.platform === "darwin" ? ["-l"] : ["-v"];
+	const build = spawnSync(
+		"/usr/bin/time",
+		[
+			...timeArgs,
+			process.env.PNPM_BIN ?? "pnpm",
+			"--config.verify-deps-before-run=warn",
+			"build",
+		],
+		{
+			cwd: dest,
+			env: {
+				...process.env,
+				SITE_MODE: "preview",
+				PUBLIC_SITE_MODE: "preview",
+				PUBLIC_SITE_ORIGIN: "http://127.0.0.1:4321",
+			},
+			encoding: "utf8",
+			maxBuffer: 64 * 1024 * 1024,
+		},
+	);
+	const seconds = (Date.now() - start) / 1000;
+	const log = (build.stdout ?? "") + "\n" + (build.stderr ?? "");
+	await writeFile(join(dest, "benchmark-build.log"), log);
+	if (build.status !== 0)
+		throw new Error(
+			`Benchmark build failed: ${join(dest, "benchmark-build.log")}`,
+		);
+	const site = existsSync(join(dest, "dist/client"))
+		? join(dest, "dist/client")
+		: join(dest, "dist");
+	const api = JSON.parse(
+		await readFile(join(site, "api/allPostMeta.json"), "utf8"),
+	);
+	const counts = Object.fromEntries(
+		Object.keys(targets).map((type) => [
+			type,
+			api.filter((n: { type: string }) => n.type === type).length,
+		]),
+	);
+	if (api.length !== 500 || JSON.stringify(counts) !== JSON.stringify(targets))
+		throw new Error("Built public scope differs");
+	if (existsSync(join(site, "notes/scale-draft/index.html")))
+		throw new Error("Draft leaked into output");
+	const report = {
+		count: api.length,
+		counts,
+		sourceBodies: new Set(added.map((n) => n.entryId)).size,
+		pages: Math.ceil(api.length / 25),
+		seconds,
+		maxResidentBytes:
+			process.platform === "darwin"
+				? Number(log.match(/(\d+)\s+maximum resident set size/)?.[1] ?? 0)
+				: Number(
+						log.match(/Maximum resident set size \(kbytes\): (\d+)/)?.[1] ?? 0,
+					) * 1024,
+		artifacts: await sizes(site),
+		outputDir: dest,
+	};
+	await writeFile(
+		join(dest, "benchmark-report.json"),
+		JSON.stringify(report, null, 2) + "\n",
+	);
+	await writeFile(
+		join(dest, "benchmark-report.md"),
+		`# 500-note benchmark\n\n${report.count} public notes, ${report.pages} pages, ${report.sourceBodies} distinct source bodies. Build ${seconds}s; peak RSS ${report.maxResidentBytes} bytes.\n\nSee benchmark-report.json and benchmark-build.log for measurements.\n`,
+	);
+	return report;
+}
+if (
+	process.argv[1] &&
+	import.meta.url === pathToFileURL(resolve(process.argv[1])).href
+) {
+	const args = process.argv.slice(2);
+	if (
+		args[args.indexOf("--count") + 1] !== "500" ||
+		!args.includes("--output-dir")
+	)
+		throw new Error("Required --count 500 --output-dir <fresh temporary path>");
+	console.log(
+		JSON.stringify(
+			await benchmarkContent(args[args.indexOf("--output-dir") + 1]),
+			null,
+			2,
+		),
+	);
+}

@@ -14,14 +14,21 @@
       "!**/dist/**/*",
       "!**/node_modules/**/*",
       "!**/src/constants/icons-data.json",
-      "!**/src/constants/lqips.json"
+      "!**/src/constants/lqips.json",
+      "!**/src/data/legacy-routes.json"
     ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "tab"
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -47,7 +54,11 @@
   },
   "overrides": [
     {
-      "includes": ["**/*.svelte", "**/*.astro", "**/*.vue"],
+      "includes": [
+        "**/*.svelte",
+        "**/*.astro",
+        "**/*.vue"
+      ],
       "linter": {
         "rules": {
           "style": {

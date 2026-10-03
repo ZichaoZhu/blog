@@ -97,7 +97,7 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 			if (import.meta.env.PROD && window.pagefind) {
 				const response = await window.pagefind.search(keyword);
 				searchResults = await Promise.all(
-					response.results.slice(0,5).map((item) => item.data()),
+					response.results.slice(0, 5).map((item) => item.data()),
 				);
 			} else if (import.meta.env.DEV) {
 				searchResults = [];
@@ -130,7 +130,6 @@ onMount(() => {
 	};
 
 	if (import.meta.env.DEV) {
-		
 		initializePagefind();
 	} else {
 		if (window.pagefind) {

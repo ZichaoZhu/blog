@@ -10,16 +10,16 @@
   },
   "sourceBodies": 44,
   "pages": 20,
-  "seconds": 85.779,
-  "maxResidentBytes": 3666083840,
+  "seconds": 75.235,
+  "maxResidentBytes": 4195188736,
   "artifacts": {
     "html": {
       "files": 633,
-      "bytes": 152894468
+      "bytes": 152895580
     },
     "js": {
       "files": 58,
-      "bytes": 784549
+      "bytes": 784551
     },
     "woff2": {
       "files": 19,
@@ -38,8 +38,8 @@
       "bytes": 379084
     },
     "images": {
-      "files": 3525,
-      "bytes": 366705965
+      "files": 3526,
+      "bytes": 366721365
     },
     "json": {
       "files": 3,
@@ -63,8 +63,8 @@
     },
     "index": {
       "files": 590,
-      "bytes": 4808317
+      "bytes": 4808334
     }
   },
-  "outputDir": "/tmp/firefly-scale-20261003-v2"
+  "outputDir": "/tmp/firefly-scale-20261003-final"
 }

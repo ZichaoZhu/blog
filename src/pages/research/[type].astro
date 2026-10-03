@@ -1,9 +1,21 @@
 ---
-import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
-import NoteList from '../../components/knowledge/NoteList.astro';
-import {getSortedPosts,asNoteRecord} from '../../utils/content-utils';
-import {toSummary} from '../../utils/note-model';
-export function getStaticPaths(){return [['logs','log','研究日志'],['ideas','idea','研究想法'],['experiments','experiment','实验记录']].map(([path,type,title])=>({params:{type:path},props:{type,title}}));}
-const {type,title}=Astro.props;const notes=(await getSortedPosts()).filter(p=>p.data.type===type).map(p=>toSummary(asNoteRecord(p)));
+import NoteList from "../../components/knowledge/NoteList.astro";
+import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
+import { asNoteRecord, getSortedPosts } from "../../utils/content-utils";
+import { toSummary } from "../../utils/note-model";
+export function getStaticPaths() {
+	return [
+		["logs", "log", "研究日志"],
+		["ideas", "idea", "研究想法"],
+		["experiments", "experiment", "实验记录"],
+	].map(([path, type, title]) => ({
+		params: { type: path },
+		props: { type, title },
+	}));
+}
+const { type, title } = Astro.props;
+const notes = (await getSortedPosts())
+	.filter((p) => p.data.type === type)
+	.map((p) => toSummary(asNoteRecord(p)));
 ---
 <KnowledgeLayout title={title}><a href="/research/">← 研究</a><NoteList notes={notes}/></KnowledgeLayout>

@@ -16,7 +16,10 @@ declare global {
 		// biome-ignore lint/suspicious/noExplicitAny: External library
 		spinePlayerInstance?: any;
 		pagefind: {
-			search: (query: string|null,options?:{filters?:Record<string,string>}) => Promise<{
+			search: (
+				query: string | null,
+				options?: { filters?: Record<string, string> },
+			) => Promise<{
 				results: Array<{
 					data: () => Promise<SearchResult>;
 				}>;

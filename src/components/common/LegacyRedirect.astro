@@ -1,6 +1,10 @@
 ---
-import {siteContext} from '../../config/siteContext';
-interface Props {target:string;aliases?:Record<string,string>}
-const {target,aliases={}}=Astro.props;
+import { siteContext } from "../../config/siteContext";
+
+interface Props {
+	target: string;
+	aliases?: Record<string, string>;
+}
+const { target, aliases = {} } = Astro.props;
 ---
 <!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width"/><meta name="robots" content="noindex,follow"/><link rel="canonical" href={new URL(target,siteContext.origin).href}/><title>地址已更新 · ZZC Notes</title></head><body><h1>地址已更新</h1><p><a href={target}>继续阅读</a> · <a href="/search/">搜索笔记</a></p><script is:inline define:vars={{target,aliases}}>let hash=location.hash;if(hash){let key;try{key=decodeURIComponent(hash.slice(1));}catch{key=hash.slice(1);}if(aliases[key])hash='#'+encodeURIComponent(aliases[key]);}location.replace(target+hash);</script></body></html>

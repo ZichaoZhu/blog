@@ -1,9 +1,12 @@
 ---
 import CollectionIntro from "../../components/knowledge/CollectionIntro.astro";
-import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
-import NoteList from '../../components/knowledge/NoteList.astro';
-import {getSortedPosts,asNoteRecord} from '../../utils/content-utils';
-import {toSummary} from '../../utils/note-model';
-const notes=(await getSortedPosts()).filter(p=>p.data.type==='paper').map(p=>toSummary(asNoteRecord(p)));
+import NoteList from "../../components/knowledge/NoteList.astro";
+import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
+import { asNoteRecord, getSortedPosts } from "../../utils/content-utils";
+import { toSummary } from "../../utils/note-model";
+
+const notes = (await getSortedPosts())
+	.filter((p) => p.data.type === "paper")
+	.map((p) => toSummary(asNoteRecord(p)));
 ---
 <KnowledgeLayout title="论文阅读" description="按研究主题整理的论文笔记；来源与我的理解分开记录。"><a href="/search/?type=paper">搜索论文</a><CollectionIntro slug="paper-reading"/><NoteList notes={notes}/></KnowledgeLayout>

@@ -1,17 +1,110 @@
 <script lang="ts">
-import {onMount} from 'svelte';import type {SearchResult} from '../../global';import {courses,topics} from '../../data/catalog';
-let keyword='',type='',topic='',course='',loading=false,error='',searched=false,total=0;
-let results:SearchResult[]=[],pending:Array<{data:()=>Promise<SearchResult>}>=[],requestId=0;
-const types=[['course','课程'],['paper','论文'],['log','日志'],['idea','想法'],['experiment','实验'],['note','笔记']];
-function restore(){const p=new URLSearchParams(location.search);keyword=p.get('q')??'';type=p.get('type')??'';topic=p.get('topic')??'';course=p.get('course')??'';}
-async function search(push=false){const id=++requestId;error='';results=[];pending=[];total=0;searched=!!(keyword.trim()||type||topic||course);
- if(push){const params=new URLSearchParams();for(const [key,value] of [['q',keyword.trim()],['type',type],['topic',topic],['course',course]])if(value)params.set(key,value);history.pushState(null,'','/search/'+(params.size?'?'+params.toString():''));}
- if(!searched){loading=false;return;}loading=true;
- try{await window.__loadPagefind?.();if(!window.pagefind||window.__pagefindError)throw new Error('索引尚不可用');const filters:Record<string,string>={};if(type)filters.type=type;if(topic)filters.topic=topic;if(course)filters.course=course;
- const response=await window.pagefind.search(keyword.trim()||null,{filters});if(id!==requestId)return;pending=response.results;total=pending.length;results=await Promise.all(pending.slice(0,20).map(r=>r.data()));
- }catch{if(id===requestId)error='搜索暂不可用，请从课程、论文或主题入口浏览。';}finally{if(id===requestId)loading=false;}}
- async function more(){const id=requestId;loading=true;try{const next=await Promise.all(pending.slice(results.length,results.length+20).map(r=>r.data()));if(id===requestId)results=[...results,...next];}catch{error='加载失败，请重试搜索。';}finally{if(id===requestId)loading=false;}}
- onMount(()=>{restore();search();const back=()=>{restore();search();};window.addEventListener('popstate',back);return()=>{requestId++;window.removeEventListener('popstate',back);};});
+import { onMount } from "svelte";
+import { courses, topics } from "../../data/catalog";
+import type { SearchResult } from "../../global";
+
+let keyword = "";
+let type = "";
+let topic = "";
+let course = "";
+let loading = false;
+let error = "";
+let searched = false;
+let total = 0;
+let results: SearchResult[] = [];
+let pending: Array<{ data: () => Promise<SearchResult> }> = [];
+let requestId = 0;
+const types = [
+	["course", "课程"],
+	["paper", "论文"],
+	["log", "日志"],
+	["idea", "想法"],
+	["experiment", "实验"],
+	["note", "笔记"],
+];
+function restore() {
+	const p = new URLSearchParams(location.search);
+	keyword = p.get("q") ?? "";
+	type = p.get("type") ?? "";
+	topic = p.get("topic") ?? "";
+	course = p.get("course") ?? "";
+}
+async function search(push = false) {
+	const id = ++requestId;
+	error = "";
+	results = [];
+	pending = [];
+	total = 0;
+	searched = !!(keyword.trim() || type || topic || course);
+	if (push) {
+		const params = new URLSearchParams();
+		for (const [key, value] of [
+			["q", keyword.trim()],
+			["type", type],
+			["topic", topic],
+			["course", course],
+		])
+			if (value) params.set(key, value);
+		history.pushState(
+			null,
+			"",
+			"/search/" + (params.size ? "?" + params.toString() : ""),
+		);
+	}
+	if (!searched) {
+		loading = false;
+		return;
+	}
+	loading = true;
+	try {
+		await window.__loadPagefind?.();
+		if (!window.pagefind || window.__pagefindError)
+			throw new Error("索引尚不可用");
+		const filters: Record<string, string> = {};
+		if (type) filters.type = type;
+		if (topic) filters.topic = topic;
+		if (course) filters.course = course;
+		const response = await window.pagefind.search(keyword.trim() || null, {
+			filters,
+		});
+		if (id !== requestId) return;
+		pending = response.results;
+		total = pending.length;
+		results = await Promise.all(pending.slice(0, 20).map((r) => r.data()));
+	} catch {
+		if (id === requestId)
+			error = "搜索暂不可用，请从课程、论文或主题入口浏览。";
+	} finally {
+		if (id === requestId) loading = false;
+	}
+}
+async function more() {
+	const id = requestId;
+	loading = true;
+	try {
+		const next = await Promise.all(
+			pending.slice(results.length, results.length + 20).map((r) => r.data()),
+		);
+		if (id === requestId) results = [...results, ...next];
+	} catch {
+		error = "加载失败，请重试搜索。";
+	} finally {
+		if (id === requestId) loading = false;
+	}
+}
+onMount(() => {
+	restore();
+	search();
+	const back = () => {
+		restore();
+		search();
+	};
+	window.addEventListener("popstate", back);
+	return () => {
+		requestId++;
+		window.removeEventListener("popstate", back);
+	};
+});
 </script>
 <div class="card-base p-5 md:p-8">
 <form on:submit|preventDefault={()=>search(true)} class="grid gap-4" aria-label="搜索公开笔记">

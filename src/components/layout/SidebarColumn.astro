@@ -3,7 +3,11 @@ import SideBar from "@components/layout/SideBar.astro";
 import type { MarkdownHeading } from "astro";
 
 interface Props {
- courseContext?:{courseId:string;currentSlug:string;notes:import("@/utils/note-model").NoteSummary[]};
+	courseContext?: {
+		courseId: string;
+		currentSlug: string;
+		notes: import("@/utils/note-model").NoteSummary[];
+	};
 	side: "left" | "right";
 	position: "left" | "right" | "both";
 	enable: boolean;
@@ -25,7 +29,7 @@ const {
 	sidebarClass,
 	headings = [],
 	encrypted = false,
- courseContext,
+	courseContext,
 } = Astro.props;
 
 // 静态容器 id（左侧为 wrapper，右侧为 static，保持原有 id 不变）

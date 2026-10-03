@@ -91,3 +91,6 @@ package/
 .claude
 .mimocode
 
+
+/test-results/
+/playwright-report/
