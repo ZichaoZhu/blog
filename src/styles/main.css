@@ -681,3 +681,12 @@ html {
 .pagination-info {
   @apply text-sm text-(--text-secondary) text-center mb-2;
 }
+
+/* Stable reading surface and local overflow for scientific content. */
+.custom-md { font-size: 17px; line-height: 1.8; overflow-wrap: anywhere; }
+.custom-md img { height: auto; max-width: 100%; }
+.custom-md pre, .custom-md .katex-display, .custom-md .table-container { max-width: 100%; overflow-x: auto; }
+.custom-md table { display: block; max-width: 100%; overflow-x: auto; }
+.custom-md mark { background: #ffeaa5; color: #202020; padding: .05em .15em; }
+.article-reading { max-width: 760px; margin-inline: auto; }
+@media (min-width: 768px) { .custom-md { font-size: 18px; } }

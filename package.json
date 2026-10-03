@@ -10,7 +10,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
-    "build": "npx tsx scripts/generate-github-card-data.ts && npx tsx scripts/generate-lqips.ts && npx tsx scripts/generate-vndb-covers.ts && astro build && npx tsx scripts/prune-pio-assets.ts && npx tsx scripts/subset-fonts.ts && npx tsx scripts/minify-inline-scripts.ts && npx tsx scripts/run-pagefind.ts",
+    "build": "astro sync --force && node --import tsx scripts/generate-github-card-data.ts && node --import tsx scripts/generate-lqips.ts && node --import tsx scripts/generate-vndb-covers.ts && astro build && node --import tsx scripts/prune-pio-assets.ts && node --import tsx scripts/subset-fonts.ts && node --import tsx scripts/minify-inline-scripts.ts && node --import tsx scripts/run-pagefind.ts",
     "preview": "astro preview",
     "astro": "astro",
     "type-check": "tsc --noEmit --isolatedDeclarations",
@@ -99,6 +99,7 @@
     "@biomejs/biome": "2.5.12",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/svg-spinners": "^1.2.4",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/qrcode": "^1.5.6",
     "@types/sanitize-html": "^2.16.1",
@@ -107,6 +108,7 @@
     "postcss-import": "^16.1.1",
     "postcss-nesting": "^14.0.1",
     "rehype-callouts": "^2.2.0",
-    "subset-font": "^2.7.0"
+    "subset-font": "^2.7.0",
+    "vfile": "6.0.3"
   }
 }

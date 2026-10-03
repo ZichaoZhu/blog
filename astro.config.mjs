@@ -1,3 +1,6 @@
+import { remarkTyporaCompat } from "./src/plugins/remark-typora-compat";
+import { remarkLocalImages } from "./src/plugins/remark-local-images";
+import { resolve } from "node:path";
 import { setMaxListeners } from "node:events";
 import cloudflare from "@astrojs/cloudflare";
 import { unified } from "@astrojs/markdown-remark";
@@ -113,7 +116,9 @@ export default defineConfig({
 	// 图像优化配置
 	image: {
 		// 组件可自行传入 layout/widths；这里只控制 Markdown 正文图片
-		layout: "none",
+		layout: "constrained",
+		responsiveStyles: true,
+		breakpoints: [320,640,960,1280],
 	},
 
 	integrations: [
@@ -286,6 +291,8 @@ export default defineConfig({
 	markdown: {
 		processor: unified({
 			remarkPlugins: [
+				remarkTyporaCompat,
+				[remarkLocalImages, {contentRoot: resolve("src/content/posts")}],
 				...(siteConfig.post.rehypeCallouts.enablePythonMarkdownAdmonitions !==
 				false
 					? [remarkAdmonitionToBlockquoteCallout]

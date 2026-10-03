@@ -2061,14 +2061,52 @@
       "sha256": "9e085ecc3811111a0d2f61cea5b27f5ba2b704812798cc78c5ba9875f9e39f7a",
       "width": 738,
       "height": 130,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260302141910891.Cnsu8p17_UutUq.webp",
+          "width": 738
+        },
+        {
+          "url": "/_astro/image-20260302141910891.Cnsu8p17_ZMCR37.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260302141910891.Cnsu8p17_Z1im5ua.webp",
+          "width": 640
+        },
+        {
+          "url": "/images/original/9e085ecc3811111a0d2f61cea5b27f5ba2b704812798cc78c5ba9875f9e39f7a.png",
+          "width": 738
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Compiler_Principle/assets/image-20260302142201915.png",
       "sha256": "67532ebcaa598e10ed7ef77c53930ea8b551be8b1b8375d63c19df3c3b8fdf97",
       "width": 1046,
       "height": 648,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260302142201915.BjMI_JzO_ZloO7z.webp",
+          "width": 1046
+        },
+        {
+          "url": "/_astro/image-20260302142201915.BjMI_JzO_A9NBo.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260302142201915.BjMI_JzO_25xh5m.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260302142201915.BjMI_JzO_Z1i2IJs.webp",
+          "width": 960
+        },
+        {
+          "url": "/images/original/67532ebcaa598e10ed7ef77c53930ea8b551be8b1b8375d63c19df3c3b8fdf97.png",
+          "width": 1046
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Compiler_Principle/assets/image-20260303103527279.png",
@@ -2313,28 +2351,124 @@
       "sha256": "e863f6d12007b8bc77090341cd3ba7a19f1a69a437658c0be9dcd236b1ff05fe",
       "width": 1732,
       "height": 930,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20250916162442998.BJ1EhHbg_Z1MuhNT.webp",
+          "width": 1732
+        },
+        {
+          "url": "/_astro/image-20250916162442998.BJ1EhHbg_1ovuXt.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20250916162442998.BJ1EhHbg_jyis7.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20250916162442998.BJ1EhHbg_ZWByyo.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20250916162442998.BJ1EhHbg_Z1Rztib.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/e863f6d12007b8bc77090341cd3ba7a19f1a69a437658c0be9dcd236b1ff05fe.png",
+          "width": 1732
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Operating_System/assets/image-20250916164033812.png",
       "sha256": "ce01c24e5adf4fc44ba6a58d6087d306da6f7b0df9aff80632dd427bc18f915b",
       "width": 1306,
       "height": 854,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20250916164033812.BIYgXydy_Z1np2bR.webp",
+          "width": 1306
+        },
+        {
+          "url": "/_astro/image-20250916164033812.BIYgXydy_2aAURx.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20250916164033812.BIYgXydy_Z5eCVD.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20250916164033812.BIYgXydy_Z28QxfF.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20250916164033812.BIYgXydy_2wsrRr.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/ce01c24e5adf4fc44ba6a58d6087d306da6f7b0df9aff80632dd427bc18f915b.png",
+          "width": 1306
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Operating_System/assets/image-20250916164339055.png",
       "sha256": "411e5f5750b0550b6d22aa9f7c28ed1a295a586eb456c403d724aa61c223ca97",
       "width": 1444,
       "height": 854,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20250916164339055.ClaR1wu-_AS50H.webp",
+          "width": 1444
+        },
+        {
+          "url": "/_astro/image-20250916164339055.ClaR1wu-_3Y5BC.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20250916164339055.ClaR1wu-_P4r6f.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20250916164339055.ClaR1wu-_1oV84I.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20250916164339055.ClaR1wu-_29pQ2w.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/411e5f5750b0550b6d22aa9f7c28ed1a295a586eb456c403d724aa61c223ca97.png",
+          "width": 1444
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Operating_System/assets/image-20250916164640434.png",
       "sha256": "46e3a80a3934eac8085bbbf6558de714d334159e8990458ef7274a52a109d04d",
       "width": 970,
       "height": 488,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20250916164640434.H-9u6t48_Z2qGIMJ.webp",
+          "width": 970
+        },
+        {
+          "url": "/_astro/image-20250916164640434.H-9u6t48_12sh3d.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20250916164640434.H-9u6t48_Z1knTXs.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20250916164640434.H-9u6t48_2frdTD.webp",
+          "width": 960
+        },
+        {
+          "url": "/images/original/46e3a80a3934eac8085bbbf6558de714d334159e8990458ef7274a52a109d04d.png",
+          "width": 970
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Operating_System/assets/image-20250916173025839.png",
@@ -4847,77 +4981,320 @@
       "sha256": "cc071c69e62a80c251be4d0d4dbfbeb0fe742831bc1a1c110a36c46e2c810074",
       "width": 1190,
       "height": 312,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260119121219498.DIruYVDW_2cjiyS.webp",
+          "width": 1190
+        },
+        {
+          "url": "/_astro/image-20260119121219498.DIruYVDW_zH5ym.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260119121219498.DIruYVDW_Z1bu8An.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260119121219498.DIruYVDW_ZWrtKU.webp",
+          "width": 960
+        },
+        {
+          "url": "/images/original/cc071c69e62a80c251be4d0d4dbfbeb0fe742831bc1a1c110a36c46e2c810074.png",
+          "width": 1190
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260119121849051.png",
       "sha256": "cea95b4b2197297c164bfe9412c64e2b2b7b5915b7942a4beddb89bdf25c2df6",
       "width": 356,
       "height": 340,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260119121849051.Ws_1aVTB_ZCCF2L.webp",
+          "width": 356
+        },
+        {
+          "url": "/_astro/image-20260119121849051.Ws_1aVTB_1Vmpqu.webp",
+          "width": 320
+        },
+        {
+          "url": "/images/original/cea95b4b2197297c164bfe9412c64e2b2b7b5915b7942a4beddb89bdf25c2df6.png",
+          "width": 356
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260119123304806.png",
       "sha256": "20438303ccd13d9640ab370ae128708ece3e98fb2e229576a89146ea6268578f",
       "width": 1352,
       "height": 872,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260119123304806.Cb3mQGJF_lXkjf.webp",
+          "width": 1352
+        },
+        {
+          "url": "/_astro/image-20260119123304806.Cb3mQGJF_g14v1.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260119123304806.Cb3mQGJF_Z2ogOks.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260119123304806.Cb3mQGJF_GSWdG.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20260119123304806.Cb3mQGJF_28dAQs.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/20438303ccd13d9640ab370ae128708ece3e98fb2e229576a89146ea6268578f.png",
+          "width": 1352
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260119155152049.png",
       "sha256": "f0f7cc00b1f2484af6c422d90e828fd951a8f88b8514419b7914b5b91aaa37a7",
       "width": 1412,
       "height": 1018,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260119155152049.9HObWQ27_owW6X.webp",
+          "width": 1412
+        },
+        {
+          "url": "/_astro/image-20260119155152049.9HObWQ27_ZRHCAc.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260119155152049.9HObWQ27_4OkU6.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260119155152049.9HObWQ27_2a6Kr2.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20260119155152049.9HObWQ27_Z1wiD8K.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/f0f7cc00b1f2484af6c422d90e828fd951a8f88b8514419b7914b5b91aaa37a7.png",
+          "width": 1412
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260119155225648.png",
       "sha256": "c070a24639c3bb0c8e781ef794b6b65e08a6081f86efabed27e6aaab7d82da3a",
       "width": 1382,
       "height": 436,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260119155225648.ChhiJhhl_ZUL0LY.webp",
+          "width": 1382
+        },
+        {
+          "url": "/_astro/image-20260119155225648.ChhiJhhl_VkQpy.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260119155225648.ChhiJhhl_Z1nuwYf.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260119155225648.ChhiJhhl_1mQcpS.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20260119155225648.ChhiJhhl_Z2fAd79.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/c070a24639c3bb0c8e781ef794b6b65e08a6081f86efabed27e6aaab7d82da3a.png",
+          "width": 1382
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260119155247456.png",
       "sha256": "ce3f996a5e9b9c0990161638282ee6a3733d436a2db0b28e80df59ccf5d8082a",
       "width": 1394,
       "height": 556,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260119155247456.I2kH5qAE_Z7njz7.webp",
+          "width": 1394
+        },
+        {
+          "url": "/_astro/image-20260119155247456.I2kH5qAE_2mH4N8.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260119155247456.I2kH5qAE_Z2rYMqh.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260119155247456.I2kH5qAE_Z20gQkB.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20260119155247456.I2kH5qAE_RQiWJ.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/ce3f996a5e9b9c0990161638282ee6a3733d436a2db0b28e80df59ccf5d8082a.png",
+          "width": 1394
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260119155359699.png",
       "sha256": "78f89ca9364d2ab6c6906301f5de49dd6cb8873bedbc376caa34bab751be60be",
       "width": 1364,
       "height": 568,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260119155359699.Du_YOJhM_Z1ugNhq.webp",
+          "width": 1364
+        },
+        {
+          "url": "/_astro/image-20260119155359699.Du_YOJhM_Zdpbmx.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260119155359699.Du_YOJhM_1qDIM1.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260119155359699.Du_YOJhM_fDmsl.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20260119155359699.Du_YOJhM_Z1384kg.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/78f89ca9364d2ab6c6906301f5de49dd6cb8873bedbc376caa34bab751be60be.png",
+          "width": 1364
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260119155544784.png",
       "sha256": "8609dcaf0adef7647ee7d97e7754b5adc883ab2084895f9da21b62aad965c2fa",
       "width": 1394,
       "height": 946,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260119155544784.DUweADP7_180nga.webp",
+          "width": 1394
+        },
+        {
+          "url": "/_astro/image-20260119155544784.DUweADP7_pGyWI.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260119155544784.DUweADP7_Z16PRR7.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260119155544784.DUweADP7_2qMN6Y.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20260119155544784.DUweADP7_2eGWUu.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/8609dcaf0adef7647ee7d97e7754b5adc883ab2084895f9da21b62aad965c2fa.png",
+          "width": 1394
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260119155606891.png",
       "sha256": "8f5ede947f54207c769e7689b4ec04d03efca77865466c39b9396fde3ace5502",
       "width": 1332,
       "height": 926,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260119155606891.C38_8YQI_2cPKqQ.webp",
+          "width": 1332
+        },
+        {
+          "url": "/_astro/image-20260119155606891.C38_8YQI_Z1fNXCy.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260119155606891.C38_8YQI_Z1A1rov.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260119155606891.C38_8YQI_Z27rzFB.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20260119155606891.C38_8YQI_fh8D8.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/8f5ede947f54207c769e7689b4ec04d03efca77865466c39b9396fde3ace5502.png",
+          "width": 1332
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260201185224003.png",
       "sha256": "2bb0f2f9e1717ea354cbd447485cfdecf03d4a08768040262cb3cbd363bf0e16",
       "width": 728,
       "height": 143,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260201185224003.KicDuvXT_1U27cN.webp",
+          "width": 728
+        },
+        {
+          "url": "/_astro/image-20260201185224003.KicDuvXT_1OEtuw.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260201185224003.KicDuvXT_ZgKkgr.webp",
+          "width": 640
+        },
+        {
+          "url": "/images/original/2bb0f2f9e1717ea354cbd447485cfdecf03d4a08768040262cb3cbd363bf0e16.png",
+          "width": 728
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260201191114658.png",
       "sha256": "fbef4e9a0efd221627e6917a9b978295426abee8d737b7ccce51c7ca275aa981",
       "width": 720,
       "height": 450,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260201191114658.CUfTTOLy_Z1iaJhH.webp",
+          "width": 720
+        },
+        {
+          "url": "/_astro/image-20260201191114658.CUfTTOLy_1pdccs.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260201191114658.CUfTTOLy_1MViHv.webp",
+          "width": 640
+        },
+        {
+          "url": "/images/original/fbef4e9a0efd221627e6917a9b978295426abee8d737b7ccce51c7ca275aa981.png",
+          "width": 720
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260201194959813.png",
@@ -5008,56 +5385,220 @@
       "sha256": "42b21450524c17b6c91a65fecf71f54d3d71c446be3e98a046d5cf28544d88de",
       "width": 694,
       "height": 538,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260222122503962.CsgQlA4q_AgQvm.webp",
+          "width": 694
+        },
+        {
+          "url": "/_astro/image-20260222122503962.CsgQlA4q_ZSyVWE.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260222122503962.CsgQlA4q_ZEymIx.webp",
+          "width": 640
+        },
+        {
+          "url": "/images/original/42b21450524c17b6c91a65fecf71f54d3d71c446be3e98a046d5cf28544d88de.png",
+          "width": 694
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260222143551214.png",
       "sha256": "e1fb1eb52189bdb30a4815507a68c14d155005d0ce6157e17bdc7008fe0fc5da",
       "width": 1332,
       "height": 650,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260222143551214.Cls5zWAI_2bzYbU.webp",
+          "width": 1332
+        },
+        {
+          "url": "/_astro/image-20260222143551214.Cls5zWAI_2wT3D7.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260222143551214.Cls5zWAI_ZR8yVL.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260222143551214.Cls5zWAI_Z1Dkzyz.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20260222143551214.Cls5zWAI_Z1f4JYU.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/e1fb1eb52189bdb30a4815507a68c14d155005d0ce6157e17bdc7008fe0fc5da.png",
+          "width": 1332
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260222144446038.png",
       "sha256": "18fbead9a6c195f36be48f8dfd4a6767c311a0dcdc004f58301b771fe691aa5a",
       "width": 270,
       "height": 290,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260222144446038.D5ess-AR_Z21WyfP.webp",
+          "width": 270
+        },
+        {
+          "url": "/images/original/18fbead9a6c195f36be48f8dfd4a6767c311a0dcdc004f58301b771fe691aa5a.png",
+          "width": 270
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260222144557637.png",
       "sha256": "691647ba36e7ad337e068e68c14308aed895a6943ccc29614d4626b210c44a4b",
       "width": 1156,
       "height": 824,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260222144557637.Y8tiQJ5W_Z9Trul.webp",
+          "width": 1156
+        },
+        {
+          "url": "/_astro/image-20260222144557637.Y8tiQJ5W_Z1t2VkL.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260222144557637.Y8tiQJ5W_Z1FChDO.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260222144557637.Y8tiQJ5W_Z1ScCWR.webp",
+          "width": 960
+        },
+        {
+          "url": "/images/original/691647ba36e7ad337e068e68c14308aed895a6943ccc29614d4626b210c44a4b.png",
+          "width": 1156
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260222144625124.png",
       "sha256": "1262c20621788b944fcc4453c975ca66786dd3b0963c7f0509a54b407857e8e0",
       "width": 1162,
       "height": 858,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260222144625124.C2HHlRHW_DwTBf.webp",
+          "width": 1162
+        },
+        {
+          "url": "/_astro/image-20260222144625124.C2HHlRHW_Zja52B.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260222144625124.C2HHlRHW_oLl8P.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260222144625124.C2HHlRHW_2CS2I.webp",
+          "width": 960
+        },
+        {
+          "url": "/images/original/1262c20621788b944fcc4453c975ca66786dd3b0963c7f0509a54b407857e8e0.png",
+          "width": 1162
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260222161436417.png",
       "sha256": "8c2557cc8dafbcfac9d20b21096bf0d642598b56e5153fe2ab145ec93f9f63c4",
       "width": 1336,
       "height": 820,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260222161436417.3yzSyxZc_16b19V.webp",
+          "width": 1336
+        },
+        {
+          "url": "/_astro/image-20260222161436417.3yzSyxZc_Z23Xn8q.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260222161436417.3yzSyxZc_ZKNzaB.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260222161436417.3yzSyxZc_1cBKmT.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20260222161436417.3yzSyxZc_Z1V0HjW.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/8c2557cc8dafbcfac9d20b21096bf0d642598b56e5153fe2ab145ec93f9f63c4.png",
+          "width": 1336
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260222181402773.png",
       "sha256": "e76b2293fc65bb84be819a3699a88190db44420ea5542c05f5c22829b3e7ad21",
       "width": 1338,
       "height": 1002,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260222181402773.DiTO0UEg_Z1Thmki.webp",
+          "width": 1338
+        },
+        {
+          "url": "/_astro/image-20260222181402773.DiTO0UEg_Zdlv6n.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260222181402773.DiTO0UEg_Hu9QN.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260222181402773.DiTO0UEg_2o2hU2.webp",
+          "width": 960
+        },
+        {
+          "url": "/_astro/image-20260222181402773.DiTO0UEg_Z1aJMQr.webp",
+          "width": 1280
+        },
+        {
+          "url": "/images/original/e76b2293fc65bb84be819a3699a88190db44420ea5542c05f5c22829b3e7ad21.png",
+          "width": 1338
+        }
+      ]
     },
     {
       "sourcePath": "Coure-Notebook/Reinforcement_learning/assets/image-20260222182552136.png",
       "sha256": "d061b4ff63278a0ff70243acbd98d1e5a8329c6b28b70c6c290954af117fac8f",
       "width": 1120,
       "height": 714,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260222182552136.C1qkaeJX_Z25AQq3.webp",
+          "width": 1120
+        },
+        {
+          "url": "/_astro/image-20260222182552136.C1qkaeJX_1VEyMl.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260222182552136.C1qkaeJX_ZqN7tJ.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260222182552136.C1qkaeJX_1nq7Wh.webp",
+          "width": 960
+        },
+        {
+          "url": "/images/original/d061b4ff63278a0ff70243acbd98d1e5a8329c6b28b70c6c290954af117fac8f.png",
+          "width": 1120
+        }
+      ]
     },
     {
       "sourcePath": "Language/JP_learning/assets/image-20260130114631286.png",
@@ -5799,21 +6340,72 @@
       "sha256": "6cb8459996cd9fd72ef43acc8fd70827b737f729fe736360dac4328bfa071064",
       "width": 978,
       "height": 405,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260201145907205.BN7CrDBO_ndK5J.webp",
+          "width": 978
+        },
+        {
+          "url": "/_astro/image-20260201145907205.BN7CrDBO_7Krjc.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260201145907205.BN7CrDBO_19eWaI.webp",
+          "width": 640
+        },
+        {
+          "url": "/_astro/image-20260201145907205.BN7CrDBO_d2Nx7.webp",
+          "width": 960
+        },
+        {
+          "url": "/images/original/6cb8459996cd9fd72ef43acc8fd70827b737f729fe736360dac4328bfa071064.png",
+          "width": 978
+        }
+      ]
     },
     {
       "sourcePath": "Language/JP_learning/assets/image-20260201150342566.png",
       "sha256": "3286e4789e6b327562a10491f5dd5aa8c5e9e6a965defcd31b7d33cad4b45753",
       "width": 469,
       "height": 246,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260201150342566.Di3CeuqJ_Z1T3Qc5.webp",
+          "width": 469
+        },
+        {
+          "url": "/_astro/image-20260201150342566.Di3CeuqJ_2pGPOV.webp",
+          "width": 320
+        },
+        {
+          "url": "/images/original/3286e4789e6b327562a10491f5dd5aa8c5e9e6a965defcd31b7d33cad4b45753.png",
+          "width": 469
+        }
+      ]
     },
     {
       "sourcePath": "Language/JP_learning/assets/image-20260201150903989.png",
       "sha256": "7a1bdd9ea95630ff2ca7eb2ebabeb19cbf98f72193c96677a982d44087b84167",
       "width": 766,
       "height": 342,
-      "publishedVariants": []
+      "publishedVariants": [
+        {
+          "url": "/_astro/image-20260201150903989.Bdb3uDsN_2naY7L.webp",
+          "width": 766
+        },
+        {
+          "url": "/_astro/image-20260201150903989.Bdb3uDsN_Z15Qt2T.webp",
+          "width": 320
+        },
+        {
+          "url": "/_astro/image-20260201150903989.Bdb3uDsN_Z1OOWam.webp",
+          "width": 640
+        },
+        {
+          "url": "/images/original/7a1bdd9ea95630ff2ca7eb2ebabeb19cbf98f72193c96677a982d44087b84167.png",
+          "width": 766
+        }
+      ]
     },
     {
       "sourcePath": "Language/JP_learning/assets/image-20260202091040129.png",
