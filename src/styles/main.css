@@ -684,8 +684,11 @@ html {
 
 /* Stable reading surface and local overflow for scientific content. */
 .custom-md { font-size: 17px; line-height: 1.8; overflow-wrap: anywhere; }
-.custom-md img { height: auto; max-width: 100%; }
+.custom-md img { height: auto; max-width: 100%; margin-inline: auto; }
+.custom-md figure:has(> img), .custom-md figure:has(> a > img) { text-align: center; }
 .custom-md pre, .custom-md .katex-display, .custom-md .table-container { max-width: 100%; overflow-x: auto; }
+/* Horizontal scrolling also clips vertically; allow room for positioned math glyphs. */
+.custom-md .katex-display { padding-block: 1em; }
 .custom-md table { display: block; max-width: 100%; overflow-x: auto; }
 .custom-md mark { background: #ffeaa5; color: #202020; padding: .05em .15em; }
 .article-reading { max-width: 760px; margin-inline: auto; }
