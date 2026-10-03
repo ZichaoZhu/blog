@@ -1,0 +1,6 @@
+---
+import map from '../data/legacy-routes.json';import manifest from '../../migration/manifest.json';import LegacyRedirect from '../components/common/LegacyRedirect.astro';
+export function getStaticPaths(){return Object.entries(map.paths).map(([path,target])=>({params:{legacy:path.slice(1)},props:{target,aliases:manifest.records.find(r=>r.legacyPath.replace(/\/$/,'')===path)?.anchorAliases??{}}}));}
+const {target,aliases}=Astro.props;
+---
+<LegacyRedirect target={target} aliases={aliases}/>

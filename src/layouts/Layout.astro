@@ -1,4 +1,6 @@
 ---
+import {siteContext} from "../config/siteContext";
+import LegacyQueryCompat from "../components/common/LegacyQueryCompat.astro";
 import GoogleAnalytics from "@components/analytics/GoogleAnalytics.astro";
 import La51Analytics from "@components/analytics/La51Analytics.astro";
 import MicrosoftClarity from "@components/analytics/MicrosoftClarity.astro";
@@ -36,7 +38,7 @@ import { isHomePage } from "@/utils/layout-utils";
 import { getAuthorAvatarUrl, getSiteLogo } from "@/utils/schema-image";
 import { buildSiteGraph, toAbsoluteUrl } from "@/utils/schema-utils";
 import { getOgLocale } from "@/utils/site-config-utils";
-import { getCanonicalUrl, url } from "@/utils/url-utils";
+import {  url } from "@/utils/url-utils";
 
 import "@/styles/main.css";
 import "@/styles/immersive-reading.css";
@@ -129,7 +131,7 @@ const aboutUrl =
 const siteLogo = await getSiteLogo();
 
 // canonical：对 /archive/ 与 /search/ 剥离查询串，避免筛选视图自我 canonical 到 ?tag= 等
-const canonicalUrl = getCanonicalUrl(Astro.url);
+const canonicalUrl = new URL(Astro.url.pathname,siteContext.origin).href;
 
 // OG 图片：文章走生成图/封面，非文章页回退到站点 logo
 let ogImageUrl: string | undefined;
@@ -200,6 +202,7 @@ const ogImageAlt = propsOgImageAlt ?? pageTitle;
     }
     <meta name="author" content={profileConfig.name} />
 
+    {siteContext.noindex&&<meta name="robots" content="noindex,follow"/>}
     <link rel="canonical" href={canonicalUrl} />
     <meta property="og:site_name" content={siteConfig.title} />
     <meta property="og:locale" content={getOgLocale(lang)} />
@@ -578,7 +581,8 @@ const ogImageAlt = propsOgImageAlt ?? pageTitle;
 
     <!-- GitHub 卡片客户端实时补全（forks/stars） -->
     <GithubCardManager />
-  </body>
+  <LegacyQueryCompat/>
+</body>
 </html>
 
 

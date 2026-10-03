@@ -1,0 +1,9 @@
+# Link and SEO verification
+
+Preview validation passed 53 legacy content endpoints and 578 legacy image endpoints. Final targets are 47 article routes, 5 collection introductions and one empty lecture routed to its course. Content compatibility pages are noindex and route directly to the final target. Native static image compatibility returns PNG bytes with their original signatures (width queries return the original in preview); the mapping resolver selects actual responsive variants for the requested width.
+
+83 changed heading IDs were discovered by comparing the original Markdown heading pipeline with rendered HTML; aliases remain on the canonical articles. Stable headings retain their IDs. Paths decode once, preserving literal plus/percent signs and rejecting traversal or malformed encodings. Folder/category/tag, author, research area, combined note filters and page 2 are covered by tests.
+
+`src/data/legacy-routes.json` is a platform-independent content/image map. Browser query compatibility uses only public catalog definitions; the complete migration manifest and its source hashes are not shipped to browsers. The sitemap uses the public content model, excludes compatibility/unlisted/draft content, and omits unknown lastmod. Preview metadata and robots are noindex. Production builds require a confirmed HTTPS origin via `PUBLIC_SITE_MODE=production` and `PUBLIC_SITE_ORIGIN`.
+
+No production domain or hosting platform has been confirmed. No platform configuration, deployment or DNS was changed. Real HTTP 301/308 rules, including image width queries, remain a cutover step for the selected host; the current static preview returns HTTP 200 compatibility pages and PNGs. Before cutover, record the current deployed release, provide personal video/music assets, generate the selected host's rules from this map, and verify every Location and fragment on its staging origin.

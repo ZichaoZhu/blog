@@ -1,0 +1,3 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';import type {APIContext} from 'astro';import manifest from '../../../../migration/manifest.json';
+export function getStaticPaths():Array<{params:{path:string};props:{sourcePath:string}}>{return manifest.assets.map(a=>({params:{path:a.sourcePath},props:{sourcePath:a.sourcePath}}));}
+export async function GET({props}:APIContext):Promise<Response>{const bytes=await readFile(resolve('src/content/posts',props.sourcePath));return new Response(new Uint8Array(bytes),{headers:{'Content-Type':'image/png','Cache-Control':'public, max-age=31536000, immutable'}});}

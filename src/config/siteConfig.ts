@@ -1,3 +1,4 @@
+import {siteContext} from "./siteContext";
 import type { SiteConfig } from "@/types/siteConfig";
 import { resolvePageToggles } from "../utils/page-toggle-utils";
 import { resolveSiteLang } from "../utils/site-config-utils";
@@ -48,7 +49,7 @@ export const siteConfig: SiteConfig = {
 	subtitle: "课程笔记、论文阅读与科研记录",
 
 	// 站点 URL
-	site_url: "http://localhost:4321",
+	site_url: siteContext.origin.href,
 
 	// 站点描述
 	description: "ZZC 的课程笔记、论文阅读与科研记录。",

@@ -1,0 +1,5 @@
+<script>
+import {resolveLegacyMap} from '../../utils/legacy';
+function redirect(){if(!['/blog','/notes','/archive'].includes(location.pathname.replace(/\/$/,'')))return;const query=new URLSearchParams(location.search);const target=resolveLegacyMap(location.pathname,query,{paths:{},images:{}});if(target&&new URL(target,location.origin).href!==location.href.split('#')[0])location.replace(target+location.hash);}
+redirect();document.addEventListener('firefly:page-view',redirect);
+</script>

@@ -1,3 +1,4 @@
+import {rehypeLegacyAnchors} from "./src/plugins/rehype-legacy-anchors.ts";
 import { remarkTyporaCompat, rehypeMathCompat, remarkSourceLinks } from "./src/plugins/remark-typora-compat";
 import { remarkLocalImages } from "./src/plugins/remark-local-images";
 import { resolve } from "node:path";
@@ -5,7 +6,6 @@ import { setMaxListeners } from "node:events";
 import cloudflare from "@astrojs/cloudflare";
 import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
-import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
@@ -239,53 +239,7 @@ export default defineConfig({
 			},
 		}),
 		svelte(),
-		sitemap({
-			filter: (page) => {
-				// 根据页面开关配置过滤sitemap
-				const url = new URL(page);
-				const pathname = url.pathname;
-				if (pathname === "/dynamic/" && !siteConfig.pages.dynamic) {
-					return false;
-				}
-				if (pathname.startsWith("/gallery/") && !siteConfig.pages.gallery) {
-					return false;
-				}
-				if (pathname === "/friends/" && !siteConfig.pages.friends) {
-					return false;
-				}
-				if (pathname === "/guestbook/" && !siteConfig.pages.guestbook) {
-					return false;
-				}
-				if (pathname === "/booknav/" && !siteConfig.pages.booknav) {
-					return false;
-				}
-				if (pathname === "/bilibili/" && !siteConfig.pages.bilibili) {
-					return false;
-				}
-				if (pathname === "/bangumi/" && !siteConfig.pages.bangumi) {
-					return false;
-				}
-				if (pathname === "/vndb/" && !siteConfig.pages.vndb) {
-					return false;
-				}
-				if (pathname === "/myanimelist/" && !siteConfig.pages.mal) {
-					return false;
-				}
-				// 动态页评论嵌入页：评论关闭时重定向到 /404/，不应进 sitemap
-				if (
-					pathname === "/dynamic/comments/" &&
-					(dynamicConfig.showComment === false ||
-						!commentConfig.type ||
-						commentConfig.type === "none")
-				) {
-					return false;
-				}
-				if (pathname === "/sponsor/" && !siteConfig.pages.sponsor) {
-					return false;
-				}
-				return true;
-			},
-		}),
+
 		mdx(),
 	],
 	markdown: {
@@ -314,6 +268,7 @@ export default defineConfig({
 				[rehypeKatex, { katex }],
 				[rehypeCallouts, { theme: siteConfig.post.rehypeCallouts.theme }],
 				rehypeSlug,
+				rehypeLegacyAnchors,
 				rehypeCodeGroup,
 				[rehypeMermaid, mermaidConfig],
 				rehypePlantuml,

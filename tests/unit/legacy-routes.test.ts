@@ -1,0 +1,10 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {resolveLegacyLocation} from '../../scripts/migration/redirects';import type {MigrationManifest} from '../../scripts/migration/convert';
+test('all legacy content, filters and images resolve without double decoding',async()=>{
+ const m:MigrationManifest=JSON.parse(await readFile('migration/manifest.json','utf8'));const query=(q='')=>new URLSearchParams(q);
+ for(const r of m.records)assert.equal(resolveLegacyLocation(encodeURI(r.legacyPath),query(),m),r.canonicalPath);
+ assert.equal(resolveLegacyLocation('/authors/zhuzichao',query(),m),'/about/');assert.equal(resolveLegacyLocation('/research/areas/3d-vision',query(),m),'/topics/3d-vision/');
+ assert.equal(resolveLegacyLocation('/blog',query('folder=Coure-Notebook%2FCompiler_Principle'),m),'/courses/compiler-principles/');assert.equal(resolveLegacyLocation('/blog',query('category=论文阅读'),m),'/papers/');assert.equal(resolveLegacyLocation('/blog',query('tag=机器人'),m),'/topics/robotics/');assert.equal(resolveLegacyLocation('/notes',query('page=2'),m),'/notes/page/2/');assert.equal(resolveLegacyLocation('/notes',query('type=paper&topic=robotics'),m),'/search/?type=paper&topic=robotics');
+ assert.equal(resolveLegacyLocation('/blog',query('folder=unknown'),m),'/search/?q=unknown');assert.equal(resolveLegacyLocation('/blog/%broken/',query(),m),null);
+ const source=m.assets.find(a=>a.publishedVariants.some(v=>v.url.startsWith('/_astro/')))!;const result=resolveLegacyLocation('/api/images/'+encodeURI(source.sourcePath),query('w=640'),m);assert.ok(source.publishedVariants.some(v=>v.url===result));assert.equal(resolveLegacyLocation('/api/images/%2e%2e/private.png',query(),m),null);
+ const fixture={...m,records:[{...m.records[0],legacyPath:'/blog/a+b%25/',canonicalPath:'/notes/plus/'}]};assert.equal(resolveLegacyLocation('/blog/a+b%2525/',query(),fixture),'/notes/plus/');assert.equal(resolveLegacyLocation('/blog/a%2Bb%2525/',query(),fixture),'/notes/plus/');assert.equal(resolveLegacyLocation('/blog/a%252Bb%2525/',query(),fixture),null);
+});
