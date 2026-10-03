@@ -4,7 +4,7 @@ import { resolve, dirname, relative } from 'node:path';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 
-export async function backupWorkspace(sourceRoot:string,backupRoot:string) {
+export async function backupWorkspace(sourceRoot:string,backupRoot:string):Promise<{files:{path:string;sha256:string}[];deletedTrackedFiles:string[];sourceHead:string}> {
  sourceRoot=resolve(sourceRoot); backupRoot=resolve(backupRoot);
  const git=(...args:string[])=>execFileSync('git',args,{cwd:sourceRoot,encoding:'utf8'});
  const paths=[...new Set(git('ls-files','-z','--cached','--others','--exclude-standard').split('\0').filter(Boolean))];
