@@ -690,3 +690,19 @@ html {
 .custom-md mark { background: #ffeaa5; color: #202020; padding: .05em .15em; }
 .article-reading { max-width: 760px; margin-inline: auto; }
 @media (min-width: 768px) { .custom-md { font-size: 18px; } }
+
+.knowledge-shell { display: grid; gap: 1.4rem; }
+.knowledge-shell h1 { font-size: clamp(1.7rem,3vw,2.4rem); font-weight: 750; line-height: 1.3; }
+.knowledge-shell h2 { font-size: 1.35rem; font-weight: 700; margin: .8rem 0; }
+.knowledge-shell p { line-height: 1.8; }
+.knowledge-list,.collection-list { list-style: none; padding:0; display:grid; gap:1rem; }
+.note-context { display:flex; justify-content:space-between; flex-wrap:wrap; gap:.5rem; padding:.5rem 1rem; font-size:.85rem; }
+.knowledge-entries { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.2rem; }
+.knowledge-entries a {display:flex;flex-direction:column;gap:.4rem;}
+.knowledge-entries strong {font-size:1.3rem;}
+.knowledge-entries span,.note-context {color:var(--deep-text);}
+.section-heading,.collection-links {display:flex;align-items:center;flex-wrap:wrap;gap:1rem;justify-content:space-between;}
+.empty-state { padding:2rem; border:1px solid var(--line-divider); border-radius:var(--radius-large); }
+.course-nav ol { padding: .8rem 0 0; display:grid;gap:.6rem; }
+.course-nav [aria-current=page] {font-weight:700;color:var(--primary);}
+:focus-visible {outline: 3px solid var(--primary);outline-offset:3px;}

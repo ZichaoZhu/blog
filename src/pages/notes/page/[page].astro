@@ -1,0 +1,9 @@
+---
+import KnowledgeLayout from '../../../layouts/KnowledgeLayout.astro';
+import NoteList from '../../../components/knowledge/NoteList.astro';
+import {getSortedPosts,asNoteRecord} from '../../../utils/content-utils';
+import {toSummary,paginateNotes} from '../../../utils/note-model';
+export async function getStaticPaths(){const notes=(await getSortedPosts()).map(p=>toSummary(asNoteRecord(p)));return Array.from({length:Math.max(0,Math.ceil(notes.length/25)-1)},(_,i)=>({params:{page:String(i+2)},props:{notes,page:i+2}}));}
+const {notes,page}=Astro.props;const {items,totalPages}=paginateNotes(notes,page);
+---
+<KnowledgeLayout title={`全部笔记 · 第 ${page} 页`}><NoteList notes={items}/><nav aria-label="分页"><a href={page===2?'/notes/':`/notes/page/${page-1}/`}>← 上一页</a><span aria-current="page">{page} / {totalPages}</span>{page < totalPages && <a href={`/notes/page/${page+1}/`}>下一页 →</a>}</nav></KnowledgeLayout>

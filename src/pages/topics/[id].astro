@@ -1,0 +1,10 @@
+---
+import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
+import NoteList from '../../components/knowledge/NoteList.astro';
+import {topics} from '../../data/catalog';
+import {getSortedPosts,asNoteRecord} from '../../utils/content-utils';
+import {toSummary} from '../../utils/note-model';
+export function getStaticPaths(){return topics.map(topic=>({params:{id:topic.id},props:{topic}}));}
+const {topic}=Astro.props;const notes=(await getSortedPosts()).filter(p=>p.data.topics.includes(topic.id)).map(p=>toSummary(asNoteRecord(p)));
+---
+<KnowledgeLayout title={topic.name} description={topic.description}><a href="/topics/">← 全部主题</a><NoteList notes={notes}/></KnowledgeLayout>

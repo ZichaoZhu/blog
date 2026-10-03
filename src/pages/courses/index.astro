@@ -1,0 +1,8 @@
+---
+import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
+import {courses} from '../../data/catalog';
+import {getSortedPosts,asNoteRecord} from '../../utils/content-utils';
+import {orderCourseNotes} from '../../utils/note-model';
+const notes=(await getSortedPosts()).map(asNoteRecord);
+---
+<KnowledgeLayout title="课程" description="按课程与讲次组织的学习笔记。"><ul class="collection-list">{courses.map(c=><li class="card-base p-6"><h2><a href={`/courses/${c.id}/`}>{c.title}</a></h2><p>{c.description}</p><span>{orderCourseNotes(notes,c.id).length} 篇讲义</span></li>)}</ul></KnowledgeLayout>

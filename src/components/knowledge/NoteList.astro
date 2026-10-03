@@ -1,0 +1,12 @@
+---
+import PostCard from '../layout/PostCard.astro';
+import type {NoteSummary} from '../../utils/note-model';
+import {courses} from '../../data/catalog';
+interface Props {notes:NoteSummary[]}
+const {notes}=Astro.props;
+const labels={course:'课程笔记',paper:'论文阅读',log:'研究日志',idea:'研究想法',experiment:'实验记录',note:'笔记'};
+---
+{notes.length ? <ul class="knowledge-list">{notes.map(note=><li>
+ <div class="note-context">{note.course ? <a href={`/courses/${note.course.id}/`}>{courses.find(c=>c.id===note.course?.id)?.title}</a> : labels[note.type]}{note.date ? <time datetime={note.date}>{note.date}</time>:<span>日期未记录</span>}</div>
+ <PostCard title={note.title} url={note.url} description={note.description} tags={[]} category={null} image="" draft={false} style="" />
+</li>)}</ul> : <p class="empty-state">暂无公开记录。</p>}

@@ -26,6 +26,7 @@ import Layout from "./Layout.astro";
 import "@/styles/expressive-code.css";
 
 interface Props {
+ courseContext?:{courseId:string;currentSlug:string;notes:import("@/utils/note-model").NoteSummary[]};
 	title?: string;
 	description?: string;
 	lang?: string;
@@ -68,6 +69,7 @@ const {
 	bannerPostMeta,
 	heading,
 	hideHeading = false,
+ courseContext,
 } = Astro.props;
 
 const isHomePageCheck = isHomePage(Astro.url.pathname);
@@ -123,7 +125,7 @@ const {
                 hasRightComponents={hasRightComponents}
                 sidebarClass={sidebarClass}
                 headings={headings}
-                encrypted={encrypted}
+                encrypted={encrypted} courseContext={courseContext}
             />
                     
             {/* 主内容区包装器 - 包含静态栏位和swup容器，作为单个grid item */}
@@ -146,7 +148,7 @@ const {
                 {/* 移动端底部组件：<768px 时 #main-grid 是 display:block，必须排在页脚之前 */}
                 {sidebarLayoutConfig.mobileBottomComponents && sidebarLayoutConfig.mobileBottomComponents.length > 0 && (
                     <div id="mobile-bottom-sidebar" class="block md:hidden mt-4">
-                        <SideBar side="bottom" headings={headings} encrypted={encrypted}></SideBar>
+                        <SideBar side="bottom" headings={headings} encrypted={encrypted} courseContext={courseContext}></SideBar>
                     </div>
                 )}
             </div>
@@ -160,7 +162,7 @@ const {
                 hasRightComponents={hasRightComponents}
                 sidebarClass={sidebarClass}
                 headings={headings}
-                encrypted={encrypted}
+                encrypted={encrypted} courseContext={courseContext}
             />
 
         </div>

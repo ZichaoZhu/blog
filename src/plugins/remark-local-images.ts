@@ -38,7 +38,7 @@ export function remarkLocalImages(options:{contentRoot:string;originalsRoot?:str
   });
   const images:{node:Image;parent:{children:unknown[];type:string};index:number}[]=[];
   visit(tree,'image',(node,index,parent)=>{if(parent&&typeof index==='number')images.push({node,parent,index});});
-  for(const {node,parent,index} of images){
+  for(const {node} of images){
    if(/^(https?:|data:|\/\/)/i.test(node.url))continue;
    const source=resolveLocalImage(node.url,sourceFile,options.contentRoot),bytes=await readFile(source);
    const name=createHash('sha256').update(bytes).digest('hex')+extname(source),original=`/images/original/${name}`;

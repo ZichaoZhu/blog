@@ -10,3 +10,11 @@
 - 构建前强制刷新 Astro 内容缓存，避免 renderer 插件更改后旧 HTML 被复用。
 
 复验：`pnpm test && pnpm check && pnpm type-check && pnpm build`。浏览器回归与最终截图见后续加入的 `tests/e2e` 和最终验收报告。
+
+## 导航验收
+
+- 首页身份、GitHub、头像来自原工作区；入口为 Notes/Courses/Papers/Research/Projects，主题与搜索另有入口。
+- 课程的 Lec0/2/10 排序、跨课程隔离、unlisted/draft 排除与 44 项分页 fixture 已通过单元验证。
+- Chromium 生产预览通过：首页 → 操作系统 → Lec0 → 下一讲 → 返回课程；研究想法/实验和项目空状态；未知课程返回 404。
+- 390px 菜单支持 Enter、Tab 焦点留在模态内、Esc 返回触发按钮；原生 details 目录支持键盘与正文锚点。
+- CourseNav 置于现有侧栏 Swup 动态容器，保持播放器持久存在并更新当前课程上下文；Article 复用模板布局/Markdown/TOC，移除分享、赞助和全站时间线邻接。

@@ -1,0 +1,12 @@
+---
+import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
+import NoteList from '../../components/knowledge/NoteList.astro';
+import {getSortedPosts,asNoteRecord} from '../../utils/content-utils';
+import {toSummary,paginateNotes} from '../../utils/note-model';
+const notes=(await getSortedPosts()).map(p=>toSummary(asNoteRecord(p)));
+const {items,totalPages}=paginateNotes(notes,1);
+---
+<KnowledgeLayout title="全部笔记" description={`${notes.length} 篇公开记录；可按课程、主题或全文搜索查找。`}>
+ <nav class="collection-links"><a href="/courses/">课程</a><a href="/topics/">主题</a><a href="/search/">全文搜索</a></nav><NoteList notes={items}/>
+ {totalPages>1 && <nav aria-label="分页"><span aria-current="page">1 / {totalPages}</span> <a href="/notes/page/2/">下一页 →</a></nav>}
+</KnowledgeLayout>

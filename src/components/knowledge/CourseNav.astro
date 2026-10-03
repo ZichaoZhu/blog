@@ -1,0 +1,11 @@
+---
+import type {NoteSummary} from '../../utils/note-model';
+import {courses} from '../../data/catalog';
+interface Props {courseId:string;currentSlug:string;notes:NoteSummary[]}
+const {courseId,currentSlug,notes}=Astro.props;
+const course=courses.find(c=>c.id===courseId);
+---
+<nav aria-label="课程讲次" class="card-base p-4 course-nav" data-pagefind-ignore>
+ <a href={`/courses/${courseId}/`} class="font-bold">{course?.title} · 返回课程</a>
+ <ol>{notes.map(note=><li><a href={note.url} aria-current={note.slug===currentSlug?'page':undefined}>{note.course?.order!==undefined && <span>Lec{note.course.order} · </span>}{note.title}</a></li>)}</ol>
+</nav>

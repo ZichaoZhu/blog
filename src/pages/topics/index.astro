@@ -1,0 +1,7 @@
+---
+import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
+import {topics} from '../../data/catalog';
+import {getSortedPosts} from '../../utils/content-utils';
+const notes=await getSortedPosts();
+---
+<KnowledgeLayout title="主题" description="主题可横跨课程、论文与研究记录。"><ul class="collection-list">{topics.map(t=><li class="card-base p-6"><h2><a href={`/topics/${t.id}/`}>{t.name}</a></h2><p>{t.description}</p><span>{notes.filter(n=>n.data.topics.includes(t.id)).length} 篇笔记</span></li>)}</ul></KnowledgeLayout>

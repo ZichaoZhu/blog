@@ -3,7 +3,7 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { getCategoryUrl } from "@utils/url-utils";
 
-import {isPublicNote, getRoutableNotes, assertCatalog, compareNoteDates, type NoteRecord} from "./note-model";
+import {isPublicNote, getRoutableNotes, assertCatalog, compareNoteDates, type NoteRecord, getCourseNeighbors} from "./note-model";
 import {courses,topics} from "../data/catalog";
 export function asNoteRecord(post:CollectionEntry<"posts">):NoteRecord {return {entryId:post.id,data:post.data,hasBody:!!post.body?.trim()};}
 async function getRawSortedPosts():Promise<CollectionEntry<"posts">[]> {
@@ -18,14 +18,8 @@ export async function getRoutablePosts():Promise<CollectionEntry<"posts">[]> {
 export async function getSortedPosts(): Promise<CollectionEntry<"posts">[]> {
 	const sorted = await getRawSortedPosts();
 
-	for (let i = 1; i < sorted.length; i++) {
-		sorted[i].data.nextSlug = sorted[i - 1].data.slug;
-		sorted[i].data.nextTitle = sorted[i - 1].data.title;
-	}
-	for (let i = 0; i < sorted.length - 1; i++) {
-		sorted[i].data.prevSlug = sorted[i + 1].data.slug;
-		sorted[i].data.prevTitle = sorted[i + 1].data.title;
-	}
+ const records=sorted.map(asNoteRecord);
+ for(const post of sorted){const {previous,next}=getCourseNeighbors(records,post.data.slug);post.data.prevSlug=previous?.slug??'';post.data.prevTitle=previous?.title??'';post.data.nextSlug=next?.slug??'';post.data.nextTitle=next?.title??'';}
 
 	return sorted;
 }
@@ -249,9 +243,7 @@ export async function getRelatedPosts(
 	currentPost: CollectionEntry<"posts">,
 	maxCount = 5,
 ): Promise<PostForList[]> {
-	const allPosts = await getCollection<"posts">("posts", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
+	const allPosts = await getRawSortedPosts();
 
 	// 排除自身和加密文章
 	const candidates = allPosts.filter(

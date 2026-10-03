@@ -103,9 +103,9 @@ const visibleTags = tags || [];
             <div class="meta-icon">
               <Icon name="material-symbols:calendar-today-outline-rounded" class="text-xl" />
             </div>
-            <time datetime={published.toISOString()} class="text-50 text-sm font-medium">
+            {published && <time datetime={published.toISOString()} class="text-50 text-sm font-medium">
               {formatDateToYYYYMMDD(published)}
-            </time>
+            </time>}
           </div>
           {visibleTags.length > 0 && (
             <div class="flex items-center">

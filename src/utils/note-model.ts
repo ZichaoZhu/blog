@@ -31,3 +31,16 @@ export function assertCatalog(notes:readonly NoteRecord[],catalog:Catalog):void 
   }
  }
 }
+export function orderCourseNotes(notes:readonly NoteRecord[],courseId:string):NoteRecord[] {
+ return getPublicNotes(notes).filter(n=>n.data.course?.id===courseId).sort((a,b)=>(a.data.course?.order??Infinity)-(b.data.course?.order??Infinity)||a.data.slug.localeCompare(b.data.slug));
+}
+export function getCourseNeighbors(notes:readonly NoteRecord[],slug:string):{previous?:NoteSummary;next?:NoteSummary} {
+ const current=notes.find(n=>n.data.slug===slug&&isPublicNote(n));if(!current?.data.course)return {};
+ const ordered=orderCourseNotes(notes,current.data.course.id),index=ordered.findIndex(n=>n.data.slug===slug);
+ return {previous:index>0?toSummary(ordered[index-1]):undefined,next:index<ordered.length-1?toSummary(ordered[index+1]):undefined};
+}
+export function paginateNotes(notes:readonly NoteSummary[],page:number,pageSize=25):{items:NoteSummary[];totalPages:number} {
+ const totalPages=Math.max(1,Math.ceil(notes.length/pageSize));
+ if(!Number.isInteger(page)||page<1||page>totalPages||!Number.isInteger(pageSize)||pageSize<1)throw new RangeError('Invalid page or page size');
+ return {items:notes.slice((page-1)*pageSize,page*pageSize),totalPages};
+}

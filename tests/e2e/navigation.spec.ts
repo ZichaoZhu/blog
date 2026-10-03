@@ -1,0 +1,29 @@
+import {test,expect} from '@playwright/test';
+test('homepage to course, article, next lecture and back',async({page})=>{
+ await page.goto('/');await expect(page.locator('h1')).toHaveText('ZZC Research Notes');
+ await page.getByRole('navigation',{name:'知识入口'}).getByRole('link',{name:'课程',exact:false}).click();
+ await page.getByRole('heading').getByRole('link',{name:'操作系统',exact:true}).click();
+ await expect(page.locator('h1')).toHaveText('操作系统');
+ await page.locator('.post-card-title').filter({hasText:'Lec0: 课程介绍与成绩'}).click();
+ await expect(page.locator('h1')).toHaveText('Lec0: 课程介绍与成绩');
+ await expect(page.getByRole('navigation',{name:'上下讲'})).toBeVisible();
+ await page.getByRole('navigation',{name:'上下讲'}).getByRole('link',{name:/下一讲/}).click();
+ await expect(page.locator('h1')).toContainText('Lec');
+ await page.locator('main').getByRole('link',{name:/返回课程/}).click();await expect(page.locator('h1')).toHaveText('操作系统');
+});
+test('collections show real empty states and unknown pages are not generated',async({page})=>{
+ for(const path of ['/research/ideas/','/research/experiments/']){await page.goto(path);await expect(page.getByText('暂无公开记录。',{exact:true})).toBeVisible();}
+ await page.goto('/projects/');await expect(page.getByText('暂无已整理的公开项目。')).toBeVisible();
+ const response=await page.goto('/courses/not-real/');expect(response?.status()).toBe(404);
+});
+test('mobile menu and table of contents support keyboard focus',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/notes/operating-systems-lec0/');
+ await page.locator('#nav-menu-switch').focus();await page.keyboard.press('Enter');
+ await expect(page.getByRole('dialog',{name:'导航菜单'})).toBeVisible();await page.keyboard.press('Tab');
+ expect(await page.evaluate(()=>document.getElementById('nav-menu-panel')?.contains(document.activeElement))).toBe(true);
+ await page.keyboard.press('Escape');await expect(page.locator('#nav-menu-switch')).toBeFocused();
+ await page.locator('summary').filter({hasText:'文章目录'}).focus();await page.keyboard.press('Enter');
+ await expect(page.getByRole('navigation',{name:'文章目录',exact:true})).toBeVisible();
+ await page.getByRole('navigation',{name:'文章目录',exact:true}).getByRole('link').first().focus();await page.keyboard.press('Enter');
+ expect(new URL(page.url()).hash.length).toBeGreaterThan(1);
+});

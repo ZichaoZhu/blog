@@ -18,7 +18,7 @@ type ProjectLink = {
 
 type ProjectData = {
 	title: string;
-	published: Date;
+	published?: Date;
 	draft: boolean;
 	order?: number;
 	description: string;
@@ -58,7 +58,7 @@ const projectsCollection: ContentCollection<ProjectData> = defineCollection({
 	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/projects" }),
 	schema: z.object({
 		title: z.string(),
-		published: z.date(),
+		published: z.date().optional(),
 		draft: z.boolean().optional().default(false),
 		order: z.number().optional(),
 		description: z.string().optional().default(""),

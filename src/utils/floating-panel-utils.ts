@@ -42,7 +42,10 @@ function syncFloatingPanelState(panel: HTMLElement): void {
 		}
 	}
 
-	panelOpenStates.set(panel, isOpen);
+	if (isOpen && wasOpen !== true && panel.querySelector('[aria-modal="true"]')) {
+  focusableElements(panel)[0]?.focus();
+ }
+ panelOpenStates.set(panel, isOpen);
 	if (wasOpen === true && !isOpen) {
 		panel.dispatchEvent(new Event(FLOATING_PANEL_CLOSE_EVENT));
 	}
@@ -57,6 +60,19 @@ function syncFloatingPanelState(panel: HTMLElement): void {
 function setFloatingPanelOpen(panel: HTMLElement, isOpen: boolean): void {
 	panel.classList.toggle(CLOSED_CLASS, !isOpen);
 	syncFloatingPanelState(panel);
+}
+
+function focusableElements(panel:HTMLElement):HTMLElement[] {
+ return Array.from(panel.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]')).filter(el=>!el.closest('[inert]')&&isVisible(el));
+}
+function trapModalTab(event:KeyboardEvent):void {
+ if(event.key!=="Tab")return;
+ const panel=Array.from(document.querySelectorAll<HTMLElement>(PANEL_SELECTOR)).find(p=>!p.classList.contains(CLOSED_CLASS)&&p.querySelector('[aria-modal="true"]'));
+ if(!panel)return;
+ const elements=focusableElements(panel),first=elements[0],last=elements.at(-1);
+ if(!first)return;
+ if(event.shiftKey && (document.activeElement===first||!panel.contains(document.activeElement))){event.preventDefault();last?.focus();}
+ else if(!event.shiftKey&&(document.activeElement===last||!panel.contains(document.activeElement))){event.preventDefault();first.focus();}
 }
 
 function handleEscape(event: KeyboardEvent): void {
@@ -128,6 +144,7 @@ export function initializeFloatingPanels(root: ParentNode = document): void {
 
 	if (!escapeListenerAttached) {
 		document.addEventListener("keydown", handleEscape);
+ document.addEventListener("keydown", trapModalTab);
 		escapeListenerAttached = true;
 	}
 }

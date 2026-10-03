@@ -11,7 +11,7 @@ import { getFileDirFromPath, getTagUrl } from "@/utils/url-utils";
 
 interface Props {
 	class?: string;
-	entry: CollectionEntry<"posts">;
+	entry?: CollectionEntry<"posts">;
 	title: string;
 	url: string;
 	published?: Date;
@@ -43,8 +43,8 @@ const {
 const className = Astro.props.class;
 
 // 处理随机图：如果image为"api"，则从配置的API获取随机图
-const processedImage = processCoverImageSync(image, entry.id);
-const apiUrls = getApiUrlList(image, entry.id);
+const processedImage = processCoverImageSync(image, entry?.id ?? url);
+const apiUrls = getApiUrlList(image, entry?.id ?? url);
 const hasCover =
 	processedImage !== undefined &&
 	processedImage !== null &&
@@ -95,10 +95,10 @@ const bottomTags = metaTagCount > 0 ? tagList.slice(0, metaTagCount) : tagList;
 const hiddenTags = tagList.slice(bottomTags.length);
 const hiddenTagCount = hiddenTags.length;
 
-const { remarkPluginFrontmatter } = await render(entry);
-const descriptionText = description || remarkPluginFrontmatter.excerpt || "";
-const words = remarkPluginFrontmatter.words;
-const minutes = remarkPluginFrontmatter.minutes;
+const remarkPluginFrontmatter = entry ? (await render(entry)).remarkPluginFrontmatter : null;
+const descriptionText = description || remarkPluginFrontmatter?.excerpt || "";
+const words = remarkPluginFrontmatter?.words;
+const minutes = remarkPluginFrontmatter?.minutes;
 ---
 
 <div
@@ -248,7 +248,7 @@ const minutes = remarkPluginFrontmatter.minutes;
         </div>
         <CoverImage
           src={processedImage}
-          basePath={getFileDirFromPath(entry.filePath || "")}
+          basePath={getFileDirFromPath(entry?.filePath || "")}
           alt={title}
           class="w-full h-full transition-transform duration-300 group-hover:scale-110 group-active:scale-115"
           preview={true}
