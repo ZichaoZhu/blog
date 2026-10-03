@@ -1,0 +1,14 @@
+<button type="button" id="effects-toggle" class="btn-plain rounded-lg h-11 px-2 text-xs" aria-label="暂停动态效果" aria-pressed="false">暂停动态</button>
+<script>
+ import {readEffectsState} from '../../utils/effects-state';
+ const button=document.getElementById('effects-toggle');
+ function sync():void {
+  const state=readEffectsState();document.documentElement.dataset.fireflyEffects=state.enabled?'on':'off';
+  button?.setAttribute('aria-label',state.enabled?'暂停动态效果':'启用动态效果');button?.setAttribute('aria-pressed',String(!state.enabled));
+  if(button)button.textContent=state.enabled?'暂停动态':'启用动态';
+  window.dispatchEvent(new CustomEvent('firefly:effects-change',{detail:state}));
+ }
+ button?.addEventListener('click',()=>{localStorage.setItem('firefly-effects',readEffectsState().enabled?'off':'on');sync();});
+ matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',sync);
+ document.addEventListener('visibilitychange',sync);window.addEventListener('storage',sync);sync();
+</script>

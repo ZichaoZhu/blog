@@ -1,0 +1,672 @@
+[
+  {
+    "state": "cover",
+    "overflow": false,
+    "audios": 1,
+    "paused": true,
+    "videoPaused": true,
+    "sakura": false,
+    "resources": [
+      {
+        "name": "http://127.0.0.1:4321/_astro/MainGridLayout.ZrmUr-ft.css",
+        "transferSize": 5452,
+        "decodedBodySize": 24317
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/NoteList.BIwf3BlI.css",
+        "transferSize": 1321,
+        "decodedBodySize": 5996
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Layout.hjBQKXgp.css",
+        "transferSize": 29983,
+        "decodedBodySize": 206036
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/page.-aUNN9dY.js",
+        "transferSize": 1304,
+        "decodedBodySize": 2008
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/EffectsToggle.astro_astro_type_script_index_0_lang.DxiGvoHG.js",
+        "transferSize": 1025,
+        "decodedBodySize": 725
+      },
+      {
+        "name": "http://127.0.0.1:4321/avatars/MyGirl.png",
+        "transferSize": 6779643,
+        "decodedBodySize": 6779343
+      },
+      {
+        "name": "http://127.0.0.1:4321/assets/images/DesktopWallpaper/d1.avif",
+        "transferSize": 73512,
+        "decodedBodySize": 73212
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/TypewriterText.astro_astro_type_script_index_0_lang.C8FuRVvh.js",
+        "transferSize": 1234,
+        "decodedBodySize": 2540
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SidebarTOC.astro_astro_type_script_index_0_lang.CZpJBkio.js",
+        "transferSize": 1316,
+        "decodedBodySize": 1016
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/ImmersiveReading.astro_astro_type_script_index_0_lang.VMkcfw2Z.js",
+        "transferSize": 1686,
+        "decodedBodySize": 4489
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/FloatingTOC.astro_astro_type_script_index_0_lang.B4vcJqvf.js",
+        "transferSize": 1362,
+        "decodedBodySize": 3126
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/WavesEffect.astro_astro_type_script_index_0_lang.Bot7H84g.js",
+        "transferSize": 2822,
+        "decodedBodySize": 7606
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SakuraEffect.astro_astro_type_script_index_0_lang.QdusYQOI.js",
+        "transferSize": 2626,
+        "decodedBodySize": 7776
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/FancyboxManager.astro_astro_type_script_index_0_lang.TsKi3_WT.js",
+        "transferSize": 2178,
+        "decodedBodySize": 4128
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Layout.astro_astro_type_script_index_0_lang.B07y5pnG.js",
+        "transferSize": 4249,
+        "decodedBodySize": 12250
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/preload-helper.BKYioxU4.js",
+        "transferSize": 1054,
+        "decodedBodySize": 1367
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/client.svelte.DPtd677M.js",
+        "transferSize": 1206,
+        "decodedBodySize": 906
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Search.Cih2eAJG.js",
+        "transferSize": 3328,
+        "decodedBodySize": 7739
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/LightDarkSwitch.DjiPJZh_.js",
+        "transferSize": 1975,
+        "decodedBodySize": 3945
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/m1.DEh_M2ue_Z1S1lrt.webp",
+        "transferSize": 72432,
+        "decodedBodySize": 72132
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/effects-state.BVb-92hj.js",
+        "transferSize": 710,
+        "decodedBodySize": 410
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/toc-utils.QRFqSJJX.js",
+        "transferSize": 2584,
+        "decodedBodySize": 5917
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/config.BgeAbQHn.js",
+        "transferSize": 2373,
+        "decodedBodySize": 4504
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/translation.DM8rFzF3.js",
+        "transferSize": 32404,
+        "decodedBodySize": 126559
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/effectsConfig.DhqIN0Lx.js",
+        "transferSize": 511,
+        "decodedBodySize": 211
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/grid-layout-utils.CoMbVltf.js",
+        "transferSize": 1497,
+        "decodedBodySize": 3033
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/rolldown-runtime.BQ-_32WO.js",
+        "transferSize": 464,
+        "decodedBodySize": 164
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/setting-utils.BF04Zrl_.js",
+        "transferSize": 3826,
+        "decodedBodySize": 13219
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/url-utils.55EjbRm1.js",
+        "transferSize": 931,
+        "decodedBodySize": 631
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/floating-panel-utils.C09Y8Obf.js",
+        "transferSize": 1468,
+        "decodedBodySize": 2707
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/client.CCcmZBat.js",
+        "transferSize": 22308,
+        "decodedBodySize": 57791
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/disclose-version.DwdwGuwu.js",
+        "transferSize": 366,
+        "decodedBodySize": 66
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/legacy._71nqFKt.js",
+        "transferSize": 347,
+        "decodedBodySize": 47
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Icon.Bqe5LpPm.js",
+        "transferSize": 8973,
+        "decodedBodySize": 22607
+      },
+      {
+        "name": "http://127.0.0.1:4321/assets/music/cover/109951169585655912.webp",
+        "transferSize": 35064,
+        "decodedBodySize": 34764
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Swup.BLK6BtE9.js",
+        "transferSize": 368,
+        "decodedBodySize": 68
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Swup.modern.CjtNEaz8.js",
+        "transferSize": 7716,
+        "decodedBodySize": 21711
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SwupA11yPlugin.8VZs389h.js",
+        "transferSize": 2586,
+        "decodedBodySize": 5734
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/index.modern.DGWg1a9q.js",
+        "transferSize": 1211,
+        "decodedBodySize": 1767
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SwupHeadPlugin.CJV9x5S0.js",
+        "transferSize": 1583,
+        "decodedBodySize": 2581
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SwupScriptsPlugin.KOkp8JHL.js",
+        "transferSize": 915,
+        "decodedBodySize": 1100
+      }
+    ]
+  },
+  {
+    "state": "effects",
+    "overflow": false,
+    "audios": 1,
+    "paused": true,
+    "videoPaused": true,
+    "sakura": true,
+    "resources": [
+      {
+        "name": "http://127.0.0.1:4321/_astro/MainGridLayout.ZrmUr-ft.css",
+        "transferSize": 5452,
+        "decodedBodySize": 24317
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Layout.hjBQKXgp.css",
+        "transferSize": 29983,
+        "decodedBodySize": 206036
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/NoteList.BIwf3BlI.css",
+        "transferSize": 1321,
+        "decodedBodySize": 5996
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/EffectsToggle.astro_astro_type_script_index_0_lang.DxiGvoHG.js",
+        "transferSize": 1025,
+        "decodedBodySize": 725
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/page.-aUNN9dY.js",
+        "transferSize": 1304,
+        "decodedBodySize": 2008
+      },
+      {
+        "name": "http://127.0.0.1:4321/avatars/MyGirl.png",
+        "transferSize": 6779643,
+        "decodedBodySize": 6779343
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SidebarTOC.astro_astro_type_script_index_0_lang.CZpJBkio.js",
+        "transferSize": 1316,
+        "decodedBodySize": 1016
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/TypewriterText.astro_astro_type_script_index_0_lang.C8FuRVvh.js",
+        "transferSize": 1234,
+        "decodedBodySize": 2540
+      },
+      {
+        "name": "http://127.0.0.1:4321/assets/images/DesktopWallpaper/d1.avif",
+        "transferSize": 73512,
+        "decodedBodySize": 73212
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/ImmersiveReading.astro_astro_type_script_index_0_lang.VMkcfw2Z.js",
+        "transferSize": 1686,
+        "decodedBodySize": 4489
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/FloatingTOC.astro_astro_type_script_index_0_lang.B4vcJqvf.js",
+        "transferSize": 1362,
+        "decodedBodySize": 3126
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SakuraEffect.astro_astro_type_script_index_0_lang.QdusYQOI.js",
+        "transferSize": 2626,
+        "decodedBodySize": 7776
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/FancyboxManager.astro_astro_type_script_index_0_lang.TsKi3_WT.js",
+        "transferSize": 2178,
+        "decodedBodySize": 4128
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/WavesEffect.astro_astro_type_script_index_0_lang.Bot7H84g.js",
+        "transferSize": 2822,
+        "decodedBodySize": 7606
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Layout.astro_astro_type_script_index_0_lang.B07y5pnG.js",
+        "transferSize": 4249,
+        "decodedBodySize": 12250
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/preload-helper.BKYioxU4.js",
+        "transferSize": 1054,
+        "decodedBodySize": 1367
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Search.Cih2eAJG.js",
+        "transferSize": 3328,
+        "decodedBodySize": 7739
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/client.svelte.DPtd677M.js",
+        "transferSize": 1206,
+        "decodedBodySize": 906
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/LightDarkSwitch.DjiPJZh_.js",
+        "transferSize": 1975,
+        "decodedBodySize": 3945
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/m1.DEh_M2ue_Z1S1lrt.webp",
+        "transferSize": 72432,
+        "decodedBodySize": 72132
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/effects-state.BVb-92hj.js",
+        "transferSize": 710,
+        "decodedBodySize": 410
+      },
+      {
+        "name": "https://bed.twoleaf.cn/file/1785658612716_firefly.mp4",
+        "transferSize": 0,
+        "decodedBodySize": 0
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/toc-utils.QRFqSJJX.js",
+        "transferSize": 2584,
+        "decodedBodySize": 5917
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/translation.DM8rFzF3.js",
+        "transferSize": 32404,
+        "decodedBodySize": 126559
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/config.BgeAbQHn.js",
+        "transferSize": 2373,
+        "decodedBodySize": 4504
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/grid-layout-utils.CoMbVltf.js",
+        "transferSize": 1497,
+        "decodedBodySize": 3033
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/effectsConfig.DhqIN0Lx.js",
+        "transferSize": 511,
+        "decodedBodySize": 211
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/rolldown-runtime.BQ-_32WO.js",
+        "transferSize": 464,
+        "decodedBodySize": 164
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/url-utils.55EjbRm1.js",
+        "transferSize": 931,
+        "decodedBodySize": 631
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/setting-utils.BF04Zrl_.js",
+        "transferSize": 3826,
+        "decodedBodySize": 13219
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/floating-panel-utils.C09Y8Obf.js",
+        "transferSize": 1468,
+        "decodedBodySize": 2707
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/client.CCcmZBat.js",
+        "transferSize": 22308,
+        "decodedBodySize": 57791
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/disclose-version.DwdwGuwu.js",
+        "transferSize": 366,
+        "decodedBodySize": 66
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/legacy._71nqFKt.js",
+        "transferSize": 347,
+        "decodedBodySize": 47
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Icon.Bqe5LpPm.js",
+        "transferSize": 8973,
+        "decodedBodySize": 22607
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/sakura.worker-S4lNqkzx.js",
+        "transferSize": 2002,
+        "decodedBodySize": 4892
+      },
+      {
+        "name": "http://127.0.0.1:4321/assets/music/cover/109951169585655912.webp",
+        "transferSize": 35064,
+        "decodedBodySize": 34764
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Swup.BLK6BtE9.js",
+        "transferSize": 368,
+        "decodedBodySize": 68
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Swup.modern.CjtNEaz8.js",
+        "transferSize": 7716,
+        "decodedBodySize": 21711
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SwupA11yPlugin.8VZs389h.js",
+        "transferSize": 2586,
+        "decodedBodySize": 5734
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/index.modern.DGWg1a9q.js",
+        "transferSize": 1211,
+        "decodedBodySize": 1767
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SwupHeadPlugin.CJV9x5S0.js",
+        "transferSize": 1583,
+        "decodedBodySize": 2581
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SwupScriptsPlugin.KOkp8JHL.js",
+        "transferSize": 915,
+        "decodedBodySize": 1100
+      }
+    ]
+  },
+  {
+    "state": "playing",
+    "overflow": false,
+    "audios": 1,
+    "paused": false,
+    "videoPaused": false,
+    "sakura": true,
+    "resources": [
+      {
+        "name": "http://127.0.0.1:4321/_astro/Layout.hjBQKXgp.css",
+        "transferSize": 29983,
+        "decodedBodySize": 206036
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/MainGridLayout.ZrmUr-ft.css",
+        "transferSize": 5452,
+        "decodedBodySize": 24317
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/NoteList.BIwf3BlI.css",
+        "transferSize": 1321,
+        "decodedBodySize": 5996
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/page.-aUNN9dY.js",
+        "transferSize": 1304,
+        "decodedBodySize": 2008
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/EffectsToggle.astro_astro_type_script_index_0_lang.DxiGvoHG.js",
+        "transferSize": 1025,
+        "decodedBodySize": 725
+      },
+      {
+        "name": "http://127.0.0.1:4321/avatars/MyGirl.png",
+        "transferSize": 6779643,
+        "decodedBodySize": 6779343
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/TypewriterText.astro_astro_type_script_index_0_lang.C8FuRVvh.js",
+        "transferSize": 1234,
+        "decodedBodySize": 2540
+      },
+      {
+        "name": "http://127.0.0.1:4321/assets/images/DesktopWallpaper/d1.avif",
+        "transferSize": 73512,
+        "decodedBodySize": 73212
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SidebarTOC.astro_astro_type_script_index_0_lang.CZpJBkio.js",
+        "transferSize": 1316,
+        "decodedBodySize": 1016
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/FloatingTOC.astro_astro_type_script_index_0_lang.B4vcJqvf.js",
+        "transferSize": 1362,
+        "decodedBodySize": 3126
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/ImmersiveReading.astro_astro_type_script_index_0_lang.VMkcfw2Z.js",
+        "transferSize": 1686,
+        "decodedBodySize": 4489
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SakuraEffect.astro_astro_type_script_index_0_lang.QdusYQOI.js",
+        "transferSize": 2626,
+        "decodedBodySize": 7776
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/WavesEffect.astro_astro_type_script_index_0_lang.Bot7H84g.js",
+        "transferSize": 2822,
+        "decodedBodySize": 7606
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/FancyboxManager.astro_astro_type_script_index_0_lang.TsKi3_WT.js",
+        "transferSize": 2178,
+        "decodedBodySize": 4128
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Layout.astro_astro_type_script_index_0_lang.B07y5pnG.js",
+        "transferSize": 4249,
+        "decodedBodySize": 12250
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/preload-helper.BKYioxU4.js",
+        "transferSize": 1054,
+        "decodedBodySize": 1367
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Search.Cih2eAJG.js",
+        "transferSize": 3328,
+        "decodedBodySize": 7739
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/client.svelte.DPtd677M.js",
+        "transferSize": 1206,
+        "decodedBodySize": 906
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/LightDarkSwitch.DjiPJZh_.js",
+        "transferSize": 1975,
+        "decodedBodySize": 3945
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/m1.DEh_M2ue_Z1S1lrt.webp",
+        "transferSize": 72432,
+        "decodedBodySize": 72132
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/effects-state.BVb-92hj.js",
+        "transferSize": 710,
+        "decodedBodySize": 410
+      },
+      {
+        "name": "https://bed.twoleaf.cn/file/1785658612716_firefly.mp4",
+        "transferSize": 0,
+        "decodedBodySize": 0
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/config.BgeAbQHn.js",
+        "transferSize": 2373,
+        "decodedBodySize": 4504
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/toc-utils.QRFqSJJX.js",
+        "transferSize": 2584,
+        "decodedBodySize": 5917
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/grid-layout-utils.CoMbVltf.js",
+        "transferSize": 1497,
+        "decodedBodySize": 3033
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/translation.DM8rFzF3.js",
+        "transferSize": 32404,
+        "decodedBodySize": 126559
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/effectsConfig.DhqIN0Lx.js",
+        "transferSize": 511,
+        "decodedBodySize": 211
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/rolldown-runtime.BQ-_32WO.js",
+        "transferSize": 464,
+        "decodedBodySize": 164
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/url-utils.55EjbRm1.js",
+        "transferSize": 931,
+        "decodedBodySize": 631
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/setting-utils.BF04Zrl_.js",
+        "transferSize": 3826,
+        "decodedBodySize": 13219
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/floating-panel-utils.C09Y8Obf.js",
+        "transferSize": 1468,
+        "decodedBodySize": 2707
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/client.CCcmZBat.js",
+        "transferSize": 22308,
+        "decodedBodySize": 57791
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/disclose-version.DwdwGuwu.js",
+        "transferSize": 366,
+        "decodedBodySize": 66
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/legacy._71nqFKt.js",
+        "transferSize": 347,
+        "decodedBodySize": 47
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Icon.Bqe5LpPm.js",
+        "transferSize": 8973,
+        "decodedBodySize": 22607
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/sakura.worker-S4lNqkzx.js",
+        "transferSize": 2002,
+        "decodedBodySize": 4892
+      },
+      {
+        "name": "http://127.0.0.1:4321/assets/music/cover/109951169585655912.webp",
+        "transferSize": 35064,
+        "decodedBodySize": 34764
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Swup.BLK6BtE9.js",
+        "transferSize": 368,
+        "decodedBodySize": 68
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/Swup.modern.CjtNEaz8.js",
+        "transferSize": 7716,
+        "decodedBodySize": 21711
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SwupA11yPlugin.8VZs389h.js",
+        "transferSize": 2586,
+        "decodedBodySize": 5734
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/index.modern.DGWg1a9q.js",
+        "transferSize": 1211,
+        "decodedBodySize": 1767
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SwupHeadPlugin.CJV9x5S0.js",
+        "transferSize": 1583,
+        "decodedBodySize": 2581
+      },
+      {
+        "name": "http://127.0.0.1:4321/_astro/SwupScriptsPlugin.KOkp8JHL.js",
+        "transferSize": 915,
+        "decodedBodySize": 1100
+      },
+      {
+        "name": "http://127.0.0.1:4321/assets/music/%E4%BD%BF%E4%B8%80%E9%A2%97%E5%BF%83%E5%85%8D%E4%BA%8E%E5%93%80%E4%BC%A4-%E5%93%BC%E5%94%B1.mp3",
+        "transferSize": 936980,
+        "decodedBodySize": 936680
+      }
+    ]
+  }
+]

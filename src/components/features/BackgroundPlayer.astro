@@ -26,7 +26,7 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 				id="bg-player-overlay"
 				class="absolute inset-0 z-15 overflow-hidden pointer-events-none transition-opacity duration-500 ease-in-out opacity-0"
 			>
-				<video id="bg-player-video" preload="auto" playsinline class="size-full object-cover"></video>
+				<video id="bg-player-video" preload="none" muted playsinline loop poster="/assets/images/DesktopWallpaper/d1.avif" class="size-full object-cover"></video>
 			</div>
 
 			<div id="bg-player-controls" class="absolute bottom-4 left-4 z-30 flex items-center gap-1.5 group">
@@ -82,6 +82,7 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 		video.setAttribute("data-player-init", "true");
 
 		var isPlaying = false;
+ var userPaused=false;
 		var currentIndex = 0;
 		var errorCount = 0;
 		var toastTimer = null;
@@ -120,10 +121,10 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 		}
 
 		function doPlay() {
-			video.src = urlList[currentIndex];
+			if(video.getAttribute("src")!==urlList[currentIndex])video.src = urlList[currentIndex];
 			video.muted = true;
 			video.play()
-				.then(function () { setTimeout(function () { if (video) video.muted = false; }, 100); })
+				.then(function () { video.muted = true; })
 				.catch(function () { isPlaying = false; syncAttr(); });
 		}
 
@@ -140,6 +141,7 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 
 		function toggle() {
 			isPlaying = !isPlaying;
+ userPaused=!isPlaying;
 			if (isPlaying) {
 				if (currentIndex >= urlList.length) currentIndex = 0;
 				syncAttr();
@@ -179,7 +181,21 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 			}
 		}
 
-		// 监听导航栏播放按钮事件
+		function syncEffects(e) {
+   var state=e && e.detail;
+   var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+   var saved=localStorage.getItem('firefly-effects');
+   var enabled=state ? state.enabled : !document.hidden && saved!=='off' && (saved==='on'||!reduced);
+   var saveData=navigator.connection && navigator.connection.saveData;
+   var shouldPlay=enabled&&!saveData&&!userPaused&&document.body.classList.contains('is-home');
+   if(shouldPlay&&!isPlaying){isPlaying=true;syncAttr();overlay?.classList.replace('opacity-0','opacity-100');doPlay();}
+   else if(!shouldPlay){isPlaying=false;video.pause();overlay?.classList.replace('opacity-100','opacity-0');syncAttr();}
+  }
+  window.addEventListener('firefly:effects-change',syncEffects);
+  window.addEventListener('firefly:page-view',()=>syncEffects());
+  syncEffects();
+
+  // 监听导航栏播放按钮事件
 		window.addEventListener("bg-player-toggle", toggle);
 		video.addEventListener("ended", onEnded);
 		video.addEventListener("error", onError);
@@ -216,11 +232,7 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 </script>
 
 <style>
-	:global([data-bg-video-playing] #banner-images-container),
-	:global([data-bg-video-playing] #banner-dim-container),
-	:global([data-bg-video-playing] #banner-overlay-container),
-	:global([data-bg-video-playing] #header-waves),
-	:global([data-bg-video-playing] #wallpaper-gradient) {
+	:global([data-bg-video-playing] #banner-images-container) {
 		opacity: 0 !important;
 		transition: opacity 0.5s ease;
 	}

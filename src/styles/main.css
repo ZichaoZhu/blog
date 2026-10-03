@@ -706,3 +706,12 @@ html {
 .course-nav ol { padding: .8rem 0 0; display:grid;gap:.6rem; }
 .course-nav [aria-current=page] {font-weight:700;color:var(--primary);}
 :focus-visible {outline: 3px solid var(--primary);outline-offset:3px;}
+
+html[data-firefly-effects=off] *,html[data-firefly-effects=off] *::before,html[data-firefly-effects=off] *::after {animation-play-state:paused!important;transition-duration:0.001ms!important;scroll-behavior:auto!important;}
+#effects-toggle {flex-shrink:0;}
+@media(max-width:440px){#navbar .navbar-brand-text{display:none;} #effects-toggle{font-size:.65rem;padding:0 .2rem;} }
+
+#music-nav-panel {width:min(20rem,calc(100vw - 1rem));right:.5rem;max-height:70vh;overflow:auto;}
+@media(max-width:440px){#bg-player-toggle {display:none;} #navbar > div {padding-left:.25rem;padding-right:.25rem;} }
+
+html[data-firefly-effects=off] .onload-animation {animation:none!important;opacity:1!important;transform:none!important;}

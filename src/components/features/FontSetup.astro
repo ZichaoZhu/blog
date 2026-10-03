@@ -63,7 +63,7 @@ const codeFontFamily = codeFontVar
 <!-- Astro Font API: 自动下载、缓存并生成优化的 @font-face -->
 {Array.from(allCssVars).map((cssVar) => (
   <Font
-    cssVariable={cssVar as any}
+    cssVariable={cssVar as never}
     preload={selectedFontVars.includes(cssVar)}
   />
 ))}

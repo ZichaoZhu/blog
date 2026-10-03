@@ -18,3 +18,12 @@
 - Chromium 生产预览通过：首页 → 操作系统 → Lec0 → 下一讲 → 返回课程；研究想法/实验和项目空状态；未知课程返回 404。
 - 390px 菜单支持 Enter、Tab 焦点留在模态内、Esc 返回触发按钮；原生 details 目录支持键盘与正文锚点。
 - CourseNav 置于现有侧栏 Swup 动态容器，保持播放器持久存在并更新当前课程上下文；Article 复用模板布局/Markdown/TOC，移除分享、赞助和全站时间线邻接。
+
+## 媒体与效果验收
+
+- 视频保持 muted/playsinline/loop，有 poster、失败回退和播放控制；首页按允许的效果状态播放，阅读页暂停。初版沿用模板视频地址，最终媒体清单由发布前确认。
+- 统一 `firefly-effects` 选择、`firefly:effects-change` 事件；默认尊重减少动态，SaveData 禁止自动请求视频，后台暂停视频/樱花/波浪/打字机。音乐独立。
+- 樱花桌面 10、手机 5；打字机、波浪、渐变、导航毛玻璃和 Swup 开启。系统字体，无字体 API 请求；导航固定，长页控制可达；关闭动效时新页正文仍可见。
+- 音乐沿用模板全局单例，local 播放列表、默认音量 0.25、preload=none，初载/刷新暂停；连续 10 次站内导航音频实例和播放进度保持。
+- Chromium 9 项导航/媒体测试通过，含真实 MP4 fixture 验证后台暂停恢复，外部错误拦截验证封面与正文不受影响。
+- 390px cover/effects/playing 三状态均无横向溢出，audio=1；请求数分别 41/43/43。完整测量见 `PROTOTYPE_RESOURCES.json`，截图见 `screenshots/`。playing 使用明确测试 fixture，不将测试色块作为正式视频。

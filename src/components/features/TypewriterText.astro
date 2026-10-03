@@ -25,6 +25,7 @@ const textData = Array.isArray(text) ? JSON.stringify(text) : text;
   data-pause-time={pauseTime}></span>
 
 <script>
+ import {readEffectsState} from "@/utils/effects-state";
   class TypewriterEffect {
     private element: HTMLElement;
     private texts: string[];
@@ -76,6 +77,7 @@ const textData = Array.isArray(text) ? JSON.stringify(text) : text;
 
     private start() {
       if (this.texts.length === 0) return;
+ if(!readEffectsState().enabled){this.showRandomText();return;}
       this.type();
     }
 
@@ -84,7 +86,8 @@ const textData = Array.isArray(text) ? JSON.stringify(text) : text;
     }
 
     private type() {
-      const currentText = this.getCurrentText();
+      if(!this.element.isConnected||!readEffectsState().enabled)return;
+ const currentText = this.getCurrentText();
       const segments = this.segmentText(currentText);
 
       if (this.isDeleting) {
@@ -153,6 +156,8 @@ const textData = Array.isArray(text) ? JSON.stringify(text) : text;
     });
   }
 
+
+
   // 初始化所有打字机效果
   function runInitWithDelay() {
     initTypewriterElements();
@@ -163,6 +168,7 @@ const textData = Array.isArray(text) ? JSON.stringify(text) : text;
   // 防止 Swup 切页重跑脚本时重复注册监听器/hooks（runInitWithDelay 由下方一次性监听器在切页时触发）
   if (!window.__typewriterTextInit) {
     window.__typewriterTextInit = true;
+    window.addEventListener("firefly:effects-change",initTypewriterElements);
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", runInitWithDelay);
     } else {

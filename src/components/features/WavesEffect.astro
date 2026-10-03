@@ -6,6 +6,7 @@
 ---
 
 <script>
+ import {readEffectsState} from "@/utils/effects-state";
 	import type { WavesManagerLike } from "@/types/waves";
 	import { WavesRenderer } from "@/utils/waves-draw";
 
@@ -80,7 +81,7 @@
 				this.reducedMotionQuery = window.matchMedia(
 					"(prefers-reduced-motion: reduce)",
 				);
-				this.reducedMotion = this.reducedMotionQuery.matches;
+				this.reducedMotion = !readEffectsState().enabled;
 				this.lastFillColor = readPageBg();
 				this.lastVisibilityHidden = document.hidden;
 
@@ -250,8 +251,8 @@
 			});
 
 			// prefers-reduced-motion
-			const onReducedMotion = (e: MediaQueryListEvent) => {
-				this.applyReducedMotion(e.matches);
+			const onReducedMotion = (_e: MediaQueryListEvent) => {
+				this.applyReducedMotion(!readEffectsState().enabled);
 			};
 			this.boundHandleReducedMotion = onReducedMotion;
 			if (this.reducedMotionQuery) {
@@ -335,7 +336,11 @@
 		}
 		window.wavesInitialized = true;
 
-		initWaves();
+  initWaves();
+  window.addEventListener('firefly:effects-change',()=>{
+   const mgr=window.wavesManager;if(!mgr)return;
+   if(readEffectsState().enabled&&!mgr.getIsRunning())void mgr.init();else if(!readEffectsState().enabled)mgr.stop();
+  });
 
 		// 防御性重校验:Swup 切页后若 canvas 脱离 DOM(容器被意外替换),则重建。
 		// 当前 #header-waves 不在 Swup 容器内、跨导航持久存在,正常是 no-op。
