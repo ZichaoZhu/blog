@@ -1,7 +1,10 @@
 ---
+import { getImage } from "astro:assets";
 import { Icon } from "astro-icon/components";
+import desktopBackground from "@/assets/images/DesktopWallpaper/seaside-bookshop-desktop.jpg";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
+import { getFallbackFormat, getImageQuality } from "@/utils/image-utils";
 
 export interface Props {
 	playerUrl: string | string[];
@@ -13,6 +16,12 @@ const { playerUrl, playerMode = "order" } = Astro.props;
 const urls = Array.isArray(playerUrl) ? playerUrl : [playerUrl];
 const hasMultiple = urls.length > 1;
 const urlsJson = JSON.stringify(urls);
+const poster = await getImage({
+	src: desktopBackground,
+	width: 1920,
+	format: getFallbackFormat(),
+	quality: getImageQuality(),
+});
 
 const tPrev = i18n(I18nKey.videoPrev);
 const tNext = i18n(I18nKey.videoNext);
@@ -26,7 +35,7 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 				id="bg-player-overlay"
 				class="absolute inset-0 z-15 overflow-hidden pointer-events-none transition-opacity duration-500 ease-in-out opacity-0"
 			>
-				<video id="bg-player-video" preload="none" muted playsinline loop poster="/assets/images/DesktopWallpaper/d1.avif" class="size-full object-cover"></video>
+				<video id="bg-player-video" preload="none" muted playsinline loop poster={poster.src} class="size-full object-cover"></video>
 			</div>
 
 			<div id="bg-player-controls" class="absolute bottom-4 left-4 z-30 flex items-center gap-1.5 group">

@@ -69,7 +69,7 @@ Pagefind 索引仅含公开且非空的文章正文。`/search/` 支持关键词
 
 ## 风格与媒体
 
-`src/config/` 配置 Firefly 导航、侧栏、主题、首页背景视频、音乐、樱花和波浪。导航上的动效按钮保存用户选择；减少动态和省流量偏好默认阻止背景视频，后台标签暂停装饰。音乐失败后停止，点击播放可重试；音乐需用户点击播放，单实例跨 Swup 切页保持状态，刷新后不自动播放。替换 `backgroundWallpaper.ts` 的演示视频与 `musicConfig.ts` 的模板音频后，应重新测量媒体传输体积。主页人物头像使用共享 WebP 小图，原 PNG 保留。
+`src/config/` 配置 Firefly 导航、侧栏、主题、首页背景视频、音乐、樱花和波浪。导航上的动效按钮保存用户选择；减少动态和省流量偏好默认阻止背景视频，后台标签暂停装饰。音乐失败后停止，点击播放可重试；音乐需用户点击播放，单实例跨 Swup 切页保持状态，刷新后不自动播放。后续替换 `backgroundWallpaper.ts` 的背景视频或 `musicConfig.ts` 的音频时，应重新测量媒体传输体积。主页人物头像使用共享 WebP 小图，原 PNG 保留。
 
 主题色由 `siteConfig.ts → themeColor.hue` 控制，目前为 OKLCH 蓝色 `250`。强调色、页面背景、目录和按钮共享这套变量。配色在服务器输出，无 JS 也生效；颜色选择器关闭时使用网站配置，浏览器里保存的旧颜色不覆盖它。开启颜色选择器后仍可使用访客保存的配色。
 
@@ -77,16 +77,16 @@ Pagefind 索引仅含公开且非空的文章正文。`/search/` 支持关键词
 
 | 元素 | 当前内容与文件 | 替换时提供 |
 | --- | --- | --- |
-| 背景视频 | 远程 [firefly.mp4](https://bed.twoleaf.cn/file/1785658612716_firefly.mp4)，1280×720，245 秒，36.4 MB；静音循环 | 一个 MP4，推荐 H.264、横屏、10–30 秒可循环片段，目标 5–10 MB；配一张静态封面 |
-| 桌面静态横幅 | 海边、蓝天与流萤插画；`src/assets/images/DesktopWallpaper/d1.avif`，2416×1376 | 一张横向 JPG / PNG / WebP / AVIF，建议 1920×1080 或更大 |
-| 手机静态横幅 | 樱花背景人物插画；`src/assets/images/MobileWallpaper/m1.avif`，1404×2052 | 一张竖向 JPG / PNG / WebP / AVIF，建议 1080×1920；可选，未提供时可裁切桌面图 |
+| 背景视频 | 上杉绘梨衣动态壁纸；`public/assets/videos/erii-background.mp4`，3840×2160，29.95 秒，87.3 MB；静音循环 | 一个 MP4，推荐 H.264、横屏、10–30 秒可循环片段，目标 5–10 MB；配一张静态封面 |
+| 桌面静态横幅 | 晴天海边书屋；`src/assets/images/DesktopWallpaper/seaside-bookshop-desktop.jpg`，3840×2160 | 一张横向 JPG / PNG / WebP / AVIF，建议 1920×1080 或更大 |
+| 手机静态横幅 | 晴天海边书屋竖图；`src/assets/images/MobileWallpaper/seaside-bookshop-mobile.jpg`，1216×2160 | 一张竖向 JPG / PNG / WebP / AVIF，建议 1080×1920；可选，未提供时可裁切桌面图 |
 | 导航／个人资料头像 | 粉发角色 `public/avatars/MyGirl.png`；构建生成 350×348 的 `MyGirl.webp` | 一个正方形头像，建议至少 512×512；PNG 优先，其他常见格式也可适配 |
 | 音乐 | 《使一颗心免于哀伤》哼唱片段，配置艺人为知更鸟 / HOYO-MiX / Chevy；`public/assets/music/使一颗心免于哀伤-哼唱.mp3`，39 秒，0.94 MB | 一个或多个 MP3，以及每首的曲名、作者；可提供自己的配乐／录音 |
 | 音乐封面／歌词 | 知更鸟专辑插画 `public/assets/music/cover/109951169585655912.webp`，512×512；当前无歌词 | 每首一张方形 JPG / PNG / WebP 封面，可选；带时间戳的 `.lrc` 歌词文件可选 |
 | 飘落樱花 | Canvas / Worker 绘制，10 片；贴图 `public/assets/images/effects/sakura.png` | 若替换花瓣形状，提供一张透明背景 PNG；数量、速度只需指定参数 |
 | 浏览器图标 | `public/favicon/firefly-32.png` | 一张方形 logo，建议 PNG 512×512 或 SVG |
 
-背景图／视频在 `backgroundWallpaper.ts` 配置；新背景图建议另取文件名，放入 `src/assets/images/`，视频放入 `public/assets/videos/`。视频静态封面另由 `src/components/features/BackgroundPlayer.astro` 的 `poster` 指定，目前为 `public/assets/images/DesktopWallpaper/d1.avif`，替换时同步更新。头像在 `profileConfig.ts` 与 `siteConfig.ts → navbar.logo` 配置，原始图处理在 `scripts/optimize-avatar.ts`。音乐及封面在 `musicConfig.ts → local.playlist` 配置，歌词显示默认关闭。
+背景图／视频在 `backgroundWallpaper.ts` 配置；新背景图建议另取文件名，放入 `src/assets/images/`，视频放入 `public/assets/videos/`。视频静态封面由 `src/components/features/BackgroundPlayer.astro` 导入桌面书屋图片，再通过 Astro 生成 1920 像素宽的优化图；替换桌面图时同步更新此导入。三份新素材分别来自 `【哲风壁纸】上杉绘梨衣-动漫角色.mp4`、`【哲风壁纸】书屋-大海-晴天-电脑.jpg`、`【哲风壁纸】书屋-大海-晴天-手机.jpg`，原始字节保留，页面静态背景由 Astro 自动优化。头像在 `profileConfig.ts` 与 `siteConfig.ts → navbar.logo` 配置，原始图处理在 `scripts/optimize-avatar.ts`。音乐及封面在 `musicConfig.ts → local.playlist` 配置，歌词显示默认关闭。
 
 波浪和打字机是程序效果，不需要额外媒体文件。Spine 流萤看板娘、Live2D 当前均未启用；如果需要替换并启用，提供完整模型资源文件夹或 ZIP（模型描述、骨骼／模型数据、贴图、动作等），然后按资源实际格式适配。仅替换当前背景动效时，提供 MP4 即可。
 
