@@ -6,7 +6,7 @@ import { onMount } from "svelte";
 import Icon from "@/components/common/Icon.svelte";
 import type { SearchResult } from "@/global";
 import { FLOATING_PANEL_CLOSE_EVENT } from "@/utils/floating-panel-utils";
-import { url as formatUrl, getSearchUrl } from "@/utils/url-utils";
+import { getSearchUrl } from "@/utils/url-utils";
 
 // --- State ---
 let keywordDesktop = "";
@@ -16,21 +16,6 @@ let isSearching = false;
 let initialized = false;
 let debounceTimer: NodeJS.Timeout;
 let searchRequestId = 0;
-
-// --- Mocks for Dev Mode ---
-const fakeResult: SearchResult[] = [
-	{
-		url: formatUrl("/"),
-		meta: { title: "This Is a Fake Search Result" },
-		excerpt:
-			"Because Pagefind cannot work in the <mark>dev</mark> environment.",
-	},
-	{
-		url: formatUrl("/"),
-		meta: { title: "If You Want to Test the Search" },
-		excerpt: "Try running <mark>npm build && npm preview</mark> instead.",
-	},
-];
 
 // --- UI Logic ---
 // pagefind.js 是按需加载的（见 Navbar.astro），搜索 UI 一被碰到就触发。
@@ -112,10 +97,10 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 			if (import.meta.env.PROD && window.pagefind) {
 				const response = await window.pagefind.search(keyword);
 				searchResults = await Promise.all(
-					response.results.map((item) => item.data()),
+					response.results.slice(0,5).map((item) => item.data()),
 				);
 			} else if (import.meta.env.DEV) {
-				searchResults = fakeResult;
+				searchResults = [];
 			}
 
 			if (requestId !== searchRequestId) return;
@@ -145,7 +130,7 @@ onMount(() => {
 	};
 
 	if (import.meta.env.DEV) {
-		console.log("Pagefind mock enabled in development mode.");
+		
 		initializePagefind();
 	} else {
 		if (window.pagefind) {
@@ -189,7 +174,7 @@ $: if (initialized && (keywordMobile || keywordMobile === "")) {
 ">
     <Icon icon="material-symbols:search"
           class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
-    <input id="search-input-desktop" placeholder="{i18n(I18nKey.search)}" bind:value={keywordDesktop}
+    <input id="search-input-desktop" aria-label="快速搜索" placeholder="{i18n(I18nKey.search)}" bind:value={keywordDesktop}
            aria-controls="search-panel" data-floating-panel-no-expanded
            on:focus={handleDesktopFocus}
            class="transition-all pl-10 text-sm bg-transparent outline-0
@@ -215,7 +200,7 @@ top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2"
   ">
         <Icon icon="material-symbols:search"
               class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
-        <input placeholder={i18n(I18nKey.search)} bind:value={keywordMobile}
+        <input aria-label="快速搜索" placeholder={i18n(I18nKey.search)} bind:value={keywordMobile}
                on:focus={requestPagefind}
                class="pl-10 absolute inset-0 text-sm bg-transparent outline-0
                focus:w-60 text-black/50 dark:text-white/50"
@@ -258,12 +243,12 @@ top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2"
                 {/if}
             </a>
         {/each}
-        {#if result.length > 5}
+        {#if keywordDesktop || keywordMobile}
             <a href={getSearchUrl(keywordDesktop || keywordMobile)}
                on:click={(e) => handleResultClick(e, getSearchUrl(keywordDesktop || keywordMobile))}
                class="transition first-of-type:mt-2 lg:first-of-type:mt-0 group block rounded-xl text-lg px-3 py-2 hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active) text-(--primary) font-bold text-center">
                 <span class="inline-flex items-center">
-                    {i18n(I18nKey.searchViewMore).replace('{count}', (result.length - 5).toString())}
+                    完整搜索与筛选
                     <Icon icon="fa7-solid:arrow-right" class="transition text-[0.75rem] ml-1"></Icon>
                 </span>
             </a>

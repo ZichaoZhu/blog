@@ -27,7 +27,8 @@ const schema={'@context':'https://schema.org','@type':'BlogPosting',headline:ent
   {entry.data.updatedAt && <meta property="article:modified_time" content={entry.data.updatedAt}/>}
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replaceAll('<','\\u003c')}/>
  </Fragment>
- <article class="card-base p-5 md:p-9 min-w-0" data-pagefind-ignore={!published?'all':undefined}>
+ <article class="card-base p-5 md:p-9 min-w-0" data-pagefind-body={published?true:undefined} data-pagefind-ignore={!published?'all':undefined}>
+  {published&&<div hidden data-pagefind-ignore><span data-pagefind-filter={`type:${entry.data.type}`}/>{entry.data.topics.map(id=><span data-pagefind-filter={`topic:${id}`}/>)}{entry.data.course&&<span data-pagefind-filter={`course:${entry.data.course.id}`}/>}</div>}
   <nav aria-label="文章位置" class="collection-links text-sm mb-5" data-pagefind-ignore>
    {course ? <a href={`/courses/${course.id}/`}>{course.title} · 返回课程</a>:<a href={entry.data.type==='paper'?'/papers/':['log','idea','experiment'].includes(entry.data.type)?'/research/':'/notes/'}>← 返回集合</a>}
    <a href="/topics/">主题</a>

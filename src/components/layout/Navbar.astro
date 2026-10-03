@@ -447,6 +447,7 @@ if (document.readyState === 'loading') {
                     console.log('Pagefind loaded and initialized successfully, event dispatched.');
                 } catch (error) {
                     console.error('Failed to load Pagefind:', error);
+                    window.__pagefindError = true;
                     window.pagefind = {
                         search: () => Promise.resolve({ results: [] }),
                         options: () => Promise.resolve(),

@@ -8,6 +8,8 @@ import { i18n } from "@i18n/translation";
 import { url } from "@utils/url-utils";
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import sanitizeHtml from "sanitize-html";
+import {getFeedNotes} from "./note-model";
+import {asNoteRecord} from "./content-utils";
 
 /**
  * 归一化后的 feed 条目，供 RSS 与 Atom 共用。
@@ -95,13 +97,14 @@ export async function renderFeedEntries(
 	opts: { includeContent?: boolean } = {},
 ): Promise<FeedEntry[]> {
 	const { includeContent = true } = opts;
-	const renderers = await loadRenderers([
+	const renderers = includeContent ? await loadRenderers([
 		getMDXRenderer(),
 		getSvelteRenderer(),
-	]);
-	const container = await AstroContainer.create({ renderers });
+	]) : [];
+	const container = includeContent ? await AstroContainer.create({ renderers }) : null;
 	const entries: FeedEntry[] = [];
-	for (const post of posts) {
+	const ids=new Set(getFeedNotes(posts.map(asNoteRecord)).map(n=>n.entryId));
+	for (const post of posts.filter(p=>ids.has(p.id))) {
 		if (!post.data.published) continue;
 		const link = url(`/notes/${post.data.slug}/`);
 		const updated = post.data.updated ?? post.data.published;
@@ -127,7 +130,7 @@ export async function renderFeedEntries(
 			continue;
 		}
 		const { Content } = await render(post);
-		const rawContent = await container.renderToString(Content);
+		const rawContent = await container!.renderToString(Content);
 		const cleanedContent = stripInvalidXmlChars(rawContent);
 		entries.push({
 			...base,

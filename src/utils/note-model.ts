@@ -13,6 +13,7 @@ export interface NoteSummary {id:string;slug:string;url:string;title:string;desc
 export interface Catalog {courses:CourseDefinition[];topics:TopicDefinition[]}
 export function isPublicNote(note:NoteRecord):boolean {return note.hasBody&&note.data.contentKind==='note'&&note.data.visibility==='published';}
 export function getPublicNotes(notes:readonly NoteRecord[]):NoteRecord[] {return notes.filter(isPublicNote);}
+export function getFeedNotes(notes:readonly NoteRecord[]):NoteRecord[] {return getPublicNotes(notes).filter(n=>!!n.data.date);}
 export function getRoutableNotes(notes:readonly NoteRecord[]):NoteRecord[] {return notes.filter(n=>n.hasBody&&n.data.contentKind==='note'&&n.data.visibility!=='draft');}
 export function compareNoteDates(a:NoteRecord,b:NoteRecord):number {return (b.data.date??'').localeCompare(a.data.date??'')||a.data.slug.localeCompare(b.data.slug);}
 export function toSummary(note:NoteRecord):NoteSummary {

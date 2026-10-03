@@ -1,192 +1,28 @@
 <script lang="ts">
-import I18nKey from "@i18n/i18nKey";
-import { i18n } from "@i18n/translation";
-import { onMount } from "svelte";
-import Icon from "@/components/common/Icon.svelte";
-import type { SearchResult } from "@/global";
-import { url as formatUrl } from "@/utils/url-utils";
-
-// --- Props ---
-export let title = i18n(I18nKey.search);
-export let description = "";
-
-// --- State ---
-let keyword = "";
-let results: SearchResult[] = [];
-let isSearching = false;
-let initialized = false;
-
-// 在客户端获取 URL 参数
-const getInitialKeyword = (): string => {
-	if (typeof window !== "undefined") {
-		const searchParams = new URLSearchParams(window.location.search);
-		return searchParams.get("q") || "";
-	}
-	return "";
-};
-
-// --- Mocks for Dev Mode ---
-const fakeResult: SearchResult[] = [
-	{
-		url: formatUrl("/"),
-		meta: { title: "Dev Mode Search Result 1" },
-		excerpt: "This is a <mark>mock</mark> result for development.",
-	},
-	{
-		url: formatUrl("/"),
-		meta: { title: "Dev Mode Search Result 2" },
-		excerpt: "Pagefind only works in <mark>production</mark> build.",
-	},
-];
-
-// --- Core Search Logic ---
-const search = async () => {
-	if (!initialized || !keyword.trim()) {
-		results = [];
-		return;
-	}
-	isSearching = true;
-
-	try {
-		if (import.meta.env.PROD && window.pagefind) {
-			const response = await window.pagefind.search(keyword);
-			const rawResults = await Promise.all(
-				response.results.map((item) => item.data()),
-			);
-			results = rawResults;
-		} else if (import.meta.env.DEV) {
-			// 开发模式下的模拟结果
-			results = fakeResult.filter(
-				(item) =>
-					item.excerpt.toLowerCase().includes(keyword.toLowerCase()) ||
-					item.meta.title.toLowerCase().includes(keyword.toLowerCase()),
-			);
-		}
-	} catch (error) {
-		console.error("Search error:", error);
-		results = [];
-	} finally {
-		isSearching = false;
-	}
-};
-
-// --- Initialization onMount ---
-onMount(() => {
-	const initialize = async () => {
-		initialized = true;
-
-		// 从 URL 获取初始关键词
-		const initialKeyword = getInitialKeyword();
-		if (initialKeyword) {
-			keyword = initialKeyword;
-		}
-
-		// 如果有关键词，自动执行搜索
-		if (keyword.trim()) {
-			await search();
-		}
-	};
-
-	// 开发环境直接初始化
-	if (import.meta.env.DEV) {
-		initialize();
-	} else {
-		// 生产环境等待 Pagefind 加载
-		window.__loadPagefind?.();
-		if (window.pagefind) {
-			initialize();
-		} else {
-			document.addEventListener("pagefindready", initialize, {
-				once: true,
-			});
-		}
-	}
-});
-
-let debounceTimer: NodeJS.Timeout;
-const handleInput = () => {
-	clearTimeout(debounceTimer);
-	debounceTimer = setTimeout(() => {
-		search();
-	}, 300);
-};
+import {onMount} from 'svelte';import type {SearchResult} from '../../global';import {courses,topics} from '../../data/catalog';
+let keyword='',type='',topic='',course='',loading=false,error='',searched=false,total=0;
+let results:SearchResult[]=[],pending:Array<{data:()=>Promise<SearchResult>}>=[],requestId=0;
+const types=[['course','课程'],['paper','论文'],['log','日志'],['idea','想法'],['experiment','实验'],['note','笔记']];
+function restore(){const p=new URLSearchParams(location.search);keyword=p.get('q')??'';type=p.get('type')??'';topic=p.get('topic')??'';course=p.get('course')??'';}
+async function search(push=false){const id=++requestId;error='';results=[];pending=[];total=0;searched=!!(keyword.trim()||type||topic||course);
+ if(push){const params=new URLSearchParams();for(const [key,value] of [['q',keyword.trim()],['type',type],['topic',topic],['course',course]])if(value)params.set(key,value);history.pushState(null,'','/search/'+(params.size?'?'+params.toString():''));}
+ if(!searched){loading=false;return;}loading=true;
+ try{await window.__loadPagefind?.();if(!window.pagefind||window.__pagefindError)throw new Error('索引尚不可用');const filters:Record<string,string>={};if(type)filters.type=type;if(topic)filters.topic=topic;if(course)filters.course=course;
+ const response=await window.pagefind.search(keyword.trim()||null,{filters});if(id!==requestId)return;pending=response.results;total=pending.length;results=await Promise.all(pending.slice(0,20).map(r=>r.data()));
+ }catch{if(id===requestId)error='搜索暂不可用，请从课程、论文或主题入口浏览。';}finally{if(id===requestId)loading=false;}}
+ async function more(){const id=requestId;loading=true;try{const next=await Promise.all(pending.slice(results.length,results.length+20).map(r=>r.data()));if(id===requestId)results=[...results,...next];}catch{error='加载失败，请重试搜索。';}finally{if(id===requestId)loading=false;}}
+ onMount(()=>{restore();search();const back=()=>{restore();search();};window.addEventListener('popstate',back);return()=>{requestId++;window.removeEventListener('popstate',back);};});
 </script>
-
-<div class="card-base px-6 py-6 md:px-9 md:py-6 mb-4 rounded-(--radius-large)">
-    <!-- Title Section -->
-    <div class="mb-4">
-        <div class="flex items-center gap-3 mb-3">
-            <div class="h-8 w-8 rounded-lg bg-(--primary) flex items-center justify-center text-white dark:text-black/70">
-                <Icon icon="material-symbols:search" class="text-[1.5rem]"></Icon>
-            </div>
-            <div class="text-3xl font-bold text-90">
-                {title}
-            </div>
-        </div>
-        {#if description}
-            <p class="text-base text-50 leading-relaxed">
-                {description}
-            </p>
-        {/if}
-    </div>
-
-    <!-- Search Bar -->
-    <div class="relative flex">
-        <div class="relative flex-1">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <Icon icon="material-symbols:search" class="text-2xl text-50" />
-            </div>
-            <input
-                type="text"
-                class="block w-full p-4 pl-10 text-sm bg-transparent border border-black/10 dark:border-white/10 rounded-lg focus:ring-2 focus:ring-(--primary) focus:border-(--primary) hover:border-black/20 dark:hover:border-white/20 text-75 placeholder:opacity-50 transition-colors outline-hidden"
-                placeholder={i18n(I18nKey.search)}
-                bind:value={keyword}
-                on:input={handleInput}
-            >
-        </div>
-    </div>
+<div class="card-base p-5 md:p-8">
+<form on:submit|preventDefault={()=>search(true)} class="grid gap-4" aria-label="搜索公开笔记">
+ <label class="grid gap-1">关键词<input name="q" type="search" bind:value={keyword} class="border rounded-lg p-3 w-full bg-transparent" placeholder="标题、术语或正文" /></label>
+ <div class="grid gap-3 sm:grid-cols-3">
+ <label class="grid gap-1">类型<select aria-label="类型" name="type" bind:value={type} class="border rounded-lg p-2 bg-(--card-bg)"><option value="">全部类型</option>{#each types as [id,label]}<option value={id}>{label}</option>{/each}</select></label>
+ <label class="grid gap-1">主题<select aria-label="主题" name="topic" bind:value={topic} class="border rounded-lg p-2 bg-(--card-bg)"><option value="">全部主题</option>{#each topics as item}<option value={item.id}>{item.name}</option>{/each}</select></label>
+ <label class="grid gap-1">课程<select aria-label="课程" name="course" bind:value={course} class="border rounded-lg p-2 bg-(--card-bg)"><option value="">全部课程</option>{#each courses as item}<option value={item.id}>{item.title}</option>{/each}</select></label>
+ </div><button type="submit" class="btn-regular rounded-lg px-5 py-3 justify-self-start">搜索</button>
+</form>
+<p role="status" aria-live="polite" class="my-5">{loading?'正在搜索…':error||(!searched?'输入关键词，或选择筛选条件。':total?`找到 ${total} 篇公开笔记。`:'没有匹配的公开笔记。')}</p>
+<ul class="grid gap-5">{#each results as result}<li data-search-result class="border-t border-(--line-divider) pt-4"><a href={result.url} class="font-bold text-xl text-(--primary)">{result.meta.title}</a><p class="mt-2 leading-relaxed">{@html result.excerpt}</p></li>{/each}</ul>
+{#if results.length<total}<button type="button" on:click={more} disabled={loading} class="btn-regular px-5 py-3 mt-5 rounded-lg">加载更多</button>{/if}
 </div>
-
-<div class="grid grid-cols-1 gap-4">
-    <!-- Results Area -->
-    <div>
-        {#if isSearching}
-            <div class="flex justify-center py-10">
-                <Icon icon="svg-spinners:ring-resize" class="text-4xl text-(--primary)" />
-            </div>
-        {:else if results.length > 0}
-            <div class="space-y-4">
-                {#each results as result}
-                    <div class="card-base p-6 block rounded-(--radius-large)">
-                        <a href={result.url} class="block group">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-90 group-hover:text-(--primary) transition-colors">
-                                {@html result.meta.title}
-                            </h5>
-                            <p class="font-normal text-75">
-                                {@html result.excerpt}
-                            </p>
-                        </a>
-                    </div>
-                {/each}
-            </div>
-        {:else if keyword}
-            <div class="card-base p-10 text-center text-50 rounded-(--radius-large)">
-                {i18n(I18nKey.searchNoResults)}
-            </div>
-        {:else}
-             <div class="card-base p-10 text-center text-50 rounded-(--radius-large)">
-                {i18n(I18nKey.searchTypeSomething)}
-            </div>
-        {/if}
-    </div>
-</div>
-
-<style>
-    /* 关键字高亮效果 - 主题色 */
-    :global(mark) {
-        background: transparent;
-        color: var(--primary);
-        font-weight: 600;
-        padding: 0 0.1em;
-    }
-</style>

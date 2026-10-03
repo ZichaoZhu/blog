@@ -1,0 +1,82 @@
+[
+  {
+    "query": "InfiniDepth",
+    "target": "infinidepth-reading"
+  },
+  {
+    "query": "DeepMimic",
+    "target": "deepmimic-reading"
+  },
+  {
+    "query": "Bellman",
+    "target": "reinforcement-learning-lec2-bellman-equation"
+  },
+  {
+    "query": "法线",
+    "target": ""
+  },
+  {
+    "query": "蒙特卡洛",
+    "target": "reinforcement-learning-lec5-monte-carlo"
+  },
+  {
+    "query": "进程",
+    "target": ""
+  },
+  {
+    "query": "编译原理",
+    "target": ""
+  },
+  {
+    "query": "五十音",
+    "target": "japanese-lec1-gojuon"
+  },
+  {
+    "query": "が",
+    "target": "japanese-lec3-dakuon-and-choon"
+  },
+  {
+    "query": "ManiGaussian",
+    "target": "manigaussian-reading"
+  },
+  {
+    "query": "AMP",
+    "target": ""
+  },
+  {
+    "query": "DreamWaQ",
+    "target": "dreamwaq-reading"
+  },
+  {
+    "query": "RMA",
+    "target": "rma-reading"
+  },
+  {
+    "query": "PIE",
+    "target": "pie-reading"
+  },
+  {
+    "query": "Liveness Analysis",
+    "target": "compiler-principles-lec10"
+  },
+  {
+    "query": "Lexical Analysis",
+    "target": "compiler-principles-lec2"
+  },
+  {
+    "query": "File System",
+    "target": ""
+  },
+  {
+    "query": "Deadlocks",
+    "target": "operating-systems-lec7"
+  },
+  {
+    "query": "Value Iteration",
+    "target": "reinforcement-learning-lec4-value-and-policy-iteration"
+  },
+  {
+    "query": "浊音",
+    "target": "japanese-lec3-dakuon-and-choon"
+  }
+]

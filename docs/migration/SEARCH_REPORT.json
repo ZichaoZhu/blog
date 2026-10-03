@@ -1,0 +1,187 @@
+[
+  {
+    "query": "InfiniDepth",
+    "target": "infinidepth-reading",
+    "count": 1,
+    "top5": [
+      "/notes/infinidepth-reading/"
+    ]
+  },
+  {
+    "query": "DeepMimic",
+    "target": "deepmimic-reading",
+    "count": 2,
+    "top5": [
+      "/notes/deepmimic-reading/",
+      "/notes/imitating-animals-reading/"
+    ]
+  },
+  {
+    "query": "Bellman",
+    "target": "reinforcement-learning-lec2-bellman-equation",
+    "count": 3,
+    "top5": [
+      "/notes/reinforcement-learning-lec2-bellman-equation/",
+      "/notes/reinforcement-learning-lec3-bellman-optimality/",
+      "/notes/reinforcement-learning-lec4-value-and-policy-iteration/"
+    ]
+  },
+  {
+    "query": "法线",
+    "target": "",
+    "count": 1,
+    "top5": [
+      "/notes/infinidepth-reading/"
+    ]
+  },
+  {
+    "query": "蒙特卡洛",
+    "target": "reinforcement-learning-lec5-monte-carlo",
+    "count": 1,
+    "top5": [
+      "/notes/reinforcement-learning-lec5-monte-carlo/"
+    ]
+  },
+  {
+    "query": "进程",
+    "target": "",
+    "count": 11,
+    "top5": [
+      "/notes/operating-systems-lec6/",
+      "/notes/operating-systems-lec3/",
+      "/notes/operating-systems-lec1/",
+      "/notes/operating-systems-lec5/",
+      "/notes/operating-systems-lec7/"
+    ]
+  },
+  {
+    "query": "编译原理",
+    "target": "",
+    "count": 4,
+    "top5": [
+      "/notes/compiler-principles-lec1/",
+      "/notes/compiler-principles-lec2/",
+      "/notes/operating-systems-lec8/",
+      "/notes/compiler-principles-lec3/"
+    ]
+  },
+  {
+    "query": "五十音",
+    "target": "japanese-lec1-gojuon",
+    "count": 1,
+    "top5": [
+      "/notes/japanese-lec1-gojuon/"
+    ]
+  },
+  {
+    "query": "が",
+    "target": "japanese-lec3-dakuon-and-choon",
+    "count": 2,
+    "top5": [
+      "/notes/japanese-lec1-gojuon/",
+      "/notes/japanese-lec3-dakuon-and-choon/"
+    ]
+  },
+  {
+    "query": "ManiGaussian",
+    "target": "manigaussian-reading",
+    "count": 2,
+    "top5": [
+      "/notes/manigaussianpp-reading/",
+      "/notes/manigaussian-reading/"
+    ]
+  },
+  {
+    "query": "AMP",
+    "target": "",
+    "count": 2,
+    "top5": [
+      "/notes/multi-amp-reading/",
+      "/notes/amp-reading/"
+    ]
+  },
+  {
+    "query": "DreamWaQ",
+    "target": "dreamwaq-reading",
+    "count": 1,
+    "top5": [
+      "/notes/dreamwaq-reading/"
+    ]
+  },
+  {
+    "query": "RMA",
+    "target": "rma-reading",
+    "count": 4,
+    "top5": [
+      "/notes/rma-reading/",
+      "/notes/pie-reading/",
+      "/notes/moe-loco-reading/",
+      "/notes/dreamwaq-reading/"
+    ]
+  },
+  {
+    "query": "PIE",
+    "target": "pie-reading",
+    "count": 3,
+    "top5": [
+      "/notes/pie-reading/",
+      "/notes/operating-systems-lec2/",
+      "/notes/operating-systems-lec8/"
+    ]
+  },
+  {
+    "query": "Liveness Analysis",
+    "target": "compiler-principles-lec10",
+    "count": 2,
+    "top5": [
+      "/notes/compiler-principles-lec10/",
+      "/notes/compiler-principles-lec1/"
+    ]
+  },
+  {
+    "query": "Lexical Analysis",
+    "target": "compiler-principles-lec2",
+    "count": 2,
+    "top5": [
+      "/notes/compiler-principles-lec2/",
+      "/notes/compiler-principles-lec1/"
+    ]
+  },
+  {
+    "query": "File System",
+    "target": "",
+    "count": 7,
+    "top5": [
+      "/notes/operating-systems-lec10/",
+      "/notes/operating-systems-lec11/",
+      "/notes/operating-systems-lec1/",
+      "/notes/operating-systems-lec9/",
+      "/notes/operating-systems-lec2/"
+    ]
+  },
+  {
+    "query": "Deadlocks",
+    "target": "operating-systems-lec7",
+    "count": 1,
+    "top5": [
+      "/notes/operating-systems-lec7/"
+    ]
+  },
+  {
+    "query": "Value Iteration",
+    "target": "reinforcement-learning-lec4-value-and-policy-iteration",
+    "count": 2,
+    "top5": [
+      "/notes/reinforcement-learning-lec4-value-and-policy-iteration/",
+      "/notes/reinforcement-learning-lec5-monte-carlo/"
+    ]
+  },
+  {
+    "query": "浊音",
+    "target": "japanese-lec3-dakuon-and-choon",
+    "count": 1,
+    "top5": [
+      "/notes/japanese-lec3-dakuon-and-choon/"
+    ]
+  }
+]
