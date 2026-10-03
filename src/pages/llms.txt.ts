@@ -115,7 +115,7 @@ export const GET: APIRoute = async ({ site }) => {
 	}
 	lines.push("", "## Recent Posts");
 	for (const post of recentPosts) {
-		const link = abs(url(`/posts/${post.id}/`));
+		const link = abs(url(`/notes/${post.data.slug}/`));
 		const desc = post.data.description || "";
 		lines.push(
 			desc

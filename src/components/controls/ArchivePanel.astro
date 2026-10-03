@@ -12,12 +12,12 @@ const sortedPostsList = await getSortedPostsList();
 // 严格按发布时间倒序（不受置顶影响），镜像原 Svelte 版行为
 const posts = sortedPostsList
 	.slice()
-	.sort((a, b) => b.data.published.getTime() - a.data.published.getTime());
+	.sort((a, b) => (b.data.published?.getTime() ?? -Infinity) - (a.data.published?.getTime() ?? -Infinity));
 
 // 按年份分组
 const grouped = new Map<number, typeof posts>();
 for (const post of posts) {
-	const year = post.data.published.getFullYear();
+	const year = post.data.published?.getUTCFullYear() ?? 0;
 	if (!grouped.has(year)) grouped.set(year, []);
 	grouped.get(year)?.push(post);
 }
@@ -29,7 +29,8 @@ const groups = Array.from(grouped.entries())
 const foldArticle = siteConfig.foldArticle !== false;
 const collapseAllButFirst = foldArticle && groups.length > 1;
 
-function formatDate(date: Date) {
+function formatDate(date: Date | undefined) {
+	if (!date) return "未知日期";
 	const month = (date.getMonth() + 1).toString().padStart(2, "0");
 	const day = date.getDate().toString().padStart(2, "0");
 	return `${month}-${day}`;
@@ -104,7 +105,7 @@ const foldOnFilter = collapseAllButFirst;
         <div class="archive-year-content" hidden={collapsed}>
           {group.posts.map((post) => (
             <a
-              href={getPostUrlBySlug(post.id)}
+              href={getPostUrlBySlug(post.data.slug)}
               aria-label={post.data.title}
               class="archive-post group btn-plain block! h-10 w-full rounded-lg hover:text-[initial]"
               data-tags={JSON.stringify(post.data.tags || [])}

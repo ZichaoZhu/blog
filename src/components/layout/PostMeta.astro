@@ -7,7 +7,7 @@ import { formatDateToYYYYMMDD } from "@/utils/date-utils";
 import { getCategoryUrl, getTagUrl } from "@/utils/url-utils";
 
 export interface Props {
-	published: Date;
+	published?: Date;
 	updated?: Date;
 	category?: string;
 	tags?: string[];
@@ -56,7 +56,7 @@ const {
 	variant = "default",
 } = Astro.props;
 
-const path = customPath || (id ? `/posts/${id}` : "");
+const path = customPath || (id ? `/notes/${id}` : "");
 const visibleTags =
 	typeof maxTags === "number" ? tags?.slice(0, maxTags) : tags;
 ---
@@ -81,7 +81,7 @@ const visibleTags =
   }
 
   {
-    showPublished && (
+    showPublished && published && (
       <div class="flex items-center">
         <div class="meta-icon">
           <Icon
@@ -100,7 +100,7 @@ const visibleTags =
     showPublished &&
       !hideUpdateDate &&
       updated &&
-      updated.getTime() !== published.getTime() && (
+      updated.getTime() !== published?.getTime() && (
         <div class="flex items-center">
           <div class="meta-icon">
             <Icon

@@ -6,7 +6,7 @@ import { getBackgroundImages } from "@/utils/layout-utils";
 export interface BannerPostMeta {
 	title: string;
 	description?: string;
-	published: Date;
+	published?: Date;
 	updated?: Date;
 	words?: number;
 	minutes?: number;

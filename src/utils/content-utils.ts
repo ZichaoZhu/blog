@@ -3,34 +3,27 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { getCategoryUrl } from "@utils/url-utils";
 
-// // Retrieve posts and sort them by publication date
-async function getRawSortedPosts() {
-	const allBlogPosts = await getCollection("posts", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
-
-	const sorted = allBlogPosts.sort((a, b) => {
-		// 首先按置顶状态排序，置顶文章在前
-		if (a.data.pinned && !b.data.pinned) return -1;
-		if (!a.data.pinned && b.data.pinned) return 1;
-
-		// 如果置顶状态相同，则按发布日期排序
-		const dateA = new Date(a.data.published);
-		const dateB = new Date(b.data.published);
-		return dateA > dateB ? -1 : 1;
-	});
-	return sorted;
+import {isPublicNote, getRoutableNotes, assertCatalog, compareNoteDates, type NoteRecord} from "./note-model";
+import {courses,topics} from "../data/catalog";
+export function asNoteRecord(post:CollectionEntry<"posts">):NoteRecord {return {entryId:post.id,data:post.data,hasBody:!!post.body?.trim()};}
+async function getRawSortedPosts():Promise<CollectionEntry<"posts">[]> {
+ const all=await getCollection("posts");
+ assertCatalog(all.map(asNoteRecord),{courses,topics});
+ return all.filter(p=>isPublicNote(asNoteRecord(p))).sort((a,b)=>Number(b.data.pinned)-Number(a.data.pinned)||compareNoteDates(asNoteRecord(a),asNoteRecord(b)));
 }
-
+export async function getRoutablePosts():Promise<CollectionEntry<"posts">[]> {
+ const all=await getCollection("posts");const ids=new Set(getRoutableNotes(all.map(asNoteRecord)).map(n=>n.entryId));
+ return all.filter(p=>ids.has(p.id));
+}
 export async function getSortedPosts(): Promise<CollectionEntry<"posts">[]> {
 	const sorted = await getRawSortedPosts();
 
 	for (let i = 1; i < sorted.length; i++) {
-		sorted[i].data.nextSlug = sorted[i - 1].id;
+		sorted[i].data.nextSlug = sorted[i - 1].data.slug;
 		sorted[i].data.nextTitle = sorted[i - 1].data.title;
 	}
 	for (let i = 0; i < sorted.length - 1; i++) {
-		sorted[i].data.prevSlug = sorted[i + 1].id;
+		sorted[i].data.prevSlug = sorted[i + 1].data.slug;
 		sorted[i].data.prevTitle = sorted[i + 1].data.title;
 	}
 
@@ -76,7 +69,7 @@ export async function getSortedProjects(): Promise<
 		}
 
 		return (
-			b.data.published.getTime() - a.data.published.getTime() ||
+			(b.data.published?.getTime() ?? -Infinity) - (a.data.published?.getTime() ?? -Infinity) ||
 			a.data.title.localeCompare(b.data.title)
 		);
 	});
@@ -98,7 +91,7 @@ function sortBySeriesOrder(a: PostForList, b: PostForList): number {
 	}
 	// tiebreaker: 相同序号或都未设置时，按发布日期降序、标题兜底
 	return (
-		b.data.published.getTime() - a.data.published.getTime() ||
+		(b.data.published?.getTime() ?? -Infinity) - (a.data.published?.getTime() ?? -Infinity) ||
 		a.data.title.localeCompare(b.data.title)
 	);
 }
@@ -157,9 +150,7 @@ export type Tag = {
 };
 
 export async function getTagList(): Promise<Tag[]> {
-	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
+	const allBlogPosts = await getRawSortedPosts();
 
 	const countMap: { [key: string]: number } = {};
 	allBlogPosts.forEach((post: { data: { tags: string[] } }) => {
@@ -184,9 +175,7 @@ export type Category = {
 };
 
 export async function getCategoryList(): Promise<Category[]> {
-	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
+	const allBlogPosts = await getRawSortedPosts();
 	const count: { [key: string]: number } = {};
 	allBlogPosts.forEach((post: { data: { category: string | null } }) => {
 		if (!post.data.category) {
@@ -287,7 +276,7 @@ export async function getRelatedPosts(
 
 		// timeFreshnessScore (0-30): 6 个月半衰期
 		const daysSincePublished =
-			(now - new Date(post.data.published).getTime()) / (1000 * 60 * 60 * 24);
+			(now - (post.data.published?.getTime() ?? -Infinity)) / (1000 * 60 * 60 * 24);
 		const timeFreshnessScore =
 			30 * Math.exp((-Math.LN2 * daysSincePublished) / 180);
 

@@ -1,14 +1,17 @@
 import { siteConfig } from "../config";
 
-export function formatDateToYYYYMMDD(date: Date): string {
+export function formatDateToYYYYMMDD(date: Date | undefined): string {
+	if (!date) return "";
 	return date.toISOString().substring(0, 10);
 }
 
 // 国际化日期格式化函数
 export function formatDateI18n(
-	dateInput: Date | string,
+	dateInput: Date | string | undefined,
 	includeTime?: boolean,
 ): string {
+	if (!dateInput) return "";
+	const calendarOnly = typeof dateInput === "string" ? /^\d{4}-\d{2}-\d{2}$/.test(dateInput) : dateInput.toISOString().endsWith("T00:00:00.000Z");
 	const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
 	const lang = siteConfig.lang || "en";
 
@@ -26,7 +29,9 @@ export function formatDateI18n(
 	}
 
 	// 如果配置了时区，则将其用于格式化（IANA 时区字符串）
-	if (siteConfig.timezone) {
+	if (calendarOnly && !includeTime) {
+		options.timeZone = "UTC";
+	} else if (siteConfig.timezone) {
 		(options as Intl.DateTimeFormatOptions).timeZone = siteConfig.timezone;
 	}
 

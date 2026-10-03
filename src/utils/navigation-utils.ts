@@ -157,7 +157,7 @@ export function isHomePage(): boolean {
  */
 export function isPostPage(): boolean {
 	const path = getCurrentPath();
-	return path.startsWith(url("/posts/"));
+	return path.startsWith(url("/notes/"));
 }
 
 /**

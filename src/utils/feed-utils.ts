@@ -102,7 +102,8 @@ export async function renderFeedEntries(
 	const container = await AstroContainer.create({ renderers });
 	const entries: FeedEntry[] = [];
 	for (const post of posts) {
-		const link = url(`/posts/${post.id}/`);
+		if (!post.data.published) continue;
+		const link = url(`/notes/${post.data.slug}/`);
 		const updated = post.data.updated ?? post.data.published;
 		const base: Omit<FeedEntry, "content" | "isPasswordProtected"> = {
 			post,

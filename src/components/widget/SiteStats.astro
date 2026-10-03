@@ -54,15 +54,15 @@ function formatNumber(num: number): string {
 }
 
 // 获取「最后活动」时间：取每篇文章 published 与 updated 中较新的那个，再从全站所有文章里取最大值。这样新发文章和修改老文章都会刷新该字段。
-const getActivityDate = (post: (typeof posts)[number]): Date => {
+const getActivityDate = (post: (typeof posts)[number]): Date | undefined => {
 	const { published, updated } = post.data;
-	if (updated && updated > published) return updated;
+	if (updated && (!published || updated > published)) return updated;
 	return published;
 };
 
 const lastActivityDate = posts.reduce<Date | null>((latest, post) => {
 	const current = getActivityDate(post);
-	if (!latest || current > latest) return current;
+	if (current && (!latest || current > latest)) return current;
 	return latest;
 }, null);
 

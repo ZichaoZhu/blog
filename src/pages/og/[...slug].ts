@@ -233,7 +233,7 @@ export async function GET({
 	const subtleTextColor = `hsl(${hue}, 10%, 75%)`;
 	const backgroundColor = `hsl(${hue}, 15%, 12%)`;
 
-	const pubDate = post.data.published.toLocaleDateString("en-US", {
+	const pubDate = post.data.published?.toLocaleDateString("en-US", {
 		year: "numeric",
 		month: "short",
 		day: "numeric",

@@ -5,7 +5,7 @@ import { i18n } from "@/i18n/translation";
 import { formatDateToYYYYMMDD } from "@/utils/date-utils";
 
 export interface Props {
-	published: Date;
+	published?: Date;
 	words?: number;
 	minutes?: number;
 	showPublished?: boolean;
@@ -26,7 +26,7 @@ const {
 	className = "",
 } = Astro.props;
 
-const hasPublished = showPublished;
+const hasPublished = showPublished && !!published;
 const hasWords = showWords && typeof words === "number";
 const hasMinutes = showReadingTime && typeof minutes === "number";
 const textClass = "text-xs font-medium";

@@ -64,7 +64,7 @@ const { seriesName, posts, currentPostId } = Astro.props;
               </li>
             ) : (
               <li>
-                <a href={getPostUrlBySlug(post.id)} title={part} aria-label={part} class:list={rowClass}>
+                <a href={getPostUrlBySlug(post.data.slug)} title={part} aria-label={part} class:list={rowClass}>
                   <span class="shrink-0 w-6 h-6 rounded-md bg-(--enter-btn-bg) text-(--primary) flex items-center justify-center text-sm font-bold transition">
                     {idx + 1}
                   </span>

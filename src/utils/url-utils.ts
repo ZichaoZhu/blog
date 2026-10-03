@@ -36,7 +36,7 @@ function joinUrl(...parts: string[]): string {
 export function getPostUrlBySlug(slug: string): string {
 	// 移除文件扩展名（如 .md, .mdx 等）
 	const slugWithoutExt = removeFileExtension(slug);
-	return url(`/posts/${slugWithoutExt}/`);
+	return url(`/notes/${slugWithoutExt}/`);
 }
 
 export function getTagUrl(tag: string): string {
@@ -100,6 +100,7 @@ export function url(path: string): string {
 // 内容详情页路径模式：文章(/posts/、/post/) 与 项目详情(/projects/<slug>/)
 // 用正则而非 includes("/projects/")，是为了不把 /projects/ 列表页误判成详情页
 const CONTENT_DETAIL_PATH_PATTERNS = [
+	/\/notes\/.+/,
 	/\/posts\/.+/,
 	/\/post\/.+/,
 	/\/projects\/.+/,

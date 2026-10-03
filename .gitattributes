@@ -8,3 +8,6 @@
 
 *.js linguist-language=astro
 * text=auto eol=lf
+
+# Preserve authored Markdown bytes, including hard breaks and final blank lines.
+src/content/posts/** whitespace=-blank-at-eol,-blank-at-eof

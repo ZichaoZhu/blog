@@ -48,7 +48,7 @@ const noRandomPostsText = i18n(I18nKey.noRandomPosts);
     {relatedPosts.length > 0 ? (
       relatedPosts.map((post, idx) => (
         <a
-          href={getPostUrlBySlug(post.id)}
+          href={getPostUrlBySlug(post.data.slug)}
           class:list={[
             "group flex items-center gap-3 px-3 py-3 -mx-1 rounded-lg",
             "transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98]",
@@ -163,7 +163,7 @@ function renderRandomPosts() {
     var base = apiUrl.replace(/\/api\/allPostMeta\.json$/, '');
 
     picked.forEach(function(post, idx) {
-      var href = base + '/posts/' + post.id + '/';
+      var href = base + '/notes/' + post.id + '/';
 
       var a = document.createElement('a');
       a.href = href;
@@ -193,7 +193,7 @@ function renderRandomPosts() {
 
       var desc = document.createElement('span');
       desc.className = 'truncate';
-      desc.textContent = post.description || new Date(post.published).toISOString().substring(0, 10);
+      desc.textContent = post.description || (post.published ? new Date(post.published).toISOString().substring(0, 10) : "");
       meta.appendChild(desc);
 
       content.appendChild(title);
