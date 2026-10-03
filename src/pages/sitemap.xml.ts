@@ -1,7 +1,12 @@
 import { siteContext } from "../config/siteContext";
 import { courses, topics } from "../data/catalog";
-import { asNoteRecord, getSortedPosts } from "../utils/content-utils";
+import {
+	asNoteRecord,
+	getSortedPosts,
+	getSortedProjects,
+} from "../utils/content-utils";
 import { escapeXml } from "../utils/feed-utils";
+import { removeFileExtension } from "../utils/url-utils";
 export async function GET(): Promise<Response> {
 	const notes = (await getSortedPosts()).map(asNoteRecord);
 	const paths = [
@@ -23,7 +28,12 @@ export async function GET(): Promise<Response> {
 			(_, i) => `/notes/page/${i + 2}/`,
 		),
 	];
+	const projects = await getSortedProjects();
 	const entries = [
+		...projects.map((p) => ({
+			path: `/projects/${removeFileExtension(p.id)}/`,
+			date: p.data.published?.toISOString().slice(0, 10),
+		})),
 		...paths.map((path) => ({ path, date: undefined as string | undefined })),
 		...notes.map((n) => ({
 			path: `/notes/${n.data.slug}/`,

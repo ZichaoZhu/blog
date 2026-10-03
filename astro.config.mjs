@@ -246,7 +246,7 @@ export default defineConfig({
 		processor: unified({
 			remarkPlugins: [
 				remarkTyporaCompat,
-				[remarkLocalImages, {contentRoot: resolve("src/content/posts")}],
+				[remarkLocalImages, {contentRoot: resolve("src/content/posts"), collectionRoots: ["projects", "spec", "dynamic"].map(name => resolve("src/content", name))}],
 				...(siteConfig.post.rehypeCallouts.enablePythonMarkdownAdmonitions !==
 				false
 					? [remarkAdmonitionToBlockquoteCallout]

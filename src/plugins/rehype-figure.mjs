@@ -13,6 +13,7 @@ export default function rehypeFigure() {
 			if (node.properties.src && shouldAddNoReferrer(node.properties.src)) {
 				node.properties.referrerpolicy = "no-referrer";
 			}
+			if (parent.tagName === "a") return; // Preserve the author's image-link destination.
 			const original = node.properties["data-original-url"];
 			const picture = original
 				? h("a", { href: original, "data-fancybox": "article" }, [node])

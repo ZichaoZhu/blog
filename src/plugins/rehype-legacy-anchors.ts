@@ -5,8 +5,17 @@ import manifest from "../../migration/manifest.json" with { type: "json" };
 export function rehypeLegacyAnchors(): (tree: Root, file: VFile) => void {
 	return (tree, file) => {
 		const path = String(file.path ?? "").replaceAll("\\", "/");
+		const frontmatter = (
+			file.data.astro as
+				| { frontmatter?: { id?: string; slug?: string } }
+				| undefined
+		)?.frontmatter;
 		const record = manifest.records.find((r) =>
-			path.endsWith("/src/content/posts/" + r.targetPath),
+			frontmatter?.id
+				? r.id === frontmatter.id
+				: frontmatter?.slug
+					? r.slug === frontmatter.slug
+					: path.endsWith("/src/content/posts/" + r.targetPath),
 		);
 		if (!record) return;
 		const aliases = record.anchorAliases as Record<string, string>;

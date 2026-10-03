@@ -5,7 +5,11 @@ import NoteList from "../../components/knowledge/NoteList.astro";
 import { courses } from "../../data/catalog";
 import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
 import { asNoteRecord, getSortedPosts } from "../../utils/content-utils";
-import { orderCourseNotes, toSummary } from "../../utils/note-model";
+import {
+	isPublicCollection,
+	orderCourseNotes,
+	toSummary,
+} from "../../utils/note-model";
 export function getStaticPaths() {
 	return courses.map((course) => ({
 		params: { id: course.id },
@@ -18,7 +22,7 @@ const notes = orderCourseNotes(
 	course.id,
 ).map(toSummary);
 const intro = (await getCollection("posts")).find(
-	(p) => p.data.contentKind === "collection" && p.data.course?.id === course.id,
+	(p) => isPublicCollection(asNoteRecord(p)) && p.data.course?.id === course.id,
 );
 const rendered = intro?.body?.trim() ? await render(intro) : null;
 const Content = rendered?.Content;

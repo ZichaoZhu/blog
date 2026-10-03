@@ -16,9 +16,11 @@ pnpm lint:check                 # 只读；主动格式化使用 pnpm format
 pnpm check
 pnpm type-check
 pnpm build                     # 默认 preview，全站 noindex
-pnpm verify:site                # 原文/图片 hash、渲染与本地链接检查
+pnpm verify:site                # 当前内容、渲染与本地链接检查
+pnpm audit:migration            # 单独核对不可变的迁移快照
 pnpm exec playwright install chromium
 pnpm test:e2e
+pnpm test:authoring             # 隔离副本中验证合集隐私与真实项目图片/发现范围
 pnpm preview --host 127.0.0.1 --port 4321
 ```
 
@@ -33,6 +35,8 @@ pnpm new-post "进程调度" --slug process-scheduling --type course --course op
 pnpm new-post "论文阅读" --slug paper-reading-name --type paper --topics 3d-vision
 pnpm new-post "实验日志" --slug experiment-log-name --type log --topics robotics
 ```
+
+迁移快照及其 hash 保留为历史证据，日常 CI 按当前内容验证。旧笔记可正常更新正文、日期、可见性和移动目录；修改 slug 是地址变更，需要显式更新兼容映射。`audit:migration` 在已修改原文后失败表示与迁移时的内容不同，不阻止日常 CI。
 
 默认生成 draft，不会公开。`--visibility published` 公开，`unlisted` 可凭地址访问但不进入公开列表、搜索、订阅和 sitemap；它不是访问控制，勿用于秘密内容。`--id` 可另设稳定标识，省略时等于 slug。重复 ID/slug、未知分类和重复课程讲次会报错。
 
@@ -65,7 +69,7 @@ Pagefind 索引仅含公开且非空的文章正文。`/search/` 支持关键词
 
 ## 风格与媒体
 
-`src/config/` 配置 Firefly 导航、侧栏、主题、首页背景视频、音乐、樱花和波浪。导航上的动效按钮保存用户选择；减少动态和省流量偏好默认阻止背景视频，后台标签暂停装饰。音乐需用户点击播放，单实例跨 Swup 切页保持状态，刷新后不自动播放。替换 `backgroundWallpaper.ts` 的演示视频与 `musicConfig.ts` 的模板音频后，应重新测量媒体传输体积。主页人物头像使用共享 WebP 小图，原 PNG 保留。
+`src/config/` 配置 Firefly 导航、侧栏、主题、首页背景视频、音乐、樱花和波浪。导航上的动效按钮保存用户选择；减少动态和省流量偏好默认阻止背景视频，后台标签暂停装饰。音乐失败后停止，点击播放可重试；音乐需用户点击播放，单实例跨 Swup 切页保持状态，刷新后不自动播放。替换 `backgroundWallpaper.ts` 的演示视频与 `musicConfig.ts` 的模板音频后，应重新测量媒体传输体积。主页人物头像使用共享 WebP 小图，原 PNG 保留。
 
 ## 构建与模板升级
 

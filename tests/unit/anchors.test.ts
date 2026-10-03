@@ -1,2 +1,6 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import {buildAnchorAliases} from '../../scripts/migration/anchors';
 test('only changed heading ids become aliases and mismatched headings cannot be guessed',()=>{assert.deepEqual(buildAnchorAliases(['intro','old'],['intro','new']),{old:'new'});assert.throws(()=>buildAnchorAliases(['a'],['b','c']),/heading count/);});
+test('stable identifiers preserve legacy heading anchors after moving the Markdown file',async()=>{
+ const {rehypeLegacyAnchors}=await import('../../src/plugins/rehype-legacy-anchors');const {VFile}=await import('vfile');const manifest=(await import('../../migration/manifest.json',{with:{type:'json'}})).default;const record=manifest.records.find(r=>Object.keys(r.anchorAliases).length)!;const [old,target]=Object.entries(record.anchorAliases)[0];
+ const tree={type:'root' as const,children:[{type:'element' as const,tagName:'h2',properties:{id:target},children:[]}]};rehypeLegacyAnchors()(tree,new VFile({path:'/tmp/app/src/content/posts/moved/index.md',data:{astro:{frontmatter:{id:record.id,slug:record.slug}}}}));assert.equal(tree.children[0].tagName,'span');assert.equal(tree.children[0].properties.id,old);
+});

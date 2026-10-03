@@ -1,5 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
+import { asNoteRecord } from "../../utils/content-utils";
+import { isPublicCollection } from "../../utils/note-model";
 import Markdown from "../common/Markdown.astro";
 
 interface Props {
@@ -7,7 +9,7 @@ interface Props {
 }
 const entry = (await getCollection("posts")).find(
 	(p) =>
-		p.data.contentKind === "collection" && p.data.slug === Astro.props.slug,
+		isPublicCollection(asNoteRecord(p)) && p.data.slug === Astro.props.slug,
 );
 const rendered = entry?.body?.trim() ? await render(entry) : null;
 const Content = rendered?.Content;

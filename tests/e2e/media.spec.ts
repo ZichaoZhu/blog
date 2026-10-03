@@ -41,3 +41,9 @@ test('video is muted and pauses in the background, then resumes',async({page})=>
  await expect.poll(()=>page.locator('#bg-player-video').evaluate((v:HTMLVideoElement)=>v.paused)).toBe(false);
  await expect(page.locator('#canvas_sakura')).toHaveCount(1);
 });
+test('failed music stops, remains stopped across navigation and retries only on user action',async({page})=>{
+ let requests=0;await page.route('**/*.mp3',route=>{requests++;return route.abort();});await page.route('**/*.mp4',route=>route.abort());await page.goto('/');await page.locator('#left-sidebar .btn-play').click();
+ await expect.poll(()=>page.evaluate(()=>window.__fireflyMusic?.getState().error)).toBeTruthy();await page.waitForTimeout(4500);expect(requests).toBe(1);expect(await page.locator('audio').evaluate((a:HTMLAudioElement)=>a.paused)).toBe(true);
+ await page.locator('#navbar a[href="/courses/"]').first().click();await expect(page.locator('h1')).toHaveText('课程');await page.waitForTimeout(2300);expect(requests).toBe(1);
+ await page.locator('#left-sidebar .btn-play').click();await expect.poll(()=>requests).toBe(2);await page.waitForTimeout(2300);expect(requests).toBe(2);
+});

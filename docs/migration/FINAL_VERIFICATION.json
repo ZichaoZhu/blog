@@ -1,0 +1,17 @@
+{
+  "reviewedRange": "d87c440..c65f1db",
+  "unitTests": 26,
+  "browserTests": 23,
+  "isolatedAuthoringTests": 3,
+  "failed": 0,
+  "astroDiagnostics": 0,
+  "typescript": "passed",
+  "readonlyLint": "no errors; 5 warnings, 24 info",
+  "frozenInstall": "pnpm 11.22.0 passed",
+  "build": "passed; 44 indexed notes",
+  "liveSiteVerification": "passed",
+  "immutableMigrationAudit": "53 bodies and 578 original assets passed",
+  "originalSourceFingerprint": "703 paths unchanged",
+  "hostedDeployment": "not performed",
+  "review": "one fresh gpt-6-astra; no rereview"
+}

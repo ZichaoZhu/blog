@@ -38,11 +38,19 @@ export function resolveLocalImage(
 }
 export function remarkLocalImages(options: {
 	contentRoot: string;
+	collectionRoots?: string[];
 	originalsRoot?: string;
 }): (tree: Root, file: VFile) => Promise<void> {
 	return async (tree, file) => {
 		const sourceFile = file.path;
 		if (!sourceFile) throw new Error("Local images require source filepath");
+		const contentRoot = [
+			options.contentRoot,
+			...(options.collectionRoots ?? []),
+		].find((root) => !relative(resolve(root), sourceFile).startsWith(".."));
+		if (!contentRoot)
+			throw new Error(`Unsupported Markdown collection: ${sourceFile}`);
+
 		// Typora accepts standalone image destinations with unescaped spaces/parentheses.
 		// CommonMark leaves these as text; recover only verified local image paragraphs.
 		visit(tree, "paragraph", (node) => {
@@ -57,7 +65,7 @@ export function remarkLocalImages(options: {
 				!/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(match[2])
 			)
 				return;
-			resolveLocalImage(match[2], sourceFile, options.contentRoot);
+			resolveLocalImage(match[2], sourceFile, contentRoot);
 			node.children = [{ type: "image", url: match[2], alt: match[1] }];
 		});
 		visit(tree, "html", (node, index, parent) => {
@@ -107,11 +115,7 @@ export function remarkLocalImages(options: {
 		});
 		for (const { node } of images) {
 			if (/^(https?:|data:|\/\/)/i.test(node.url)) continue;
-			const source = resolveLocalImage(
-				node.url,
-				sourceFile,
-				options.contentRoot,
-			);
+			const source = resolveLocalImage(node.url, sourceFile, contentRoot);
 			const bytes = await readFile(source);
 			const name =
 				createHash("sha256").update(bytes).digest("hex") + extname(source);
@@ -129,10 +133,10 @@ export function remarkLocalImages(options: {
 			node.data ??= {};
 			node.data.hProperties = {
 				...node.data.hProperties,
-				"data-source-asset": relative(
-					resolve(options.contentRoot),
-					source,
-				).replaceAll("\\", "/"),
+				"data-source-asset": relative(resolve(contentRoot), source).replaceAll(
+					"\\",
+					"/",
+				),
 				"data-original-url": original,
 			};
 		}

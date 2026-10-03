@@ -1,13 +1,21 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import matter from "gray-matter";
 import { fromHtml } from "hast-util-from-html";
+import sharp from "sharp";
 import { visit } from "unist-util-visit";
 import { noteDataSchema } from "../src/content/schema";
-import { isPublicNote } from "../src/utils/note-model";
-import { bodyOf, type MigrationManifest, sha256 } from "./migration/convert";
+import { courses, topics } from "../src/data/catalog";
+import { assertCatalog, isPublicNote } from "../src/utils/note-model";
+import {
+	type AssetRecord,
+	bodyOf,
+	type MigrationManifest,
+	type MigrationRecord,
+	sha256,
+} from "./migration/convert";
 import { resolveSiteRoot } from "./site-root";
 
 async function walk(root: string): Promise<string[]> {
@@ -23,6 +31,61 @@ async function walk(root: string): Promise<string[]> {
 function outputFile(root: string, url: string): string {
 	const pathname = new URL(url, "https://verify.invalid").pathname;
 	return resolve(root, "." + decodeURIComponent(pathname));
+}
+/** Live verification follows current content; the migration snapshot remains immutable. */
+export async function readCurrentManifest(
+	contentRoot: string,
+): Promise<MigrationManifest> {
+	const records: MigrationRecord[] = [];
+	const assets: AssetRecord[] = [];
+	for (const path of await walk(contentRoot)) {
+		const sourcePath = relative(contentRoot, path).replaceAll("\\", "/");
+		if (/\.mdx?$/.test(path)) {
+			const raw = await readFile(path, "utf8");
+			const data = noteDataSchema.parse(matter(raw).data);
+			const body = bodyOf(raw);
+			const collectionPath = data.course
+				? `/courses/${data.course.id}/`
+				: {
+						course: "/courses/",
+						paper: "/papers/",
+						log: "/research/",
+						idea: "/research/ideas/",
+						experiment: "/research/experiments/",
+						note: "/notes/",
+					}[data.type];
+			records.push({
+				...data,
+				sourcePath,
+				targetPath: sourcePath,
+				hasBody: !!body.trim(),
+				bodySha256: sha256(body),
+				legacyPath: "",
+				canonicalPath:
+					data.contentKind === "note" ? `/notes/${data.slug}/` : collectionPath,
+				anchorAliases: {},
+			});
+		} else if (/\.(png|jpe?g|gif|webp|avif|svg)$/i.test(path)) {
+			const bytes = await readFile(path);
+			const { width, height } = await sharp(bytes).metadata();
+			assets.push({
+				sourcePath,
+				sha256: sha256(bytes),
+				width: width ?? 0,
+				height: height ?? 0,
+				publishedVariants: [],
+			});
+		}
+	}
+	assertCatalog(
+		records.map((r) => ({
+			entryId: r.sourcePath,
+			data: r,
+			hasBody: r.hasBody,
+		})),
+		{ courses, topics },
+	);
+	return { version: 1, sourceHead: "current-content", records, assets };
 }
 export async function verifyMigration(
 	manifest: MigrationManifest,
@@ -97,7 +160,12 @@ export async function verifyRenderedSite(
 	const assets = new Map(manifest.assets.map((a) => [a.sourcePath, a]));
 	for (const a of manifest.assets) a.publishedVariants = [];
 	for (const r of manifest.records) {
-		if (!r.hasBody || r.visibility === "draft") continue;
+		if (
+			!r.hasBody ||
+			r.visibility === "draft" ||
+			(r.contentKind === "collection" && r.visibility !== "published")
+		)
+			continue;
 		const path = resolve(siteRoot, `.${r.canonicalPath}`, "index.html");
 		if (!existsSync(path)) {
 			errors.push(`${r.sourcePath}: missing article output`);
@@ -199,15 +267,27 @@ if (
 	const value = (key: string, fallback: string): string =>
 		args.includes(key) ? args[args.indexOf(key) + 1] : fallback;
 	const path = value("--manifest", "migration/manifest.json");
-	const manifest: MigrationManifest = JSON.parse(await readFile(path, "utf8"));
-	const content = await verifyMigration(
-		manifest,
-		value("--content-root", "src/content/posts"),
-	);
+	const audit = args.includes("--audit-migration");
+	const contentRoot = value("--content-root", "src/content/posts");
+	const manifest: MigrationManifest = audit
+		? JSON.parse(await readFile(path, "utf8"))
+		: await readCurrentManifest(contentRoot);
+	const content = audit
+		? await verifyMigration(manifest, contentRoot)
+		: {
+				records: manifest.records.length,
+				published: manifest.records.filter((r) =>
+					isPublicNote({ entryId: r.sourcePath, data: r, hasBody: r.hasBody }),
+				).length,
+				assets: manifest.assets.length,
+				errors: [] as string[],
+			};
 	const rendered = await verifyRenderedSite(
 		value("--site-root", resolveSiteRoot()),
 		manifest,
 	);
+	if (args.includes("--update-variants") && !audit)
+		throw new Error("Updating historical variants requires --audit-migration");
 	if (args.includes("--update-variants"))
 		await writeFile(path, JSON.stringify(manifest, null, 2) + "\n");
 	console.log(

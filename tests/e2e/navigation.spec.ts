@@ -12,8 +12,8 @@ test('homepage to course, article, next lecture and back',async({page})=>{
  await page.locator('main').getByRole('link',{name:/返回课程/}).click();await expect(page.locator('h1')).toHaveText('操作系统');
 });
 test('collections show real empty states and unknown pages are not generated',async({page})=>{
- for(const path of ['/research/ideas/','/research/experiments/']){await page.goto(path);await expect(page.getByText('暂无公开记录。',{exact:true})).toBeVisible();}
- await page.goto('/projects/');await expect(page.getByText('暂无已整理的公开项目。')).toBeVisible();
+ const notes=await (await page.request.get('/api/allPostMeta.json')).json();for(const [path,type] of [['/research/ideas/','idea'],['/research/experiments/','experiment']]){await page.goto(path);if(notes.some(n=>n.type===type))await expect(page.locator('.post-card-title')).not.toHaveCount(0);else await expect(page.getByText('暂无公开记录。',{exact:true})).toBeVisible();}
+ await page.goto('/projects/');if(await page.locator('.collection-list li').count())await expect(page.locator('.collection-list li')).not.toHaveCount(0);else await expect(page.getByText('暂无已整理的公开项目。')).toBeVisible();
  const response=await page.goto('/courses/not-real/');expect(response?.status()).toBe(404);
 });
 test('mobile menu and table of contents support keyboard focus',async({page})=>{

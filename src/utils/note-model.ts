@@ -74,6 +74,13 @@ export function isPublicNote(note: NoteRecord): boolean {
 		note.data.visibility === "published"
 	);
 }
+export function isPublicCollection(note: NoteRecord): boolean {
+	return (
+		note.hasBody &&
+		note.data.contentKind === "collection" &&
+		note.data.visibility === "published"
+	);
+}
 export function getPublicNotes(notes: readonly NoteRecord[]): NoteRecord[] {
 	return notes.filter(isPublicNote);
 }

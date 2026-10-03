@@ -20,7 +20,7 @@ The avatar performance regression (6,779,343-byte original downloaded by the nav
 
 Remaining cutover inputs: confirmed production domain/host, personal video/music assets and a recoverable current hosted release. Preview is globally noindex. The host-specific 301/308 rules and production-origin staging validation are pending those inputs. No push, merge, deployment or DNS change was made.
 
-Final static-cover medians (same machine/network, three cold runs):
+Task 9 static-cover medians (same machine/network, three cold runs):
 
 | Page | Next transferred | Astro transferred | Next FCP | Astro FCP | Next LCP | Astro LCP |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -31,6 +31,14 @@ The final avatar is 19,608 bytes. The Firefly presentation remains heavier than 
 
 ## Delivery checks
 
-Frozen install with pnpm 11.22.0 passed. 21 unit tests and 21 browser tests passed, Astro check reported 0 errors/warnings/hints, TypeScript passed, and read-only Biome reported no errors (5 non-null-assertion warnings and 24 template-literal suggestions). The final build indexed exactly 44 public pages. Render verification found no errors in 53 source bodies, 578 original assets and local links. Original main's 703-path source fingerprint remains unchanged.
+Frozen install with pnpm 11.22.0 passed. 26 unit tests, 23 browser tests and 3 isolated real-authoring build regressions passed, Astro check reported 0 errors/warnings/hints, TypeScript passed, and read-only Biome reported no errors (5 non-null-assertion warnings and 24 template-literal suggestions). The final build indexed exactly 44 public pages. Render verification found no errors in 53 source bodies, 578 original assets and local links. Original main's 703-path source fingerprint remains unchanged.
 
 CI uses Node 22.23.0 / pnpm 11.22.0, Git LFS checkout and the same commands; it has not been run on a remote runner because this branch has not been pushed. Default build skips inactive GitHub/VNDB/font-subset tasks and generated OG images; active LQIP, avatar optimization, unused PIO-resource pruning, inline JS minification and Pagefind remain.
+
+## Independent review and final fixes
+
+One fresh read-only whole-branch review found no Critical issues. Six executor-graded Important findings were fixed with reproducing RED→GREEN tests, followed by the complete 52/52 suite, read-only lint, Astro check (297 files, no diagnostics), TypeScript, build, live-site verification and the separate immutable migration audit. Stable-ID file moves also preserve historical heading aliases; linked images keep the authored destination. See REVIEW_REPORT.md and DECISIONS.md.
+
+Ongoing CI checks current content rather than freezing body bytes, dates, status or initial public counts. Historical migration evidence remains unchanged and can be checked with `pnpm audit:migration`. A temporary app with draft/unlisted introductions, a normal new note and a project containing a local body image builds successfully; private introductions stay absent, the public project appears in sitemap and Pagefind remains note-only. CI runs this test with `pnpm test:authoring` without modifying real source files.
+
+Deferred: search results do not yet display course/type labels; the existing filters work. Measurements of 500-note size/time, cold-page performance and media resource cost were made during Task 9 (commit d21625d), before the final handoff fixes, and are retained with that provenance rather than represented as newly repeated measurements. Final screenshots were refreshed against the delivered preview.

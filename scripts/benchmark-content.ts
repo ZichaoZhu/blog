@@ -17,7 +17,9 @@ import {
 	type NoteRecord,
 	type NoteType,
 } from "../src/utils/note-model";
-import { bodyOf, type MigrationManifest } from "./migration/convert";
+import { bodyOf } from "./migration/convert";
+
+import { readCurrentManifest } from "./verify-site";
 
 const targets: Record<NoteType, number> = {
 	course: 200,
@@ -128,9 +130,7 @@ export async function benchmarkContent(
 	await symlink(resolve("node_modules"), join(dest, "node_modules"), "dir");
 	if (existsSync(".astro"))
 		await cp(".astro", join(dest, ".astro"), { recursive: true });
-	const manifest: MigrationManifest = JSON.parse(
-		await readFile("migration/manifest.json", "utf8"),
-	);
+	const manifest = await readCurrentManifest(resolve("src/content/posts"));
 	const originals = manifest.records.map((r) => ({
 		entryId: r.sourcePath,
 		data: r,

@@ -70,7 +70,10 @@ async function search(push = false) {
 		if (id !== requestId) return;
 		pending = response.results;
 		total = pending.length;
-		results = await Promise.all(pending.slice(0, 20).map((r) => r.data()));
+		const resolved = await Promise.all(
+			pending.slice(0, 20).map((r) => r.data()),
+		);
+		if (id === requestId) results = resolved;
 	} catch {
 		if (id === requestId)
 			error = "搜索暂不可用，请从课程、论文或主题入口浏览。";
@@ -87,7 +90,7 @@ async function more() {
 		);
 		if (id === requestId) results = [...results, ...next];
 	} catch {
-		error = "加载失败，请重试搜索。";
+		if (id === requestId) error = "加载失败，请重试搜索。";
 	} finally {
 		if (id === requestId) loading = false;
 	}

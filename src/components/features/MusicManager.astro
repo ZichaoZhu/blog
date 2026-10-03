@@ -204,23 +204,34 @@ const managerConfigStr = JSON.stringify({
 
     var currentTrackUrls = [];
     var currentTrackUrlIndex = 0;
-    var errorSkipTimeout = null;
+    var playbackRequested = false;
+
+    function stopPlaybackError() {
+        playbackRequested = false;
+        audio.pause();
+        state.isPlaying = false;
+        state.error = "播放失败，点击播放重试。";
+        emit("fm:play-state", { isPlaying: false });
+        emit("fm:error", { message: state.error });
+    }
 
     function tryPlayCurrentTrackUrl(autoPlay, ver) {
         if (ver !== loadVersion) return;
-        var playUrl = currentTrackUrls[currentTrackUrlIndex];
+        var attempt = currentTrackUrlIndex;
+        var playUrl = currentTrackUrls[attempt];
         audio.src = playUrl;
 
         if (autoPlay) {
             audio.play().then(function () {
-                if (ver !== loadVersion) return; // stale, discard
+                if (ver !== loadVersion || attempt !== currentTrackUrlIndex) return; // stale, discard
                 state.isPlaying = true;
                 state.error = null;
                 emit('fm:play-state', { isPlaying: true });
             }).catch(function (e) {
-                if (ver !== loadVersion) return; // stale, discard
+                if (ver !== loadVersion || attempt !== currentTrackUrlIndex) return; // stale, discard
                 if (e.name === 'AbortError') return; // interrupted by new load
-                console.warn('Autoplay blocked:', e);
+                console.warn('Playback failed:', e);
+                stopPlaybackError();
             });
         } else {
             state.isPlaying = false;
@@ -235,10 +246,8 @@ const managerConfigStr = JSON.stringify({
         var track = state.playlist[index];
         var ver = ++loadVersion;
 
-        if (errorSkipTimeout) {
-            clearTimeout(errorSkipTimeout);
-            errorSkipTimeout = null;
-        }
+        playbackRequested = !!autoPlay;
+        state.error = null;
 
         currentTrackUrls = [track.url];
         currentTrackUrlIndex = 0;
@@ -267,14 +276,18 @@ const managerConfigStr = JSON.stringify({
     // ── Playback controls ────────────────────────────────────
     function togglePlay() {
         if (audio.paused) {
+            if (state.error) { loadTrack(state.currentIndex, true); return; }
+            playbackRequested = true;
             audio.play().then(function () {
                 state.isPlaying = true;
                 emit('fm:play-state', { isPlaying: true });
             }).catch(function (e) {
                 if (e.name === 'AbortError') return;
                 console.warn('Playback failed:', e);
+                stopPlaybackError();
             });
         } else {
+            playbackRequested = false;
             audio.pause();
             state.isPlaying = false;
             emit('fm:play-state', { isPlaying: false });
@@ -282,9 +295,10 @@ const managerConfigStr = JSON.stringify({
     }
 
     function playNext(auto) {
+        if (auto && !playbackRequested) return;
         if (state.playMode === 1 && auto) {
             audio.currentTime = 0;
-            audio.play();
+            audio.play().catch(stopPlaybackError);
             return;
         }
         var nextIndex;
@@ -384,20 +398,12 @@ const managerConfigStr = JSON.stringify({
 
     audio.addEventListener('error', function () {
         var ver = loadVersion;
-        if (currentTrackUrlIndex < currentTrackUrls.length - 1) {
+        if (playbackRequested && currentTrackUrlIndex < currentTrackUrls.length - 1) {
             currentTrackUrlIndex++;
             console.warn('Playback failed, trying fallback URL: ' + currentTrackUrls[currentTrackUrlIndex]);
             tryPlayCurrentTrackUrl(true, ver);
         } else {
-            state.error = 'Audio playback error';
-            emit('fm:error', { message: '播放失败，即将自动跳过...' });
-
-            if (errorSkipTimeout) clearTimeout(errorSkipTimeout);
-            errorSkipTimeout = setTimeout(function () {
-                if (ver === loadVersion) {
-                    playNext(true);
-                }
-            }, 2000);
+            stopPlaybackError();
         }
     });
 
