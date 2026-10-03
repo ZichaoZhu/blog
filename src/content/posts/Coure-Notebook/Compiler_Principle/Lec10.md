@@ -21,6 +21,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Coure-Notebook/Compiler_Principle/Lec10.md"
 ---
 
 ## What does Chapter 10 focus on?

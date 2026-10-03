@@ -1,8 +1,9 @@
 ---
+import CollectionIntro from "../../components/knowledge/CollectionIntro.astro";
 import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
 import NoteList from '../../components/knowledge/NoteList.astro';
 import {getSortedPosts,asNoteRecord} from '../../utils/content-utils';
 import {toSummary} from '../../utils/note-model';
 const notes=(await getSortedPosts()).filter(p=>['log','idea','experiment'].includes(p.data.type)).map(p=>toSummary(asNoteRecord(p)));
 ---
-<KnowledgeLayout title="研究" description="记录研究过程中的观察、想法与实验。"><nav class="collection-links"><a href="/research/logs/">研究日志</a><a href="/research/ideas/">研究想法</a><a href="/research/experiments/">实验记录</a></nav><NoteList notes={notes}/></KnowledgeLayout>
+<KnowledgeLayout title="研究" description="记录研究过程中的观察、想法与实验。"><nav class="collection-links"><a href="/research/logs/">研究日志</a><a href="/research/ideas/">研究想法</a><a href="/research/experiments/">实验记录</a></nav><CollectionIntro slug="reaserch-note"/><NoteList notes={notes}/></KnowledgeLayout>

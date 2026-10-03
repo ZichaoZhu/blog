@@ -21,6 +21,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Coure-Notebook/Reinforcement_learning/Lec2-Bellman-Equation.md"
 ---
 
 ## Why return is important

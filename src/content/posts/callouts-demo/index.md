@@ -20,6 +20,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "callouts-demo/index.md"
 ---
 
 本文演示博客支持的 **Obsidian 风格 Callout** 语法。它基于标准 blockquote，生态兼容 Obsidian / GitHub / Typora。

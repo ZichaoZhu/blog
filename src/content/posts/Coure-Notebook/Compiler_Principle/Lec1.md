@@ -21,6 +21,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Coure-Notebook/Compiler_Principle/Lec1.md"
 ---
 
 ## 编译器

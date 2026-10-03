@@ -1,4 +1,4 @@
-import { remarkTyporaCompat } from "./src/plugins/remark-typora-compat";
+import { remarkTyporaCompat, rehypeMathCompat, remarkSourceLinks } from "./src/plugins/remark-typora-compat";
 import { remarkLocalImages } from "./src/plugins/remark-local-images";
 import { resolve } from "node:path";
 import { setMaxListeners } from "node:events";
@@ -298,6 +298,7 @@ export default defineConfig({
 					? [remarkAdmonitionToBlockquoteCallout]
 					: []),
 				remarkMath,
+				remarkSourceLinks,
 				remarkReadingTime,
 				remarkWikiLink,
 				remarkImageGrid,
@@ -309,6 +310,7 @@ export default defineConfig({
 				[remarkPlantuml, plantumlConfig],
 			],
 			rehypePlugins: [
+				rehypeMathCompat,
 				[rehypeKatex, { katex }],
 				[rehypeCallouts, { theme: siteConfig.post.rehypeCallouts.theme }],
 				rehypeSlug,

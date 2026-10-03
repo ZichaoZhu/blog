@@ -1,0 +1,105 @@
+{
+  "records": 53,
+  "publicNotes": 44,
+  "routableNotes": 47,
+  "collectionIntroductions": 5,
+  "emptyNotes": 1,
+  "sourceImages": 578,
+  "referencedImages": 498,
+  "unreferencedPreservedImages": 80,
+  "bodyHashMismatches": 0,
+  "imageHashMismatches": 0,
+  "renderErrors": 0,
+  "diagrams": [
+    {
+      "source": "Coure-Notebook/Compiler_Principle/Lec10.md",
+      "mermaidBlocks": 1,
+      "htmlImages": 0
+    },
+    {
+      "source": "Coure-Notebook/Compiler_Principle/Lec2.md",
+      "mermaidBlocks": 1,
+      "htmlImages": 0
+    },
+    {
+      "source": "Coure-Notebook/Compiler_Principle/Lec3.md",
+      "mermaidBlocks": 1,
+      "htmlImages": 0
+    },
+    {
+      "source": "Coure-Notebook/Compiler_Principle/Lec4.md",
+      "mermaidBlocks": 1,
+      "htmlImages": 0
+    },
+    {
+      "source": "Coure-Notebook/Compiler_Principle/Lec5.md",
+      "mermaidBlocks": 1,
+      "htmlImages": 0
+    },
+    {
+      "source": "Coure-Notebook/Compiler_Principle/Lec6.md",
+      "mermaidBlocks": 1,
+      "htmlImages": 0
+    },
+    {
+      "source": "Coure-Notebook/Compiler_Principle/Lec7.md",
+      "mermaidBlocks": 1,
+      "htmlImages": 0
+    },
+    {
+      "source": "Coure-Notebook/Compiler_Principle/Lec8.md",
+      "mermaidBlocks": 1,
+      "htmlImages": 0
+    },
+    {
+      "source": "Coure-Notebook/Operating_System/Lec0.md",
+      "mermaidBlocks": 0,
+      "htmlImages": 4
+    },
+    {
+      "source": "Coure-Notebook/Operating_System/Lec1.md",
+      "mermaidBlocks": 1,
+      "htmlImages": 11
+    },
+    {
+      "source": "Coure-Notebook/Operating_System/Lec2.md",
+      "mermaidBlocks": 0,
+      "htmlImages": 16
+    },
+    {
+      "source": "Coure-Notebook/Operating_System/Lec3.md",
+      "mermaidBlocks": 0,
+      "htmlImages": 24
+    },
+    {
+      "source": "Coure-Notebook/Operating_System/Lec4.md",
+      "mermaidBlocks": 0,
+      "htmlImages": 14
+    },
+    {
+      "source": "Coure-Notebook/Operating_System/Lec6.md",
+      "mermaidBlocks": 0,
+      "htmlImages": 2
+    },
+    {
+      "source": "Coure-Notebook/Operating_System/Lec7.md",
+      "mermaidBlocks": 0,
+      "htmlImages": 5
+    },
+    {
+      "source": "Coure-Notebook/Operating_System/Lec8.md",
+      "mermaidBlocks": 0,
+      "htmlImages": 39
+    },
+    {
+      "source": "Language/JP_learning/Lec1-Gojuon.md",
+      "mermaidBlocks": 0,
+      "htmlImages": 1
+    },
+    {
+      "source": "typora-test/index.md",
+      "mermaidBlocks": 1,
+      "htmlImages": 1
+    }
+  ]
+}

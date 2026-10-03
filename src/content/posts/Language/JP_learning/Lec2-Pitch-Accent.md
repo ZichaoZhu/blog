@@ -21,6 +21,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Language/JP_learning/Lec2-Pitch-Accent.md"
 ---
 
 ## 日语声调的标记方法

@@ -20,5 +20,6 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Coure-Notebook/index.md"
 ---
 欢迎来到我的课程笔记！这里记录了我在大学期间学习的部分课程的笔记和总结，主要涉及计算机科学领域。希望这些内容能够帮助到正在学习相关课程的同学们，也欢迎大家交流和讨论。

@@ -21,6 +21,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Coure-Notebook/Operating_System/Lec0.md"
 ---
 
 ## Course and Grades

@@ -20,6 +20,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Reaserch_Note/index.md"
 ---
 
 这里是我在科研途中的日记。

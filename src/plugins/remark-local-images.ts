@@ -20,7 +20,16 @@ export function resolveLocalImage(src:string,sourceFile:string,contentRoot:strin
 export function remarkLocalImages(options:{contentRoot:string;originalsRoot?:string}): (tree:Root,file:VFile)=>Promise<void> {
  return async (tree,file)=>{
   const sourceFile=file.path;if(!sourceFile)throw new Error('Local images require source filepath');
-  visit(tree,'html',(node,index,parent)=>{
+  // Typora accepts standalone image destinations with unescaped spaces/parentheses.
+  // CommonMark leaves these as text; recover only verified local image paragraphs.
+  visit(tree,'paragraph',node=>{
+   if(node.children.length!==1||node.children[0].type!=='text')return;
+   const match=/^!\[([^\]\n]*)\]\((.+)\)$/.exec(node.children[0].value.trim());
+   if(!match||/^(https?:|data:|\/\/)/i.test(match[2])||! /\.(png|jpe?g|webp|gif|avif|svg)$/i.test(match[2]))return;
+   resolveLocalImage(match[2],sourceFile,options.contentRoot);
+   node.children=[{type:'image',url:match[2],alt:match[1]}];
+  });
+  visit(tree,'html' ,(node,index,parent)=>{
    if(!parent||typeof index!=='number'||!/<img\b/i.test(node.value))return;
    const parsed=fromHtml(node.value,{fragment:true}),parts:PhrasingContent[]=[];let end=0;
    visit(parsed,'element',(element:Element)=>{

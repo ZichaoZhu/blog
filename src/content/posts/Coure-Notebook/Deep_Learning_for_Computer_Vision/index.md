@@ -20,6 +20,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Coure-Notebook/Deep_Learning_for_Computer_Vision/index.md"
 ---
 # 课程简介
 

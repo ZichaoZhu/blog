@@ -21,6 +21,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Coure-Notebook/Reinforcement_learning/Lec5-Monte-Carlo.md"
 ---
 
 ## Model based & Model free

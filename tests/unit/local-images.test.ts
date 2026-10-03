@@ -25,15 +25,16 @@ test('local names decode once and filesystem escapes are rejected',async()=>{
 test('HTML img becomes an optimizable image retaining zoom and original access',async()=>{
  const root=await mkdtemp(join(tmpdir(),'firefly-htmlimg-'));
  try{
-  await writeFile(join(root,'image.png'),Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==','base64'));
+  await writeFile(join(root,'图 a+(2).png'),Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==','base64'));
   const renderer=await createMarkdownProcessor({remarkPlugins:[[remarkLocalImages,{contentRoot:root,originalsRoot:join(root,'public')}]],rehypePlugins:[rehypeFigure]});
-  const result=await renderer.render('<img src="./image.png" alt="示意" style="zoom:50%">',{fileURL:new URL('file://'+join(root,'note.md'))});
+  const result=await renderer.render('<img src="./图 a+(2).png" alt="示意" style="zoom:50%">',{fileURL:new URL('file://'+join(root,'note.md'))});
   let imageProps:Record<string,unknown>|undefined;
   visit(fromHtml(result.code,{fragment:true}),'element',node=>{
    const key=Object.keys(node.properties).find(k=>k.toLowerCase()==='__astro_image_');
    if(key)imageProps=JSON.parse(String(node.properties[key]));
   });
-  assert.equal(imageProps?.['data-source-asset'],'image.png');assert.equal(imageProps?.style,'zoom:50%');
-  assert.match(result.code,/<figure>/);assert.doesNotMatch(result.code,/<center|<p><a[^>]*><figure/);assert.match(result.code,/href="\/images\/original\//);assert.deepEqual(result.metadata.localImagePaths,['image.png']);
+  const legacy=await renderer.render('![思维导图](./图 a+(2).png)',{fileURL:new URL('file://'+join(root,'note.md'))});assert.deepEqual(legacy.metadata.localImagePaths,['图 a+(2).png']);
+  assert.equal(imageProps?.['data-source-asset'],'图 a+(2).png');assert.equal(imageProps?.style,'zoom:50%');
+  assert.match(result.code,/<figure>/);assert.doesNotMatch(result.code,/<center|<p><a[^>]*><figure/);assert.match(result.code,/href="\/images\/original\//);assert.deepEqual(result.metadata.localImagePaths,['图 a+(2).png']);
  }finally{await rm(root,{recursive:true,force:true});}
 });

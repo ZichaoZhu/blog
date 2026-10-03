@@ -1,0 +1,8 @@
+---
+import {getCollection,render} from 'astro:content';
+import Markdown from '../common/Markdown.astro';
+interface Props {slug:string}
+const entry=(await getCollection('posts')).find(p=>p.data.contentKind==='collection'&&p.data.slug===Astro.props.slug);
+const rendered=entry?.body?.trim()?await render(entry):null;const Content=rendered?.Content;
+---
+{Content&&<section class="card-base p-6" data-pagefind-ignore><Markdown class=""><Content/></Markdown></section>}

@@ -1,3 +1,4 @@
+import sourceLinks from "../../migration/source-links.json" with {type:"json"};
 import type {Root,Text,PhrasingContent} from 'mdast';
 import {visit} from 'unist-util-visit';
 export function remarkTyporaCompat(): (tree:Root)=>void {
@@ -26,4 +27,14 @@ export function remarkTyporaCompat(): (tree:Root)=>void {
    (parent.children as PhrasingContent[]).splice(index,1,...result);return index+result.length;
   });
  };
+}
+
+export function rehypeMathCompat(): (tree:import('hast').Root)=>void {
+ return tree=>{visit(tree,'element',node=>{
+  if(node.tagName!=='code'||!String(node.properties.className).includes('math-display'))return;
+  const text=node.children[0];if(text?.type==='text'&&/(?<!\\)&/.test(text.value)&&!text.value.includes('\\begin{'))text.value='\\begin{aligned}\n'+text.value+'\n\\end{aligned}';
+ });};
+}
+export function remarkSourceLinks(): (tree:Root)=>void {
+ return tree=>{visit(tree,'link',node=>{const mapped=(sourceLinks as Record<string,string>)[node.url];if(mapped)node.url=mapped;});};
 }

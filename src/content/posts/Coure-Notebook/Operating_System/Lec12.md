@@ -21,6 +21,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Coure-Notebook/Operating_System/Lec12.md"
 ---
 
 ## Mass-Storage System

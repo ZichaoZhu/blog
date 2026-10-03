@@ -53,7 +53,7 @@ export async function convertContent(manifest:MigrationManifest,options:{sourceR
   const raw=await readFile(resolve(options.sourceRoot,'content/posts',record.sourcePath),'utf8'),body=bodyOf(raw);
   if(sha256(body)!==record.bodySha256)throw new Error(`Source changed since manifest: ${record.sourcePath}`);
   const {sourcePath,targetPath,hasBody,bodySha256,legacyPath,canonicalPath,anchorAliases,...data}=record;
-  const output=`---\n${Object.entries(data).filter(([,v])=>v!==undefined).map(([k,v])=>`${k}: ${JSON.stringify(v)}`).join('\n')}\n---\n${body}`;
+  const output=`---\n${Object.entries({...data,migrationSource:sourcePath}).filter(([,v])=>v!==undefined).map(([k,v])=>`${k}: ${JSON.stringify(v)}`).join('\n')}\n---\n${body}`;
   const target=resolve(options.targetRoot,targetPath);let existing='';try{existing=await readFile(target,'utf8');}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
   if(existing===output){unchanged.push(targetPath);continue;}written.push(targetPath);
   if(!options.dryRun){await mkdir(dirname(target),{recursive:true});await writeFile(target,output);}

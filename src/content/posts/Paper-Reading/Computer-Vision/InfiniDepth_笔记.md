@@ -19,6 +19,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Paper-Reading/Computer-Vision/InfiniDepth_笔记.md"
 ---
 # InfiniDepth 阅读笔记
 

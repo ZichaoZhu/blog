@@ -20,6 +20,7 @@ licenseUrl: ""
 comment: false
 password: ""
 passwordHint: ""
+migrationSource: "Paper-Reading/index.md"
 ---
 
 这里整理了我读过的一些论文笔记,主要集中在机器人腿足运动、模仿学习与基于高斯泼溅的视觉表示等方向。如果你也在做相关方向,欢迎交流。
