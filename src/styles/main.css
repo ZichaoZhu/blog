@@ -715,3 +715,6 @@ html[data-firefly-effects=off] *,html[data-firefly-effects=off] *::before,html[d
 @media(max-width:440px){#bg-player-toggle {display:none;} #navbar > div {padding-left:.25rem;padding-right:.25rem;} }
 
 html[data-firefly-effects=off] .onload-animation {animation:none!important;opacity:1!important;transform:none!important;}
+
+.skip-link {position:fixed;top:.5rem;left:.5rem;z-index:10000;background:var(--card-bg);padding:.75rem;transform:translateY(-160%);border-radius:.5rem;}
+.skip-link:focus {transform:none;}

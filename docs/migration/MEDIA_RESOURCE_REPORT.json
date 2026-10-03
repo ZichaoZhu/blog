@@ -1,0 +1,853 @@
+[
+  {
+    "state": "cover",
+    "effects": "off",
+    "overflow": false,
+    "audios": 1,
+    "audioPaused": true,
+    "videoPaused": true,
+    "sakura": false,
+    "resources": [
+      {
+        "url": "http://127.0.0.1:4321/_astro/MainGridLayout.ZrmUr-ft.css",
+        "transferSize": 5452,
+        "decodedBodySize": 24317
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Layout.BgC4AzNy.css",
+        "transferSize": 29898,
+        "decodedBodySize": 205093
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/NoteList.BIwf3BlI.css",
+        "transferSize": 1321,
+        "decodedBodySize": 5996
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/page.-aUNN9dY.js",
+        "transferSize": 1304,
+        "decodedBodySize": 2008
+      },
+      {
+        "url": "http://127.0.0.1:4321/avatars/MyGirl.webp",
+        "transferSize": 19908,
+        "decodedBodySize": 19608
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/EffectsToggle.astro_astro_type_script_index_0_lang.DxiGvoHG.js",
+        "transferSize": 1025,
+        "decodedBodySize": 725
+      },
+      {
+        "url": "http://127.0.0.1:4321/assets/images/DesktopWallpaper/d1.avif",
+        "transferSize": 73512,
+        "decodedBodySize": 73212
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SidebarTOC.astro_astro_type_script_index_0_lang.DBiAUyhx.js",
+        "transferSize": 1316,
+        "decodedBodySize": 1016
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/TypewriterText.astro_astro_type_script_index_0_lang.C8FuRVvh.js",
+        "transferSize": 1234,
+        "decodedBodySize": 2540
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/FloatingTOC.astro_astro_type_script_index_0_lang.BmHX5qES.js",
+        "transferSize": 1360,
+        "decodedBodySize": 3126
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/ImmersiveReading.astro_astro_type_script_index_0_lang.CerbAcdt.js",
+        "transferSize": 1685,
+        "decodedBodySize": 4489
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SakuraEffect.astro_astro_type_script_index_0_lang.Lg3xUVuM.js",
+        "transferSize": 2627,
+        "decodedBodySize": 7776
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/WavesEffect.astro_astro_type_script_index_0_lang.Bot7H84g.js",
+        "transferSize": 2822,
+        "decodedBodySize": 7606
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/FancyboxManager.astro_astro_type_script_index_0_lang.TsKi3_WT.js",
+        "transferSize": 2178,
+        "decodedBodySize": 4128
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/LegacyQueryCompat.astro_astro_type_script_index_0_lang.FFHfLxRb.js",
+        "transferSize": 1363,
+        "decodedBodySize": 2153
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Layout.astro_astro_type_script_index_0_lang.C9LyVnig.js",
+        "transferSize": 4250,
+        "decodedBodySize": 12250
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/preload-helper.BKYioxU4.js",
+        "transferSize": 1054,
+        "decodedBodySize": 1367
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/client.svelte.DZNth-4R.js",
+        "transferSize": 1206,
+        "decodedBodySize": 906
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Search.BHiS8EO1.js",
+        "transferSize": 3328,
+        "decodedBodySize": 7670
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/LightDarkSwitch.ClSiN5UA.js",
+        "transferSize": 1974,
+        "decodedBodySize": 3947
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/m1.DEh_M2ue_Z1S1lrt.webp",
+        "transferSize": 72432,
+        "decodedBodySize": 72132
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/effects-state.BVb-92hj.js",
+        "transferSize": 710,
+        "decodedBodySize": 410
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/toc-utils.BLHtS2ZX.js",
+        "transferSize": 2583,
+        "decodedBodySize": 5917
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/grid-layout-utils.CiPUBo5l.js",
+        "transferSize": 1497,
+        "decodedBodySize": 3033
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/config.C4luZoUJ.js",
+        "transferSize": 2674,
+        "decodedBodySize": 5117
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/translation.C24BPmpw.js",
+        "transferSize": 32406,
+        "decodedBodySize": 126559
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/effectsConfig.DhqIN0Lx.js",
+        "transferSize": 511,
+        "decodedBodySize": 211
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/rolldown-runtime.BQ-_32WO.js",
+        "transferSize": 464,
+        "decodedBodySize": 164
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/url-utils.DdarX2HR.js",
+        "transferSize": 931,
+        "decodedBodySize": 631
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/catalog.gMBbkjJq.js",
+        "transferSize": 1307,
+        "decodedBodySize": 2054
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/setting-utils.BsSMo2Xg.js",
+        "transferSize": 3823,
+        "decodedBodySize": 13219
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/floating-panel-utils.C09Y8Obf.js",
+        "transferSize": 1468,
+        "decodedBodySize": 2707
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/disclose-version.DwdwGuwu.js",
+        "transferSize": 366,
+        "decodedBodySize": 66
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/legacy.xRmREgYR.js",
+        "transferSize": 347,
+        "decodedBodySize": 47
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Icon.2WJdr24H.js",
+        "transferSize": 8972,
+        "decodedBodySize": 22609
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/client.DaSmzd1x.js",
+        "transferSize": 22569,
+        "decodedBodySize": 58536
+      },
+      {
+        "url": "http://127.0.0.1:4321/assets/music/cover/109951169585655912.webp",
+        "transferSize": 35064,
+        "decodedBodySize": 34764
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Swup.BLK6BtE9.js",
+        "transferSize": 368,
+        "decodedBodySize": 68
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SwupA11yPlugin.8VZs389h.js",
+        "transferSize": 2586,
+        "decodedBodySize": 5734
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Swup.modern.CjtNEaz8.js",
+        "transferSize": 7716,
+        "decodedBodySize": 21711
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/index.modern.DGWg1a9q.js",
+        "transferSize": 1211,
+        "decodedBodySize": 1767
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SwupHeadPlugin.CJV9x5S0.js",
+        "transferSize": 1583,
+        "decodedBodySize": 2581
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SwupScriptsPlugin.KOkp8JHL.js",
+        "transferSize": 915,
+        "decodedBodySize": 1100
+      }
+    ],
+    "requests": [
+      "http://127.0.0.1:4321/",
+      "http://127.0.0.1:4321/_astro/Layout.BgC4AzNy.css",
+      "http://127.0.0.1:4321/_astro/MainGridLayout.ZrmUr-ft.css",
+      "http://127.0.0.1:4321/_astro/NoteList.BIwf3BlI.css",
+      "http://127.0.0.1:4321/_astro/page.-aUNN9dY.js",
+      "http://127.0.0.1:4321/avatars/MyGirl.webp",
+      "http://127.0.0.1:4321/_astro/EffectsToggle.astro_astro_type_script_index_0_lang.DxiGvoHG.js",
+      "http://127.0.0.1:4321/assets/images/DesktopWallpaper/d1.avif",
+      "http://127.0.0.1:4321/_astro/TypewriterText.astro_astro_type_script_index_0_lang.C8FuRVvh.js",
+      "http://127.0.0.1:4321/_astro/SidebarTOC.astro_astro_type_script_index_0_lang.DBiAUyhx.js",
+      "http://127.0.0.1:4321/_astro/FloatingTOC.astro_astro_type_script_index_0_lang.BmHX5qES.js",
+      "http://127.0.0.1:4321/_astro/ImmersiveReading.astro_astro_type_script_index_0_lang.CerbAcdt.js",
+      "http://127.0.0.1:4321/_astro/SakuraEffect.astro_astro_type_script_index_0_lang.Lg3xUVuM.js",
+      "http://127.0.0.1:4321/_astro/WavesEffect.astro_astro_type_script_index_0_lang.Bot7H84g.js",
+      "http://127.0.0.1:4321/_astro/FancyboxManager.astro_astro_type_script_index_0_lang.TsKi3_WT.js",
+      "http://127.0.0.1:4321/_astro/LegacyQueryCompat.astro_astro_type_script_index_0_lang.FFHfLxRb.js",
+      "http://127.0.0.1:4321/_astro/Layout.astro_astro_type_script_index_0_lang.C9LyVnig.js",
+      "http://127.0.0.1:4321/_astro/preload-helper.BKYioxU4.js",
+      "http://127.0.0.1:4321/_astro/Search.BHiS8EO1.js",
+      "http://127.0.0.1:4321/_astro/client.svelte.DZNth-4R.js",
+      "http://127.0.0.1:4321/_astro/LightDarkSwitch.ClSiN5UA.js",
+      "http://127.0.0.1:4321/_astro/m1.DEh_M2ue_Z1S1lrt.webp",
+      "http://127.0.0.1:4321/_astro/effects-state.BVb-92hj.js",
+      "http://127.0.0.1:4321/_astro/toc-utils.BLHtS2ZX.js",
+      "http://127.0.0.1:4321/_astro/translation.C24BPmpw.js",
+      "http://127.0.0.1:4321/_astro/config.C4luZoUJ.js",
+      "http://127.0.0.1:4321/_astro/grid-layout-utils.CiPUBo5l.js",
+      "http://127.0.0.1:4321/_astro/effectsConfig.DhqIN0Lx.js",
+      "http://127.0.0.1:4321/_astro/catalog.gMBbkjJq.js",
+      "http://127.0.0.1:4321/_astro/rolldown-runtime.BQ-_32WO.js",
+      "http://127.0.0.1:4321/_astro/setting-utils.BsSMo2Xg.js",
+      "http://127.0.0.1:4321/_astro/url-utils.DdarX2HR.js",
+      "http://127.0.0.1:4321/_astro/floating-panel-utils.C09Y8Obf.js",
+      "http://127.0.0.1:4321/_astro/client.DaSmzd1x.js",
+      "http://127.0.0.1:4321/_astro/disclose-version.DwdwGuwu.js",
+      "http://127.0.0.1:4321/_astro/legacy.xRmREgYR.js",
+      "http://127.0.0.1:4321/_astro/Icon.2WJdr24H.js",
+      "http://127.0.0.1:4321/assets/music/cover/109951169585655912.webp",
+      "http://127.0.0.1:4321/_astro/Swup.BLK6BtE9.js",
+      "http://127.0.0.1:4321/_astro/Swup.modern.CjtNEaz8.js",
+      "http://127.0.0.1:4321/_astro/SwupA11yPlugin.8VZs389h.js",
+      "http://127.0.0.1:4321/_astro/index.modern.DGWg1a9q.js",
+      "http://127.0.0.1:4321/_astro/SwupHeadPlugin.CJV9x5S0.js",
+      "http://127.0.0.1:4321/_astro/SwupScriptsPlugin.KOkp8JHL.js"
+    ],
+    "videoSource": "aborted for failure/cover verification"
+  },
+  {
+    "state": "effects",
+    "effects": "on",
+    "overflow": false,
+    "audios": 1,
+    "audioPaused": true,
+    "videoPaused": true,
+    "sakura": true,
+    "resources": [
+      {
+        "url": "http://127.0.0.1:4321/_astro/Layout.BgC4AzNy.css",
+        "transferSize": 29898,
+        "decodedBodySize": 205093
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/MainGridLayout.ZrmUr-ft.css",
+        "transferSize": 5452,
+        "decodedBodySize": 24317
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/NoteList.BIwf3BlI.css",
+        "transferSize": 1321,
+        "decodedBodySize": 5996
+      },
+      {
+        "url": "http://127.0.0.1:4321/avatars/MyGirl.webp",
+        "transferSize": 19908,
+        "decodedBodySize": 19608
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/page.-aUNN9dY.js",
+        "transferSize": 1304,
+        "decodedBodySize": 2008
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/EffectsToggle.astro_astro_type_script_index_0_lang.DxiGvoHG.js",
+        "transferSize": 1025,
+        "decodedBodySize": 725
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SidebarTOC.astro_astro_type_script_index_0_lang.DBiAUyhx.js",
+        "transferSize": 1316,
+        "decodedBodySize": 1016
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/TypewriterText.astro_astro_type_script_index_0_lang.C8FuRVvh.js",
+        "transferSize": 1234,
+        "decodedBodySize": 2540
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/FloatingTOC.astro_astro_type_script_index_0_lang.BmHX5qES.js",
+        "transferSize": 1360,
+        "decodedBodySize": 3126
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/ImmersiveReading.astro_astro_type_script_index_0_lang.CerbAcdt.js",
+        "transferSize": 1685,
+        "decodedBodySize": 4489
+      },
+      {
+        "url": "http://127.0.0.1:4321/assets/images/DesktopWallpaper/d1.avif",
+        "transferSize": 73512,
+        "decodedBodySize": 73212
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SakuraEffect.astro_astro_type_script_index_0_lang.Lg3xUVuM.js",
+        "transferSize": 2627,
+        "decodedBodySize": 7776
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/FancyboxManager.astro_astro_type_script_index_0_lang.TsKi3_WT.js",
+        "transferSize": 2178,
+        "decodedBodySize": 4128
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/LegacyQueryCompat.astro_astro_type_script_index_0_lang.FFHfLxRb.js",
+        "transferSize": 1363,
+        "decodedBodySize": 2153
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/WavesEffect.astro_astro_type_script_index_0_lang.Bot7H84g.js",
+        "transferSize": 2822,
+        "decodedBodySize": 7606
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Layout.astro_astro_type_script_index_0_lang.C9LyVnig.js",
+        "transferSize": 4250,
+        "decodedBodySize": 12250
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/preload-helper.BKYioxU4.js",
+        "transferSize": 1054,
+        "decodedBodySize": 1367
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Search.BHiS8EO1.js",
+        "transferSize": 3328,
+        "decodedBodySize": 7670
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/client.svelte.DZNth-4R.js",
+        "transferSize": 1206,
+        "decodedBodySize": 906
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/LightDarkSwitch.ClSiN5UA.js",
+        "transferSize": 1974,
+        "decodedBodySize": 3947
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/m1.DEh_M2ue_Z1S1lrt.webp",
+        "transferSize": 72432,
+        "decodedBodySize": 72132
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/effects-state.BVb-92hj.js",
+        "transferSize": 710,
+        "decodedBodySize": 410
+      },
+      {
+        "url": "https://bed.twoleaf.cn/file/1785658612716_firefly.mp4",
+        "transferSize": 0,
+        "decodedBodySize": 0
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/config.C4luZoUJ.js",
+        "transferSize": 2674,
+        "decodedBodySize": 5117
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/toc-utils.BLHtS2ZX.js",
+        "transferSize": 2583,
+        "decodedBodySize": 5917
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/grid-layout-utils.CiPUBo5l.js",
+        "transferSize": 1497,
+        "decodedBodySize": 3033
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/translation.C24BPmpw.js",
+        "transferSize": 32406,
+        "decodedBodySize": 126559
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/effectsConfig.DhqIN0Lx.js",
+        "transferSize": 511,
+        "decodedBodySize": 211
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/catalog.gMBbkjJq.js",
+        "transferSize": 1307,
+        "decodedBodySize": 2054
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/rolldown-runtime.BQ-_32WO.js",
+        "transferSize": 464,
+        "decodedBodySize": 164
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/url-utils.DdarX2HR.js",
+        "transferSize": 931,
+        "decodedBodySize": 631
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/floating-panel-utils.C09Y8Obf.js",
+        "transferSize": 1468,
+        "decodedBodySize": 2707
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/setting-utils.BsSMo2Xg.js",
+        "transferSize": 3823,
+        "decodedBodySize": 13219
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/client.DaSmzd1x.js",
+        "transferSize": 22569,
+        "decodedBodySize": 58536
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/disclose-version.DwdwGuwu.js",
+        "transferSize": 366,
+        "decodedBodySize": 66
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/legacy.xRmREgYR.js",
+        "transferSize": 347,
+        "decodedBodySize": 47
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Icon.2WJdr24H.js",
+        "transferSize": 8972,
+        "decodedBodySize": 22609
+      },
+      {
+        "url": "http://127.0.0.1:4321/assets/music/cover/109951169585655912.webp",
+        "transferSize": 35064,
+        "decodedBodySize": 34764
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Swup.BLK6BtE9.js",
+        "transferSize": 368,
+        "decodedBodySize": 68
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/sakura.worker-S4lNqkzx.js",
+        "transferSize": 2002,
+        "decodedBodySize": 4892
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Swup.modern.CjtNEaz8.js",
+        "transferSize": 7716,
+        "decodedBodySize": 21711
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SwupA11yPlugin.8VZs389h.js",
+        "transferSize": 2586,
+        "decodedBodySize": 5734
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/index.modern.DGWg1a9q.js",
+        "transferSize": 1211,
+        "decodedBodySize": 1767
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SwupHeadPlugin.CJV9x5S0.js",
+        "transferSize": 1583,
+        "decodedBodySize": 2581
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SwupScriptsPlugin.KOkp8JHL.js",
+        "transferSize": 915,
+        "decodedBodySize": 1100
+      }
+    ],
+    "requests": [
+      "http://127.0.0.1:4321/",
+      "http://127.0.0.1:4321/_astro/Layout.BgC4AzNy.css",
+      "http://127.0.0.1:4321/_astro/MainGridLayout.ZrmUr-ft.css",
+      "http://127.0.0.1:4321/_astro/NoteList.BIwf3BlI.css",
+      "http://127.0.0.1:4321/_astro/page.-aUNN9dY.js",
+      "http://127.0.0.1:4321/avatars/MyGirl.webp",
+      "http://127.0.0.1:4321/_astro/EffectsToggle.astro_astro_type_script_index_0_lang.DxiGvoHG.js",
+      "http://127.0.0.1:4321/assets/images/DesktopWallpaper/d1.avif",
+      "http://127.0.0.1:4321/_astro/TypewriterText.astro_astro_type_script_index_0_lang.C8FuRVvh.js",
+      "http://127.0.0.1:4321/_astro/SidebarTOC.astro_astro_type_script_index_0_lang.DBiAUyhx.js",
+      "http://127.0.0.1:4321/_astro/FloatingTOC.astro_astro_type_script_index_0_lang.BmHX5qES.js",
+      "http://127.0.0.1:4321/_astro/ImmersiveReading.astro_astro_type_script_index_0_lang.CerbAcdt.js",
+      "http://127.0.0.1:4321/_astro/SakuraEffect.astro_astro_type_script_index_0_lang.Lg3xUVuM.js",
+      "http://127.0.0.1:4321/_astro/WavesEffect.astro_astro_type_script_index_0_lang.Bot7H84g.js",
+      "http://127.0.0.1:4321/_astro/FancyboxManager.astro_astro_type_script_index_0_lang.TsKi3_WT.js",
+      "http://127.0.0.1:4321/_astro/LegacyQueryCompat.astro_astro_type_script_index_0_lang.FFHfLxRb.js",
+      "http://127.0.0.1:4321/_astro/Layout.astro_astro_type_script_index_0_lang.C9LyVnig.js",
+      "http://127.0.0.1:4321/_astro/preload-helper.BKYioxU4.js",
+      "http://127.0.0.1:4321/_astro/Search.BHiS8EO1.js",
+      "http://127.0.0.1:4321/_astro/client.svelte.DZNth-4R.js",
+      "http://127.0.0.1:4321/_astro/LightDarkSwitch.ClSiN5UA.js",
+      "http://127.0.0.1:4321/_astro/m1.DEh_M2ue_Z1S1lrt.webp",
+      "http://127.0.0.1:4321/_astro/effects-state.BVb-92hj.js",
+      "https://bed.twoleaf.cn/file/1785658612716_firefly.mp4",
+      "http://127.0.0.1:4321/_astro/toc-utils.BLHtS2ZX.js",
+      "http://127.0.0.1:4321/_astro/translation.C24BPmpw.js",
+      "http://127.0.0.1:4321/_astro/config.C4luZoUJ.js",
+      "http://127.0.0.1:4321/_astro/grid-layout-utils.CiPUBo5l.js",
+      "http://127.0.0.1:4321/_astro/effectsConfig.DhqIN0Lx.js",
+      "http://127.0.0.1:4321/_astro/catalog.gMBbkjJq.js",
+      "http://127.0.0.1:4321/_astro/rolldown-runtime.BQ-_32WO.js",
+      "http://127.0.0.1:4321/_astro/setting-utils.BsSMo2Xg.js",
+      "http://127.0.0.1:4321/_astro/url-utils.DdarX2HR.js",
+      "http://127.0.0.1:4321/_astro/floating-panel-utils.C09Y8Obf.js",
+      "http://127.0.0.1:4321/_astro/client.DaSmzd1x.js",
+      "http://127.0.0.1:4321/_astro/disclose-version.DwdwGuwu.js",
+      "http://127.0.0.1:4321/_astro/legacy.xRmREgYR.js",
+      "http://127.0.0.1:4321/_astro/Icon.2WJdr24H.js",
+      "http://127.0.0.1:4321/_astro/sakura.worker-S4lNqkzx.js",
+      "http://127.0.0.1:4321/assets/music/cover/109951169585655912.webp",
+      "http://127.0.0.1:4321/_astro/Swup.BLK6BtE9.js",
+      "http://127.0.0.1:4321/_astro/Swup.modern.CjtNEaz8.js",
+      "http://127.0.0.1:4321/_astro/SwupA11yPlugin.8VZs389h.js",
+      "http://127.0.0.1:4321/_astro/index.modern.DGWg1a9q.js",
+      "http://127.0.0.1:4321/_astro/SwupHeadPlugin.CJV9x5S0.js",
+      "http://127.0.0.1:4321/_astro/SwupScriptsPlugin.KOkp8JHL.js",
+      "http://127.0.0.1:4321/assets/images/effects/sakura.png"
+    ],
+    "videoSource": "aborted for failure/cover verification"
+  },
+  {
+    "state": "playing",
+    "effects": "on",
+    "overflow": false,
+    "audios": 1,
+    "audioPaused": false,
+    "videoPaused": false,
+    "sakura": true,
+    "resources": [
+      {
+        "url": "http://127.0.0.1:4321/_astro/Layout.BgC4AzNy.css",
+        "transferSize": 29898,
+        "decodedBodySize": 205093
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/MainGridLayout.ZrmUr-ft.css",
+        "transferSize": 5452,
+        "decodedBodySize": 24317
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/NoteList.BIwf3BlI.css",
+        "transferSize": 1321,
+        "decodedBodySize": 5996
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/page.-aUNN9dY.js",
+        "transferSize": 1304,
+        "decodedBodySize": 2008
+      },
+      {
+        "url": "http://127.0.0.1:4321/avatars/MyGirl.webp",
+        "transferSize": 19908,
+        "decodedBodySize": 19608
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/EffectsToggle.astro_astro_type_script_index_0_lang.DxiGvoHG.js",
+        "transferSize": 1025,
+        "decodedBodySize": 725
+      },
+      {
+        "url": "http://127.0.0.1:4321/assets/images/DesktopWallpaper/d1.avif",
+        "transferSize": 73512,
+        "decodedBodySize": 73212
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SidebarTOC.astro_astro_type_script_index_0_lang.DBiAUyhx.js",
+        "transferSize": 1316,
+        "decodedBodySize": 1016
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/TypewriterText.astro_astro_type_script_index_0_lang.C8FuRVvh.js",
+        "transferSize": 1234,
+        "decodedBodySize": 2540
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/FloatingTOC.astro_astro_type_script_index_0_lang.BmHX5qES.js",
+        "transferSize": 1360,
+        "decodedBodySize": 3126
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/ImmersiveReading.astro_astro_type_script_index_0_lang.CerbAcdt.js",
+        "transferSize": 1685,
+        "decodedBodySize": 4489
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SakuraEffect.astro_astro_type_script_index_0_lang.Lg3xUVuM.js",
+        "transferSize": 2627,
+        "decodedBodySize": 7776
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/WavesEffect.astro_astro_type_script_index_0_lang.Bot7H84g.js",
+        "transferSize": 2822,
+        "decodedBodySize": 7606
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/FancyboxManager.astro_astro_type_script_index_0_lang.TsKi3_WT.js",
+        "transferSize": 2178,
+        "decodedBodySize": 4128
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/LegacyQueryCompat.astro_astro_type_script_index_0_lang.FFHfLxRb.js",
+        "transferSize": 1363,
+        "decodedBodySize": 2153
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Layout.astro_astro_type_script_index_0_lang.C9LyVnig.js",
+        "transferSize": 4250,
+        "decodedBodySize": 12250
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/preload-helper.BKYioxU4.js",
+        "transferSize": 1054,
+        "decodedBodySize": 1367
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Search.BHiS8EO1.js",
+        "transferSize": 3328,
+        "decodedBodySize": 7670
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/client.svelte.DZNth-4R.js",
+        "transferSize": 1206,
+        "decodedBodySize": 906
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/LightDarkSwitch.ClSiN5UA.js",
+        "transferSize": 1974,
+        "decodedBodySize": 3947
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/m1.DEh_M2ue_Z1S1lrt.webp",
+        "transferSize": 72432,
+        "decodedBodySize": 72132
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/effects-state.BVb-92hj.js",
+        "transferSize": 710,
+        "decodedBodySize": 410
+      },
+      {
+        "url": "https://bed.twoleaf.cn/file/1785658612716_firefly.mp4",
+        "transferSize": 0,
+        "decodedBodySize": 0
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/toc-utils.BLHtS2ZX.js",
+        "transferSize": 2583,
+        "decodedBodySize": 5917
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/config.C4luZoUJ.js",
+        "transferSize": 2674,
+        "decodedBodySize": 5117
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/grid-layout-utils.CiPUBo5l.js",
+        "transferSize": 1497,
+        "decodedBodySize": 3033
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/translation.C24BPmpw.js",
+        "transferSize": 32406,
+        "decodedBodySize": 126559
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/effectsConfig.DhqIN0Lx.js",
+        "transferSize": 511,
+        "decodedBodySize": 211
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/rolldown-runtime.BQ-_32WO.js",
+        "transferSize": 464,
+        "decodedBodySize": 164
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/catalog.gMBbkjJq.js",
+        "transferSize": 1307,
+        "decodedBodySize": 2054
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/url-utils.DdarX2HR.js",
+        "transferSize": 931,
+        "decodedBodySize": 631
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/floating-panel-utils.C09Y8Obf.js",
+        "transferSize": 1468,
+        "decodedBodySize": 2707
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/setting-utils.BsSMo2Xg.js",
+        "transferSize": 3823,
+        "decodedBodySize": 13219
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/client.DaSmzd1x.js",
+        "transferSize": 22569,
+        "decodedBodySize": 58536
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/disclose-version.DwdwGuwu.js",
+        "transferSize": 366,
+        "decodedBodySize": 66
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Icon.2WJdr24H.js",
+        "transferSize": 8972,
+        "decodedBodySize": 22609
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/legacy.xRmREgYR.js",
+        "transferSize": 347,
+        "decodedBodySize": 47
+      },
+      {
+        "url": "http://127.0.0.1:4321/assets/music/cover/109951169585655912.webp",
+        "transferSize": 35064,
+        "decodedBodySize": 34764
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Swup.BLK6BtE9.js",
+        "transferSize": 368,
+        "decodedBodySize": 68
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/Swup.modern.CjtNEaz8.js",
+        "transferSize": 7716,
+        "decodedBodySize": 21711
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SwupA11yPlugin.8VZs389h.js",
+        "transferSize": 2586,
+        "decodedBodySize": 5734
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/index.modern.DGWg1a9q.js",
+        "transferSize": 1211,
+        "decodedBodySize": 1767
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SwupHeadPlugin.CJV9x5S0.js",
+        "transferSize": 1583,
+        "decodedBodySize": 2581
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/SwupScriptsPlugin.KOkp8JHL.js",
+        "transferSize": 915,
+        "decodedBodySize": 1100
+      },
+      {
+        "url": "http://127.0.0.1:4321/_astro/sakura.worker-S4lNqkzx.js",
+        "transferSize": 2002,
+        "decodedBodySize": 4892
+      },
+      {
+        "url": "http://127.0.0.1:4321/assets/music/%E4%BD%BF%E4%B8%80%E9%A2%97%E5%BF%83%E5%85%8D%E4%BA%8E%E5%93%80%E4%BC%A4-%E5%93%BC%E5%94%B1.mp3",
+        "transferSize": 936980,
+        "decodedBodySize": 936680
+      }
+    ],
+    "requests": [
+      "http://127.0.0.1:4321/",
+      "http://127.0.0.1:4321/_astro/Layout.BgC4AzNy.css",
+      "http://127.0.0.1:4321/_astro/MainGridLayout.ZrmUr-ft.css",
+      "http://127.0.0.1:4321/_astro/NoteList.BIwf3BlI.css",
+      "http://127.0.0.1:4321/_astro/page.-aUNN9dY.js",
+      "http://127.0.0.1:4321/avatars/MyGirl.webp",
+      "http://127.0.0.1:4321/_astro/EffectsToggle.astro_astro_type_script_index_0_lang.DxiGvoHG.js",
+      "http://127.0.0.1:4321/assets/images/DesktopWallpaper/d1.avif",
+      "http://127.0.0.1:4321/_astro/TypewriterText.astro_astro_type_script_index_0_lang.C8FuRVvh.js",
+      "http://127.0.0.1:4321/_astro/SidebarTOC.astro_astro_type_script_index_0_lang.DBiAUyhx.js",
+      "http://127.0.0.1:4321/_astro/FloatingTOC.astro_astro_type_script_index_0_lang.BmHX5qES.js",
+      "http://127.0.0.1:4321/_astro/ImmersiveReading.astro_astro_type_script_index_0_lang.CerbAcdt.js",
+      "http://127.0.0.1:4321/_astro/SakuraEffect.astro_astro_type_script_index_0_lang.Lg3xUVuM.js",
+      "http://127.0.0.1:4321/_astro/WavesEffect.astro_astro_type_script_index_0_lang.Bot7H84g.js",
+      "http://127.0.0.1:4321/_astro/FancyboxManager.astro_astro_type_script_index_0_lang.TsKi3_WT.js",
+      "http://127.0.0.1:4321/_astro/LegacyQueryCompat.astro_astro_type_script_index_0_lang.FFHfLxRb.js",
+      "http://127.0.0.1:4321/_astro/Layout.astro_astro_type_script_index_0_lang.C9LyVnig.js",
+      "http://127.0.0.1:4321/_astro/preload-helper.BKYioxU4.js",
+      "http://127.0.0.1:4321/_astro/Search.BHiS8EO1.js",
+      "http://127.0.0.1:4321/_astro/client.svelte.DZNth-4R.js",
+      "http://127.0.0.1:4321/_astro/LightDarkSwitch.ClSiN5UA.js",
+      "http://127.0.0.1:4321/_astro/m1.DEh_M2ue_Z1S1lrt.webp",
+      "http://127.0.0.1:4321/_astro/effects-state.BVb-92hj.js",
+      "https://bed.twoleaf.cn/file/1785658612716_firefly.mp4",
+      "http://127.0.0.1:4321/_astro/toc-utils.BLHtS2ZX.js",
+      "http://127.0.0.1:4321/_astro/translation.C24BPmpw.js",
+      "http://127.0.0.1:4321/_astro/config.C4luZoUJ.js",
+      "http://127.0.0.1:4321/_astro/grid-layout-utils.CiPUBo5l.js",
+      "http://127.0.0.1:4321/_astro/effectsConfig.DhqIN0Lx.js",
+      "http://127.0.0.1:4321/_astro/catalog.gMBbkjJq.js",
+      "http://127.0.0.1:4321/_astro/rolldown-runtime.BQ-_32WO.js",
+      "http://127.0.0.1:4321/_astro/setting-utils.BsSMo2Xg.js",
+      "http://127.0.0.1:4321/_astro/url-utils.DdarX2HR.js",
+      "http://127.0.0.1:4321/_astro/floating-panel-utils.C09Y8Obf.js",
+      "http://127.0.0.1:4321/_astro/client.DaSmzd1x.js",
+      "http://127.0.0.1:4321/_astro/disclose-version.DwdwGuwu.js",
+      "http://127.0.0.1:4321/_astro/Icon.2WJdr24H.js",
+      "http://127.0.0.1:4321/_astro/legacy.xRmREgYR.js",
+      "http://127.0.0.1:4321/_astro/sakura.worker-S4lNqkzx.js",
+      "http://127.0.0.1:4321/assets/music/cover/109951169585655912.webp",
+      "http://127.0.0.1:4321/_astro/Swup.BLK6BtE9.js",
+      "http://127.0.0.1:4321/_astro/Swup.modern.CjtNEaz8.js",
+      "http://127.0.0.1:4321/_astro/SwupA11yPlugin.8VZs389h.js",
+      "http://127.0.0.1:4321/_astro/index.modern.DGWg1a9q.js",
+      "http://127.0.0.1:4321/_astro/SwupHeadPlugin.CJV9x5S0.js",
+      "http://127.0.0.1:4321/_astro/SwupScriptsPlugin.KOkp8JHL.js",
+      "http://127.0.0.1:4321/assets/images/effects/sakura.png",
+      "http://127.0.0.1:4321/assets/music/%E4%BD%BF%E4%B8%80%E9%A2%97%E5%BF%83%E5%85%8D%E4%BA%8E%E5%93%80%E4%BC%A4-%E5%93%BC%E5%94%B1.mp3"
+    ],
+    "videoSource": "9.6KB test fixture"
+  }
+]

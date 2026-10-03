@@ -134,7 +134,7 @@ const {
                 {shouldRenderCategoryBar && <div id="category-bar-wrapper"><CategoryBar currentPostCategory={postCategory} /></div>}
                 {/* 主内容区 - 始终渲染，确保 Swup 容器存在 */}
                 <main
-                    id="swup-container"
+                    id="swup-container" tabindex="-1"
                     class="transition-main"
                     data-current-post-category={postCategory || ""}
                 >

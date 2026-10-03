@@ -1,0 +1,70 @@
+{
+  "count": 500,
+  "counts": {
+    "course": 200,
+    "paper": 180,
+    "log": 50,
+    "idea": 30,
+    "experiment": 20,
+    "note": 20
+  },
+  "sourceBodies": 44,
+  "pages": 20,
+  "seconds": 85.779,
+  "maxResidentBytes": 3666083840,
+  "artifacts": {
+    "html": {
+      "files": 633,
+      "bytes": 152894468
+    },
+    "js": {
+      "files": 58,
+      "bytes": 784549
+    },
+    "woff2": {
+      "files": 19,
+      "bytes": 256168
+    },
+    "woff": {
+      "files": 20,
+      "bytes": 303116
+    },
+    "ttf": {
+      "files": 20,
+      "bytes": 513664
+    },
+    "css": {
+      "files": 11,
+      "bytes": 379084
+    },
+    "images": {
+      "files": 3525,
+      "bytes": 366705965
+    },
+    "json": {
+      "files": 3,
+      "bytes": 212792
+    },
+    "otf": {
+      "files": 1,
+      "bytes": 52928
+    },
+    "media": {
+      "files": 1,
+      "bytes": 936680
+    },
+    "xml": {
+      "files": 4,
+      "bytes": 431324
+    },
+    "txt": {
+      "files": 4,
+      "bytes": 5219
+    },
+    "index": {
+      "files": 590,
+      "bytes": 4808317
+    }
+  },
+  "outputDir": "/tmp/firefly-scale-20261003-v2"
+}

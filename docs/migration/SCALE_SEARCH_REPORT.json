@@ -1,0 +1,271 @@
+{
+  "indexCount": 500,
+  "courseCount": 200,
+  "combinedCount": 18,
+  "sentinelCandidateCount": 7,
+  "leakedSentinelCount": 0,
+  "queries": [
+    {
+      "query": "InfiniDepth",
+      "target": "infinidepth-reading",
+      "count": 15,
+      "top5": [
+        "/notes/infinidepth-reading/",
+        "/notes/scale-paper-61/",
+        "/notes/scale-paper-121/",
+        "/notes/scale-paper-145/",
+        "/notes/scale-paper-133/"
+      ]
+    },
+    {
+      "query": "DeepMimic",
+      "target": "deepmimic-reading",
+      "count": 30,
+      "top5": [
+        "/notes/deepmimic-reading/",
+        "/notes/scale-paper-173/",
+        "/notes/scale-paper-29/",
+        "/notes/scale-paper-89/",
+        "/notes/scale-paper-17/"
+      ]
+    },
+    {
+      "query": "Bellman",
+      "target": "reinforcement-learning-lec2-bellman-equation",
+      "count": 21,
+      "top5": [
+        "/notes/reinforcement-learning-lec2-bellman-equation/",
+        "/notes/scale-course-55/",
+        "/notes/scale-course-179/",
+        "/notes/scale-course-117/",
+        "/notes/scale-course-86/"
+      ]
+    },
+    {
+      "query": "法线",
+      "target": "",
+      "count": 15,
+      "top5": [
+        "/notes/infinidepth-reading/",
+        "/notes/scale-paper-61/",
+        "/notes/scale-paper-121/",
+        "/notes/scale-paper-145/",
+        "/notes/scale-paper-133/"
+      ]
+    },
+    {
+      "query": "蒙特卡洛",
+      "target": "reinforcement-learning-lec5-monte-carlo",
+      "count": 7,
+      "top5": [
+        "/notes/reinforcement-learning-lec5-monte-carlo/",
+        "/notes/scale-course-182/",
+        "/notes/scale-course-58/",
+        "/notes/scale-idea-27/",
+        "/notes/scale-course-151/"
+      ]
+    },
+    {
+      "query": "进程",
+      "target": "",
+      "count": 96,
+      "top5": [
+        "/notes/operating-systems-lec6/",
+        "/notes/scale-course-50/",
+        "/notes/scale-note-19/",
+        "/notes/scale-course-174/",
+        "/notes/scale-idea-19/"
+      ]
+    },
+    {
+      "query": "编译原理",
+      "target": "",
+      "count": 37,
+      "top5": [
+        "/notes/compiler-principles-lec1/",
+        "/notes/scale-course-31/",
+        "/notes/scale-course-155/",
+        "/notes/scale-course-62/",
+        "/notes/scale-course-93/"
+      ]
+    },
+    {
+      "query": "五十音",
+      "target": "japanese-lec1-gojuon",
+      "count": 7,
+      "top5": [
+        "/notes/scale-course-90/",
+        "/notes/scale-course-183/",
+        "/notes/scale-course-152/",
+        "/notes/scale-course-59/",
+        "/notes/scale-idea-28/"
+      ]
+    },
+    {
+      "query": "が",
+      "target": "japanese-lec3-dakuon-and-choon",
+      "count": 13,
+      "top5": [
+        "/notes/japanese-lec1-gojuon/",
+        "/notes/scale-course-90/",
+        "/notes/scale-course-183/",
+        "/notes/scale-course-59/",
+        "/notes/scale-course-121/"
+      ]
+    },
+    {
+      "query": "ManiGaussian",
+      "target": "manigaussian-reading",
+      "count": 30,
+      "top5": [
+        "/notes/manigaussianpp-reading/",
+        "/notes/scale-paper-51/",
+        "/notes/scale-paper-111/",
+        "/notes/scale-paper-27/",
+        "/notes/scale-paper-87/"
+      ]
+    },
+    {
+      "query": "AMP",
+      "target": "",
+      "count": 30,
+      "top5": [
+        "/notes/multi-amp-reading/",
+        "/notes/scale-paper-57/",
+        "/notes/scale-paper-117/",
+        "/notes/scale-paper-69/",
+        "/notes/scale-paper-93/"
+      ]
+    },
+    {
+      "query": "DreamWaQ",
+      "target": "dreamwaq-reading",
+      "count": 15,
+      "top5": [
+        "/notes/dreamwaq-reading/",
+        "/notes/scale-paper-66/",
+        "/notes/scale-paper-126/",
+        "/notes/scale-paper-174/",
+        "/notes/scale-paper-18/"
+      ]
+    },
+    {
+      "query": "RMA",
+      "target": "rma-reading",
+      "count": 60,
+      "top5": [
+        "/notes/rma-reading/",
+        "/notes/scale-paper-131/",
+        "/notes/scale-paper-59/",
+        "/notes/scale-paper-95/",
+        "/notes/scale-paper-143/"
+      ]
+    },
+    {
+      "query": "PIE",
+      "target": "pie-reading",
+      "count": 31,
+      "top5": [
+        "/notes/pie-reading/",
+        "/notes/scale-paper-142/",
+        "/notes/scale-paper-94/",
+        "/notes/scale-paper-58/",
+        "/notes/scale-paper-118/"
+      ]
+    },
+    {
+      "query": "Liveness Analysis",
+      "target": "compiler-principles-lec10",
+      "count": 20,
+      "top5": [
+        "/notes/compiler-principles-lec10/",
+        "/notes/scale-course-63/",
+        "/notes/scale-note-1/",
+        "/notes/scale-experiment-1/",
+        "/notes/scale-idea-1/"
+      ]
+    },
+    {
+      "query": "Lexical Analysis",
+      "target": "compiler-principles-lec2",
+      "count": 20,
+      "top5": [
+        "/notes/compiler-principles-lec2/",
+        "/notes/scale-course-95/",
+        "/notes/scale-course-33/",
+        "/notes/scale-experiment-2/",
+        "/notes/scale-note-2/"
+      ]
+    },
+    {
+      "query": "File System",
+      "target": "",
+      "count": 60,
+      "top5": [
+        "/notes/operating-systems-lec10/",
+        "/notes/scale-course-43/",
+        "/notes/scale-course-198/",
+        "/notes/scale-course-105/",
+        "/notes/scale-course-167/"
+      ]
+    },
+    {
+      "query": "Deadlocks",
+      "target": "operating-systems-lec7",
+      "count": 7,
+      "top5": [
+        "/notes/operating-systems-lec7/",
+        "/notes/scale-course-113/",
+        "/notes/scale-course-82/",
+        "/notes/scale-course-51/",
+        "/notes/scale-course-175/"
+      ]
+    },
+    {
+      "query": "Value Iteration",
+      "target": "reinforcement-learning-lec4-value-and-policy-iteration",
+      "count": 14,
+      "top5": [
+        "/notes/reinforcement-learning-lec4-value-and-policy-iteration/",
+        "/notes/scale-course-57/",
+        "/notes/scale-idea-26/",
+        "/notes/scale-course-181/",
+        "/notes/scale-course-119/"
+      ]
+    },
+    {
+      "query": "浊音",
+      "target": "japanese-lec3-dakuon-and-choon",
+      "count": 6,
+      "top5": [
+        "/notes/japanese-lec3-dakuon-and-choon/",
+        "/notes/scale-course-123/",
+        "/notes/scale-course-185/",
+        "/notes/scale-course-154/",
+        "/notes/scale-course-61/"
+      ]
+    }
+  ],
+  "pageCounts": [
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25,
+    25
+  ]
+}

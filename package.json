@@ -10,7 +10,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
-    "build": "astro sync --force && node --import tsx scripts/generate-github-card-data.ts && node --import tsx scripts/generate-lqips.ts && node --import tsx scripts/generate-vndb-covers.ts && astro build && node --import tsx scripts/prune-pio-assets.ts && node --import tsx scripts/subset-fonts.ts && node --import tsx scripts/minify-inline-scripts.ts && node --import tsx scripts/run-pagefind.ts",
+    "build": "astro sync --force && node --import tsx scripts/optimize-avatar.ts && node --import tsx scripts/generate-github-card-data.ts && node --import tsx scripts/generate-lqips.ts && node --import tsx scripts/generate-vndb-covers.ts && astro build && node --import tsx scripts/prune-pio-assets.ts && node --import tsx scripts/subset-fonts.ts && node --import tsx scripts/minify-inline-scripts.ts && node --import tsx scripts/run-pagefind.ts",
     "preview": "astro preview",
     "astro": "astro",
     "type-check": "tsc --noEmit --isolatedDeclarations",

@@ -1,0 +1,147 @@
+{
+  "conditions": {
+    "viewport": "390x844",
+    "latencyMs": 40,
+    "downloadMbps": 1.5,
+    "uploadKbps": 750,
+    "coldContext": true,
+    "reducedMotion": true,
+    "effects": "off",
+    "runs": 3,
+    "localServers": true
+  },
+  "measurements": [
+    {
+      "name": "Next",
+      "path": "/",
+      "run": 1,
+      "requests": 47,
+      "encodedBytes": 214626,
+      "domContentLoadedMs": 424.80000001192093,
+      "loadMs": 944.8999999761581,
+      "fcpMs": 484,
+      "lcpMs": 484
+    },
+    {
+      "name": "Next",
+      "path": "/",
+      "run": 2,
+      "requests": 47,
+      "encodedBytes": 214630,
+      "domContentLoadedMs": 419.0999999642372,
+      "loadMs": 944.1999999880791,
+      "fcpMs": 472,
+      "lcpMs": 472
+    },
+    {
+      "name": "Next",
+      "path": "/",
+      "run": 3,
+      "requests": 47,
+      "encodedBytes": 214625,
+      "domContentLoadedMs": 418.0999999642372,
+      "loadMs": 928.0999999642372,
+      "fcpMs": 464,
+      "lcpMs": 464
+    },
+    {
+      "name": "Next",
+      "path": "/notes/operating-systems-lec3/",
+      "run": 1,
+      "requests": 52,
+      "encodedBytes": 508200,
+      "domContentLoadedMs": 328.5,
+      "loadMs": 2778.699999988079,
+      "fcpMs": 336,
+      "lcpMs": 336
+    },
+    {
+      "name": "Next",
+      "path": "/notes/operating-systems-lec3/",
+      "run": 2,
+      "requests": 52,
+      "encodedBytes": 508196,
+      "domContentLoadedMs": 336.30000001192093,
+      "loadMs": 2731.899999976158,
+      "fcpMs": 328,
+      "lcpMs": 328
+    },
+    {
+      "name": "Next",
+      "path": "/notes/operating-systems-lec3/",
+      "run": 3,
+      "requests": 52,
+      "encodedBytes": 506951,
+      "domContentLoadedMs": 450.5,
+      "loadMs": 2760.699999988079,
+      "fcpMs": 328,
+      "lcpMs": 328
+    },
+    {
+      "name": "Astro",
+      "path": "/",
+      "run": 1,
+      "requests": 44,
+      "encodedBytes": 406167,
+      "domContentLoadedMs": 1775.800000011921,
+      "loadMs": 1977.3999999761581,
+      "fcpMs": 800,
+      "lcpMs": 1992
+    },
+    {
+      "name": "Astro",
+      "path": "/",
+      "run": 2,
+      "requests": 44,
+      "encodedBytes": 406167,
+      "domContentLoadedMs": 1764.5,
+      "loadMs": 1976.5,
+      "fcpMs": 784,
+      "lcpMs": 1992
+    },
+    {
+      "name": "Astro",
+      "path": "/",
+      "run": 3,
+      "requests": 44,
+      "encodedBytes": 406167,
+      "domContentLoadedMs": 1772.7000000476837,
+      "loadMs": 1969.2000000476837,
+      "fcpMs": 784,
+      "lcpMs": 1984
+    },
+    {
+      "name": "Astro",
+      "path": "/notes/operating-systems-lec3/",
+      "run": 1,
+      "requests": 56,
+      "encodedBytes": 636770,
+      "domContentLoadedMs": 2148.900000035763,
+      "loadMs": 3191.600000023842,
+      "fcpMs": 864,
+      "lcpMs": 3212
+    },
+    {
+      "name": "Astro",
+      "path": "/notes/operating-systems-lec3/",
+      "run": 2,
+      "requests": 56,
+      "encodedBytes": 636770,
+      "domContentLoadedMs": 2009.199999988079,
+      "loadMs": 3197.800000011921,
+      "fcpMs": 916,
+      "lcpMs": 3216
+    },
+    {
+      "name": "Astro",
+      "path": "/notes/operating-systems-lec3/",
+      "run": 3,
+      "requests": 56,
+      "encodedBytes": 636770,
+      "domContentLoadedMs": 2369.100000023842,
+      "loadMs": 3197.800000011921,
+      "fcpMs": 860,
+      "lcpMs": 3208
+    }
+  ]
+}
