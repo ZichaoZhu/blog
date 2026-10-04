@@ -1,7 +1,7 @@
 import { sidebarLayoutConfig } from "@/config";
 
 /** 侧栏列宽，全仓库唯一字面值出处 */
-const SIDEBAR_WIDTH = "17.5rem";
+const SIDEBAR_WIDTH = "15.625rem";
 
 const SIDEBAR_TRACK = "var(--grid-sidebar-width)";
 
@@ -40,9 +40,9 @@ export function isWidgetVisibleOnPageType(
  * 获取响应式侧边栏配置
  *
  * 响应式布局：
- * - 768px及以下: 隐藏侧栏，显示底部 mobileBottomComponents
- * - 769px-1279px: 根据 position 和 tabletSidebar 配置显示侧栏
- * - 1280px及以上: 根据 position 配置显示侧栏
+ * - 1024px及以下: 隐藏侧栏，显示底部 mobileBottomComponents
+ * - 1024px-1359px: 根据 position 和 tabletSidebar 配置显示侧栏
+ * - 1360px及以上: 根据 position 配置显示侧栏
  */
 export function getResponsiveSidebarConfig(): ResponsiveSidebarConfig {
 	const position = sidebarLayoutConfig.position;
@@ -117,10 +117,10 @@ export interface GridColumnVars {
 
 /** 按左右两侧是否占列生成轨道串 */
 function trackSegments(left: boolean, right: boolean): string {
-	if (left && right) return `${SIDEBAR_TRACK} 1fr ${SIDEBAR_TRACK}`;
-	if (left) return `${SIDEBAR_TRACK} 1fr`;
-	if (right) return `1fr ${SIDEBAR_TRACK}`;
-	return "1fr";
+	if (left && right) return `${SIDEBAR_TRACK} minmax(0,1fr) ${SIDEBAR_TRACK}`;
+	if (left) return `${SIDEBAR_TRACK} minmax(0,1fr)`;
+	if (right) return `minmax(0,1fr) ${SIDEBAR_TRACK}`;
+	return "minmax(0,1fr)";
 }
 
 /**

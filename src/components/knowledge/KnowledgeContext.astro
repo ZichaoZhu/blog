@@ -1,0 +1,8 @@
+---
+import type {SidebarContext} from '../../utils/knowledge-model';
+import TopicNav from './TopicNav.astro';
+import CourseNav from './CourseNav.astro';
+interface Props {context:SidebarContext;location:'sidebar'|'inline'}
+const {context,location}=Astro.props;
+---
+{location==='sidebar'?<div class="knowledge-context-sidebar"><TopicNav context={context} id="topic-nav-sidebar"/>{context.course&&<CourseNav {...context.course}/>}</div>:<details class="knowledge-context-inline" data-pagefind-ignore><summary>{context.title}导航{context.course?'与课程讲次':''}</summary><TopicNav context={context} id="topic-nav-inline"/>{context.course&&<details class="inline-course-nav"><summary>课程讲次</summary><CourseNav {...context.course}/></details>}</details>}

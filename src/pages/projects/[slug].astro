@@ -7,6 +7,9 @@ import { siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import KnowledgeContext from "@/components/knowledge/KnowledgeContext.astro";
+import {getKnowledgeIndex} from "@/utils/knowledge-index";
+import {getSidebarContext} from "@/utils/knowledge-model";
 import { getSortedProjects } from "@/utils/content-utils";
 import { formatDateToYYYYMMDD } from "@/utils/date-utils";
 import {
@@ -57,6 +60,7 @@ const statusMeta = status ? getProjectStatusMeta(status) : null;
 
 // 标签：详情页完整显示所有标签（不折叠成 +N）
 const visibleTags = tags || [];
+const sidebarContext=getSidebarContext(await getKnowledgeIndex(),Astro.url.pathname);
 ---
 
 <MainGridLayout
@@ -66,6 +70,7 @@ const visibleTags = tags || [];
   setOGTypeArticle={true}
   headings={headings}
   postCoverImage={coverOg}
+  sidebarContext={sidebarContext}
 >
   <div class="flex w-full rounded-(--radius-large) overflow-hidden relative mb-4">
     <div id="post-container" class="card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full">
@@ -192,6 +197,8 @@ const visibleTags = tags || [];
         )}
       </div>
 
+      <KnowledgeContext context={sidebarContext} location="inline"/>
+      {headings.length>0&&<details class="inline-toc my-5" data-pagefind-ignore><summary>文章目录</summary><nav aria-label="文章目录"><ol>{headings.map(h=><li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol></nav></details>}
       <!-- README 正文 -->
       <div data-pagefind-ignore>
         <Markdown class="mb-6 markdown-content">

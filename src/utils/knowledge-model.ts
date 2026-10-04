@@ -4,11 +4,132 @@ import {
 	type Catalog,
 	compareNoteDates,
 	isPublicNote,
+	type NoteData,
 	type NoteRecord,
+	type NoteSummary,
+	type NoteType,
 	orderCourseNotes,
+	toSummary,
 } from "./note-model";
 
 export type HubId = "courses" | "papers" | "research" | "projects";
+export type NavItem = {
+	id: string;
+	title: string;
+	url: string;
+	count: number;
+	state: "none" | "current" | "related";
+};
+export type SidebarContext = {
+	hub: HubId | null;
+	title: string;
+	items: NavItem[];
+	course?: { courseId: string; currentSlug: string; notes: NoteSummary[] };
+};
+export function getSidebarContext(
+	index: KnowledgeIndex,
+	pathname: string,
+	article?: {
+		url: string;
+		type: NoteType | "project";
+		topics: string[];
+		course?: NoteData["course"];
+	},
+): SidebarContext {
+	const path = `${pathname.replace(/\/$/, "")}/`;
+	const item = index.publicItems.find((item) => item.url === path);
+	const record =
+		article ??
+		(item?.kind === "post"
+			? {
+					url: item.url,
+					type: item.post.data.type,
+					topics: item.post.data.topics,
+					course: item.post.data.course,
+				}
+			: item?.kind === "project"
+				? {
+						url: item.url,
+						type: "project" as const,
+						topics: item.project.data.topics,
+					}
+				: undefined);
+	const hub: HubId | null = record
+		? record.type === "course"
+			? "courses"
+			: record.type === "paper"
+				? "papers"
+				: ["log", "idea", "experiment"].includes(record.type)
+					? "research"
+					: record.type === "project"
+						? "projects"
+						: null
+		: ((["courses", "papers", "research", "projects"] as const).find((h) =>
+				path.startsWith(`/${h}/`),
+			) ?? null);
+	if (!hub)
+		return {
+			hub: null,
+			title: "专题",
+			items: Object.values(index.hubs).map((h) => ({
+				id: h.id,
+				title: h.title,
+				url: h.url,
+				count: h.items.length,
+				state: "none",
+			})),
+		};
+	const groupPath = path.replace(/page\/\d+\/$/, "");
+	const courseId =
+		hub === "courses"
+			? (record?.course?.id ??
+				index.hubs.courses.groups.find((g) => g.url === groupPath)?.id)
+			: undefined;
+	const groups = index.hubs[hub].groups;
+	const items: NavItem[] = groups.map((g) => ({
+		id: g.id,
+		title: g.title,
+		url: g.url,
+		count: g.items.length,
+		state: record
+			? hub === "courses" && g.id === courseId
+				? "current"
+				: hub !== "courses" &&
+						(record.topics.includes(g.id) ||
+							(!record.topics.length && g.id === "uncategorized"))
+					? "related"
+					: "none"
+			: g.url === groupPath
+				? "current"
+				: "none",
+	}));
+	const courseGroup = courseId
+		? index.lists[`/courses/${courseId}/`]
+		: undefined;
+	const titles: Record<HubId, string> = {
+		courses: "课程",
+		papers: "论文主题",
+		research: "研究主题",
+		projects: "项目主题",
+	};
+	return {
+		hub,
+		title: titles[hub],
+		items,
+		...(courseGroup
+			? {
+					course: {
+						courseId: courseGroup.id,
+						currentSlug:
+							record?.url.replace(/^\/notes\//, "").replace(/\/$/, "") ?? "",
+						notes: courseGroup.items.flatMap((n) =>
+							n.kind === "post" ? [toSummary(n.post)] : [],
+						),
+					},
+				}
+			: {}),
+	};
+}
 export type PostInput = NoteRecord & { pinned: boolean; words: number };
 export type ProjectInput = {
 	entryId: string;

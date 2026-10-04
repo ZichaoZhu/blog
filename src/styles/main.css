@@ -730,3 +730,17 @@ html[data-firefly-effects=off] .onload-animation {animation:none!important;opaci
 
 .skip-link {position:fixed;top:.5rem;left:.5rem;z-index:10000;background:var(--card-bg);padding:.75rem;transform:translateY(-160%);border-radius:.5rem;}
 .skip-link:focus {transform:none;}
+/* Context navigation shares links across the sidebar and native mobile disclosure. */
+.knowledge-context-sidebar {display:grid;gap:1rem;margin-bottom:1rem;}
+.knowledge-context-inline {margin:1rem 0;padding:.8rem 1rem;border-radius:var(--radius-large);background:var(--card-bg);}
+.knowledge-context-inline summary,.inline-course-nav summary,.inline-toc summary {cursor:pointer;font-weight:600;}
+.topic-nav ul {max-height:22rem;overflow-y:auto;}
+.topic-nav li a {display:flex;justify-content:space-between;gap:.75rem;padding:.6rem .5rem;border-radius:.4rem;overflow-wrap:anywhere;}
+.topic-nav-count {color:var(--primary);font-variant-numeric:tabular-nums;flex-shrink:0;}
+.topic-nav a[aria-current],.topic-nav a[data-related] {background:var(--btn-regular-bg);color:var(--primary);font-weight:600;}
+.topic-nav-back {display:block;margin-top:.8rem;font-size:.85rem;color:var(--primary);}
+.course-nav ol {max-height:24rem;overflow-y:auto;}
+.course-nav a {overflow-wrap:anywhere;}
+.inline-course-nav {margin-top:1rem;}
+@media(min-width:1024px){.knowledge-context-inline{display:none;}}
+@media(min-width:1360px){.inline-toc{display:none;}}

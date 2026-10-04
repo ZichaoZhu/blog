@@ -111,5 +111,6 @@ const CONTENT_DETAIL_PATH_PATTERNS = [
  * 供侧边栏组件显隐、悬浮目录、沉浸阅读等复用，统一了各处硬编码的 /posts/ 判断。
  */
 export function isArticleDetailPage(pathname: string): boolean {
+	if (/^\/(notes\/page|projects\/topics)\//.test(pathname)) return false;
 	return CONTENT_DETAIL_PATH_PATTERNS.some((re) => re.test(pathname));
 }

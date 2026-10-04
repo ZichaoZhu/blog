@@ -22,15 +22,14 @@ import { getBackgroundImages, isHomePage } from "@/utils/layout-utils";
 import { resolveNavMenuLinks } from "@/utils/nav-menu-utils";
 import { getEffectiveSidebarState } from "@/utils/sidebar-effective-utils";
 import Layout from "./Layout.astro";
+import {getKnowledgeIndex} from "@/utils/knowledge-index";
+import {getSidebarContext} from "@/utils/knowledge-model";
+import {isArticleDetailPage} from "@/utils/url-utils";
 
 import "@/styles/expressive-code.css";
 
 interface Props {
-	courseContext?: {
-		courseId: string;
-		currentSlug: string;
-		notes: import("@/utils/note-model").NoteSummary[];
-	};
+	sidebarContext?: import('@/utils/knowledge-model').SidebarContext;
 	title?: string;
 	description?: string;
 	lang?: string;
@@ -73,11 +72,12 @@ const {
 	bannerPostMeta,
 	heading,
 	hideHeading = false,
-	courseContext,
+	sidebarContext: suppliedContext,
 } = Astro.props;
 
 const isHomePageCheck = isHomePage(Astro.url.pathname);
-const isPostPage = !!postSlug;
+const isPostPage = isArticleDetailPage(Astro.url.pathname);
+const sidebarContext = suppliedContext ?? getSidebarContext(await getKnowledgeIndex(), Astro.url.pathname);
 const shouldRenderCategoryBar = !!siteConfig.categoryBar;
 const navbarWidthFull = siteConfig.navbar.widthFull ?? false;
 
@@ -129,7 +129,7 @@ const {
                 hasRightComponents={hasRightComponents}
                 sidebarClass={sidebarClass}
                 headings={headings}
-                encrypted={encrypted} courseContext={courseContext}
+                encrypted={encrypted} sidebarContext={sidebarContext}
             />
                     
             {/* 主内容区包装器 - 包含静态栏位和swup容器，作为单个grid item */}
@@ -152,7 +152,7 @@ const {
                 {/* 移动端底部组件：<768px 时 #main-grid 是 display:block，必须排在页脚之前 */}
                 {sidebarLayoutConfig.mobileBottomComponents && sidebarLayoutConfig.mobileBottomComponents.length > 0 && (
                     <div id="mobile-bottom-sidebar" class="block md:hidden mt-4">
-                        <SideBar side="bottom" headings={headings} encrypted={encrypted} courseContext={courseContext}></SideBar>
+                        <SideBar side="bottom" headings={headings} encrypted={encrypted} sidebarContext={sidebarContext}></SideBar>
                     </div>
                 )}
             </div>
@@ -166,7 +166,7 @@ const {
                 hasRightComponents={hasRightComponents}
                 sidebarClass={sidebarClass}
                 headings={headings}
-                encrypted={encrypted} courseContext={courseContext}
+                encrypted={encrypted} sidebarContext={sidebarContext}
             />
 
         </div>

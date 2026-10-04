@@ -1,10 +1,11 @@
 import {test,expect} from '@playwright/test';
 test('reading stays within 320/390/768/1280 and 200 percent equivalent viewports',async({page})=>{
- for(const width of [320,390,640,768,1280])for(const theme of ['light','dark']){await page.setViewportSize({width,height:900});await page.addInitScript(t=>{localStorage.setItem('theme',t);localStorage.setItem('firefly-effects','off');},theme);for(const path of ['/','/notes/reinforcement-learning-lec3-bellman-optimality/','/notes/compiler-principles-lec5/','/search/']){await page.goto(path);await expect(page.locator('h1')).toHaveCount(1);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${width} ${theme} ${path}`).toBe(true);}}
+ for(const width of [320,390,640,768,1024,1280,1440])for(const theme of ['light','dark']){await page.setViewportSize({width,height:900});await page.addInitScript(t=>{localStorage.setItem('theme',t);localStorage.setItem('firefly-effects','off');},theme);for(const path of ['/','/notes/reinforcement-learning-lec3-bellman-optimality/','/notes/compiler-principles-lec5/','/search/']){await page.goto(path);await expect(page.locator('h1')).toHaveCount(1);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${width} ${theme} ${path}`).toBe(true);}}
 });
 test('keyboard reaches main content and hidden navigation cannot receive focus',async({page})=>{
  await page.setViewportSize({width:390,height:844});await page.goto('/notes/operating-systems-lec0/');await page.keyboard.press('Tab');await expect(page.getByRole('link',{name:'跳到正文'})).toBeFocused();await page.keyboard.press('Enter');await expect(page.locator('main')).toBeFocused();
  expect(await page.locator('#nav-menu-panel').evaluate(e=>e.hasAttribute('inert'))).toBe(true);
+ await page.locator('.knowledge-context-inline>summary').focus();await page.keyboard.press('Enter');await expect(page.locator('#topic-nav-inline')).toBeVisible();await expect(page.locator('#topic-nav-sidebar')).toBeHidden();
  await page.locator('#search-switch').focus();await page.keyboard.press('Enter');await expect(page.locator('#search-panel')).toBeVisible();await page.keyboard.press('Escape');await expect(page.locator('#search-switch')).toBeFocused();
  await page.locator('#effects-toggle').focus();await page.keyboard.press('Enter');await expect(page.locator('#effects-toggle')).toHaveAttribute('aria-pressed','true');
 });
