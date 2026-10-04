@@ -43,7 +43,7 @@ export const noteDataSchema: z.ZodType<PostData> = z
 			.default("note"),
 		topics: z.array(z.string()).default([]),
 		visibility: z.enum(["published", "unlisted", "draft"]).default("published"),
-		author: z.string().default("ZZC"),
+		author: z.string().default("Goongmly"),
 		date: day.optional(),
 		updatedAt: day.optional(),
 		course: z

@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 test('homepage to course, article, next lecture and back',async({page})=>{
- await page.goto('/');await expect(page.locator('h1')).toHaveText('ZZC Research Notes');
+ await page.goto('/');await expect(page.locator('h1')).toHaveText('Goongmly Research Notes');
  await page.getByRole('navigation',{name:'知识入口'}).getByRole('link',{name:'课程',exact:false}).click();
  await page.getByRole('heading').getByRole('link',{name:'操作系统',exact:true}).click();
  await expect(page.locator('h1')).toHaveText('操作系统');

@@ -43,7 +43,7 @@ const pages = resolvePageToggles({
 
 export const siteConfig: SiteConfig = {
 	// 站点标题
-	title: "ZZC Research Notes",
+	title: "Goongmly Research Notes",
 
 	// 站点副标题
 	subtitle: "课程笔记、论文阅读与科研记录",
@@ -52,7 +52,7 @@ export const siteConfig: SiteConfig = {
 	site_url: siteContext.origin.href,
 
 	// 站点描述
-	description: "ZZC 的课程笔记、论文阅读与科研记录。",
+	description: "Goongmly 的课程笔记、论文阅读与科研记录。",
 
 	// 站点关键词
 	keywords: [
@@ -117,7 +117,7 @@ export const siteConfig: SiteConfig = {
 			alt: "🍀",
 		},
 		// 导航栏标题
-		title: "ZZC Notes",
+		title: "Goongmly Notes",
 		// 全宽导航栏，导航栏是否占满屏幕宽度
 		widthFull: false,
 		// 导航菜单对齐方式，left：左对齐，center：居中

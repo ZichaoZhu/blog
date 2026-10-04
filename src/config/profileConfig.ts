@@ -1,7 +1,7 @@
 import type { ProfileConfig } from "../types/profileConfig";
 export const profileConfig: ProfileConfig = {
 	avatar: "/avatars/MyGirl.webp",
-	name: "ZZC",
+	name: "Goongmly",
 	bio: "课程笔记、论文阅读与科研记录。",
 	links: [
 		{

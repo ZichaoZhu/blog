@@ -1,4 +1,4 @@
-# ZZC Research Notes
+# Goongmly Research Notes
 
 个人科研知识主页，采用 Astro 静态构建、Markdown Content Collections、Svelte 交互和 Pagefind 搜索。基于真实 [Firefly](https://github.com/CuteLeaf/Firefly/tree/6d82554bfe1cb3d4b43adb0969dad1d43ac6dee3) 模板 6.16.8，锁定提交 `6d82554bfe1cb3d4b43adb0969dad1d43ac6dee3`；保留上游 MIT 许可与致谢。
 

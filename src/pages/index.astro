@@ -19,7 +19,7 @@ const entries = [
 	["项目", "/projects/", "公开代码与阶段性成果"],
 ];
 ---
-<KnowledgeLayout title="ZZC Research Notes" description="课程笔记、论文阅读与科研记录。">
+<KnowledgeLayout title="Goongmly Research Notes" description="课程笔记、论文阅读与科研记录。">
  <nav class="knowledge-entries card-base p-6" aria-label="知识入口">{entries.map(([name,url,description])=><a href={url}><strong>{name}</strong><span>{description}</span></a>)}</nav>
  {featured.length>0 && <section><h2>精选阅读</h2><NoteList notes={featured}/></section>}
  <section><div class="section-heading"><h2>最近记录</h2><a href="/notes/">全部笔记 →</a></div><NoteList notes={notes.slice(0,8)} /></section>
