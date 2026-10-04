@@ -17,6 +17,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			showOnPostPage: true,
 			hideOnNonPostPage: true,
 		},
+		{ type: "stats", enable: true, position: "sticky", showOnPostPage: true },
 	],
 	mobileBottomComponents: [],
 };

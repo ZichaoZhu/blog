@@ -1,192 +1,51 @@
 ---
-import { Icon } from "astro-icon/components";
-import WidgetLayout from "@/components/common/WidgetLayout.astro";
-import { siteConfig } from "@/config";
-import I18nKey from "@/i18n/i18nKey";
-import { i18n } from "@/i18n/translation";
-import type { WidgetComponentConfig } from "@/types/config";
-import {
-	getCategoryList,
-	getSortedPosts,
-	getTagList,
-} from "@/utils/content-utils";
-
-interface Props {
-	class?: string;
-	style?: string;
-	widgetConfig?: WidgetComponentConfig;
-}
-
-const { class: className, style, widgetConfig } = Astro.props;
-
-const showTitle = widgetConfig?.showTitle !== false;
-
-// 从配置中获取站点开始日期
-const siteStartDate = siteConfig.siteStartDate || "2025-01-01";
-
-// 获取所有文章
-const posts = await getSortedPosts();
-const categories = await getCategoryList();
-const tags = await getTagList();
-
-// 计算总字数
-let totalWords = 0;
-for (const post of posts) {
-	if (post.body) {
-		// 移除代码块和内联代码后计算字数
-		let text = post.body
-			.replace(/```[\s\S]*?```/g, "") // 移除代码块
-			.replace(/`[^`]*`/g, "") // 移除内联代码
-			.replace(/\s+/g, " ") // 合并空白
-			.trim();
-
-		// 分别计算中文字符和英文字符
-		const chineseChars = text.match(/[\u4e00-\u9fa5]/g) || [];
-		const englishChars = text.match(/[a-zA-Z]/g) || [];
-
-		totalWords += chineseChars.length + englishChars.length;
-	}
-}
-
-// 格式化数字（添加千位分隔符）
-function formatNumber(num: number): string {
-	return num.toLocaleString();
-}
-
-// 获取「最后活动」时间：取每篇文章 published 与 updated 中较新的那个，再从全站所有文章里取最大值。这样新发文章和修改老文章都会刷新该字段。
-const getActivityDate = (post: (typeof posts)[number]): Date | undefined => {
-	const { published, updated } = post.data;
-	if (updated && (!published || updated > published)) return updated;
-	return published;
-};
-
-const lastActivityDate = posts.reduce<Date | null>((latest, post) => {
-	const current = getActivityDate(post);
-	if (current && (!latest || current > latest)) return current;
-	return latest;
-}, null);
-
-const lastPostDate = lastActivityDate ? lastActivityDate.toISOString() : null;
-
-const todayText = i18n(I18nKey.today);
-
-const stats = [
-	{
-		icon: "material-symbols:article-outline",
-		label: i18n(I18nKey.siteStatsPostCount),
-		value: posts.length,
-	},
-	{
-		icon: "material-symbols:folder-outline",
-		label: i18n(I18nKey.siteStatsCategoryCount),
-		value: categories.length,
-	},
-	{
-		icon: "material-symbols:label-outline",
-		label: i18n(I18nKey.siteStatsTagCount),
-		value: tags.length,
-	},
-	{
-		icon: "material-symbols:text-ad-outline-rounded",
-		label: i18n(I18nKey.siteStatsTotalWords),
-		value: totalWords,
-		formatted: true,
-	},
-	{
-		icon: "material-symbols:calendar-clock-outline",
-		label: i18n(I18nKey.siteStatsRunningDays),
-		value: 0, // 将由客户端更新
-		suffix: i18n(I18nKey.siteStatsDays).replace("{days}", ""),
-		dynamic: true,
-		id: "running-days",
-	},
-	{
-		icon: "mingcute:heartbeat-line",
-		label: i18n(I18nKey.siteStatsLastUpdate),
-		value: 0, // 将由客户端更新
-		suffix: i18n(I18nKey.siteStatsDaysAgo).replace("{days}", ""),
-		dynamic: true,
-		id: "last-update",
-	},
+import {Icon} from 'astro-icon/components';
+import WidgetLayout from '@/components/common/WidgetLayout.astro';
+import {siteConfig} from '@/config';
+import type {WidgetComponentConfig} from '@/types/config';
+import {getKnowledgeIndex} from '@/utils/knowledge-index';
+import type {SiteStatsData} from '@/utils/knowledge-model';
+import {activityText,getStatDates} from '@/utils/site-stats';
+interface Props {class?:string;style?:string;widgetConfig?:WidgetComponentConfig;stats?:SiteStatsData}
+const {class:className,style,widgetConfig}=Astro.props;
+const stats=Astro.props.stats??(await getKnowledgeIndex()).stats;
+const startDay=siteConfig.siteStartDate||'2025-01-01';
+const dates=getStatDates(startDay,stats.lastActivityISO);
+const rows=[
+ {id:'articles',label:'文章',icon:'material-symbols:article-outline',value:stats.articleCount},
+ {id:'categories',label:'分类',icon:'material-symbols:folder-outline',value:stats.categoryCount},
+ {id:'tags',label:'标签',icon:'material-symbols:label-outline',value:stats.tagCount},
+ {id:'words',label:'总字数',icon:'material-symbols:text-ad-outline-rounded',value:stats.totalWords},
+ {id:'running-days',label:'运行时长',icon:'material-symbols:calendar-clock-outline',value:dates.runningDays},
 ];
 ---
-
-<WidgetLayout name={i18n(I18nKey.siteStats)} showTitle={showTitle} id="site-stats" class={className} style={style}>
-  <div class="flex flex-col gap-2">
-    {stats.map((stat) => (
-      <div class="flex items-center justify-between px-3 py-1.5">
-        <div class="flex items-center gap-2.5">
-          <div class="text-(--primary) text-xl">
-            <Icon name={stat.icon} />
-          </div>
-          <span class="text-neutral-700 dark:text-neutral-300 font-medium text-sm">
-            {stat.label}
-          </span>
-        </div>
-        <div class="flex items-center">
-          <span
-            class="text-base font-bold text-neutral-900 dark:text-neutral-100"
-            data-stat-id={stat.id}
-          >
-            {stat.formatted ? formatNumber(stat.value) : stat.value}
-          </span>
-          {stat.suffix && (
-            <span class="ml-1 text-sm text-neutral-500 dark:text-neutral-400">
-              {stat.suffix}
-            </span>
-          )}
-        </div>
-      </div>
-    ))}
-  </div>
+<WidgetLayout name="站点统计" showTitle={widgetConfig?.showTitle!==false} id="site-stats" class={className} style={style}>
+ <dl data-site-stats data-start-day={startDay} data-last-activity={stats.lastActivityISO??''} data-pagefind-ignore class="site-stat-list">
+ {rows.map(row=><div><dt><Icon name={row.icon}/>{row.label}</dt><dd><span data-stat-id={row.id}>{row.value.toLocaleString('en-US')}</span>{row.id==='running-days'&&' 天'}</dd></div>)}
+ <div><dt><Icon name="mingcute:heartbeat-line"/>最后活动</dt><dd><time data-stat-id="last-update" datetime={stats.lastActivityISO??undefined}>{activityText(dates)}</time></dd></div>
+ </dl>
 </WidgetLayout>
-
-<script is:inline define:vars={{ siteStartDate, lastPostDate, todayText }}>
-  function updateDynamicStats() {
-    const today = new Date();
-
-    // 更新运行天数
-    const startDate = new Date(siteStartDate);
-    const diffTime = Math.abs(today.getTime() - startDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    const runningDaysElements = document.querySelectorAll('[data-stat-id="running-days"]');
-    runningDaysElements.forEach((element) => {
-      element.textContent = diffDays.toString();
-    });
-
-    // 更新最后活动时间
-    if (lastPostDate) {
-      const lastPost = new Date(lastPostDate);
-      const timeSinceLastPost = Math.abs(today.getTime() - lastPost.getTime());
-      const daysSinceLastUpdate = Math.floor(timeSinceLastPost / (1000 * 60 * 60 * 24));
-
-      const lastUpdateElements = document.querySelectorAll('[data-stat-id="last-update"]');
-      lastUpdateElements.forEach((element) => {
-        if (daysSinceLastUpdate === 0) {
-          element.textContent = todayText;
-          if (element.nextElementSibling) {
-            element.nextElementSibling.style.display = 'none';
-          }
-        } else {
-          element.textContent = daysSinceLastUpdate.toString();
-          if (element.nextElementSibling) {
-            element.nextElementSibling.style.display = '';
-          }
-        }
-      });
-    }
+<script>
+ import {getStatDates,activityText} from '@/utils/site-stats';
+ function updateDates(){
+  for(const root of document.querySelectorAll<HTMLElement>('[data-site-stats]')){
+   const dates=getStatDates(root.dataset.startDay||'2025-01-01',root.dataset.lastActivity||null);
+   const running=root.querySelector('[data-stat-id="running-days"]');
+   const last=root.querySelector('[data-stat-id="last-update"]');
+   if(running)running.textContent=dates.runningDays.toLocaleString('en-US');
+   if(last)last.textContent=activityText(dates);
   }
-
-  // 页面加载时更新
-  updateDynamicStats();
-
-  // 防止 Swup 切页重跑脚本时重复注册监听器
-  if (!window.__siteStatsInit) {
-    window.__siteStatsInit = true;
-    // 页面切换时重新更新
-    document.addEventListener("swup:contentReplaced", () => {
-      setTimeout(updateDynamicStats, 100);
-    });
-  }
+ }
+ updateDates();
+ setInterval(updateDates,60000);
+ document.addEventListener('swup:contentReplaced',updateDates);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateDates();});
 </script>
+<style>
+ .site-stat-list{display:grid;gap:.9rem;font-size:.875rem;}
+ .site-stat-list>div{display:flex;justify-content:space-between;gap:.5rem;}
+ dt{display:flex;align-items:center;gap:.5rem;flex-shrink:0;}
+ dt :global(svg){color:var(--primary);width:1.1rem;height:1.1rem;}
+ dd{font-weight:600;text-align:right;overflow-wrap:anywhere;}
+ time{font-weight:400;font-size:.8rem;}
+</style>
