@@ -3,6 +3,7 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { getCategoryUrl } from "@utils/url-utils";
 import { courses, topics } from "../data/catalog";
+import { compareProjectData, isPublicProject } from "./knowledge-model";
 import {
 	assertCatalog,
 	compareNoteDates,
@@ -70,27 +71,9 @@ export async function getSortedPostsList(): Promise<PostForList[]> {
 export async function getSortedProjects(): Promise<
 	CollectionEntry<"projects">[]
 > {
-	const allProjects = await getCollection("projects", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
-
-	return allProjects.sort((a, b) => {
-		const ao = a.data.order;
-		const bo = b.data.order;
-		if (ao !== undefined && bo !== undefined) {
-			if (ao !== bo) return bo - ao;
-		} else if (ao === undefined && bo !== undefined) {
-			return 1;
-		} else if (ao !== undefined && bo === undefined) {
-			return -1;
-		}
-
-		return (
-			(b.data.published?.getTime() ?? Number.NEGATIVE_INFINITY) -
-				(a.data.published?.getTime() ?? Number.NEGATIVE_INFINITY) ||
-			a.data.title.localeCompare(b.data.title)
-		);
-	});
+	return (await getCollection("projects"))
+		.filter((p) => isPublicProject({ data: p.data, hasBody: !!p.body?.trim() }))
+		.sort((a, b) => compareProjectData(a.data, b.data));
 }
 
 /**

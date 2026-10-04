@@ -2,31 +2,17 @@ import { defineCollection } from "astro:content";
 import type { CollectionConfig } from "astro/content/config";
 import { glob } from "astro/loaders";
 import { type ZodType, z } from "astro/zod";
-import { noteDataSchema, type PostData } from "./content/schema";
+import {
+	noteDataSchema,
+	type PostData,
+	type ProjectData,
+	projectDataSchema,
+} from "./content/schema";
 
 type DynamicData = {
 	published: Date;
 	pinned: boolean;
 	location: string;
-};
-
-type ProjectLink = {
-	label: string;
-	icon: string;
-	value: string;
-};
-
-type ProjectData = {
-	title: string;
-	published?: Date;
-	draft: boolean;
-	order?: number;
-	description: string;
-	image: string;
-	tags: string[];
-	link: ProjectLink[];
-	status: string;
-	lang: string;
 };
 
 type ContentCollection<T> = CollectionConfig<
@@ -56,27 +42,7 @@ const dynamicCollection: ContentCollection<DynamicData> = defineCollection({
 
 const projectsCollection: ContentCollection<ProjectData> = defineCollection({
 	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/projects" }),
-	schema: z.object({
-		title: z.string(),
-		published: z.date().optional(),
-		draft: z.boolean().optional().default(false),
-		order: z.number().optional(),
-		description: z.string().optional().default(""),
-		image: z.string().optional().default(""),
-		tags: z.array(z.string()).optional().default([]),
-		link: z
-			.array(
-				z.object({
-					label: z.string(),
-					icon: z.string().optional().default(""),
-					value: z.string(),
-				}),
-			)
-			.optional()
-			.default([]),
-		status: z.string().optional().default(""),
-		lang: z.string().optional().default(""),
-	}),
+	schema: projectDataSchema,
 });
 
 export const collections: {

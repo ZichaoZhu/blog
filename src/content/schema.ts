@@ -1,5 +1,41 @@
 import { z } from "astro/zod";
 import type { NoteData } from "../utils/note-model";
+export interface ProjectData {
+	title: string;
+	published?: Date;
+	updated?: Date;
+	draft: boolean;
+	order?: number;
+	description: string;
+	image: string;
+	tags: string[];
+	topics: string[];
+	link: { label: string; icon: string; value: string }[];
+	status: string;
+	lang: string;
+}
+export const projectDataSchema: z.ZodType<ProjectData> = z.object({
+	title: z.string(),
+	published: z.date().optional(),
+	updated: z.date().optional(),
+	draft: z.boolean().default(false),
+	order: z.number().optional(),
+	description: z.string().default(""),
+	image: z.string().default(""),
+	tags: z.array(z.string()).default([]),
+	topics: z.array(z.string()).default([]),
+	link: z
+		.array(
+			z.object({
+				label: z.string(),
+				icon: z.string().default(""),
+				value: z.string(),
+			}),
+		)
+		.default([]),
+	status: z.string().default(""),
+	lang: z.string().default(""),
+});
 export interface PostData extends NoteData {
 	published?: Date;
 	updated?: Date;

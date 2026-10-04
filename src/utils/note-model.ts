@@ -143,6 +143,8 @@ export function assertCatalog(
 		for (const id of d.topics)
 			if (!catalog.topics.some((t) => t.id === id))
 				throw new Error(`unknown topic ${id}: ${where}`);
+		if (isPublicNote(note) && d.type === "course" && !d.course)
+			throw new Error(`missing course: ${where}`);
 		if (d.course) {
 			if (!catalog.courses.some((c) => c.id === d.course?.id))
 				throw new Error(`unknown course ${d.course.id}: ${where}`);
