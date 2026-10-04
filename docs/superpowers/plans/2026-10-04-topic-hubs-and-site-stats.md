@@ -10,7 +10,7 @@
 
 **Spec:** [已确认的专题聚合、主题导航与站点统计设计](../specs/2026-10-04-topic-hubs-and-site-stats-design.md)。实施者先读规格，再读本计划。
 
-**Execution:** 延续用户此前选择的 **Native**，由当前实现者逐项执行；完成后按执行技能进行整体审查。本计划已于 2026-10-04 经用户确认实施；Tasks 1–5 已完成，Task 6 回归与规模验收通过，待 Native 流程的最后整体审查。
+**Execution:** 延续用户此前选择的 **Native**，由当前实现者逐项执行；完成后按执行技能进行整体审查。本计划已于 2026-10-04 经用户确认实施；Tasks 1–6 已完成，整体独立审查及一次 TDD 修复通过；最终单元 43／43、浏览器 47／47，500 篇规模和原文／原图验收记录见 TOPIC-HUBS-ACCEPTANCE.md。
 
 ## Global Constraints
 
@@ -192,12 +192,12 @@ assert.equal(getStatDates('2025-01-01', '2026-10-05T00:00:00Z', new Date('2026-1
 
 **Interfaces:** 保留 CLI `node --import tsx scripts/benchmark-content.ts --count 500 --output-dir <不存在的临时目录>`，`benchmarkContent(outputDir:string):Promise<Record<string,unknown>>`；扩展报告记录集合分页与代表页面传输体积。样本仍为 course 200、paper 180、log 50、idea 30、experiment 20、note 20；公开项目新增能力由隔离 authoring fixture 验证，不悄悄改变同规模基线分布。
 
-- [ ] **Step 1：为规模报告新增有意义的断言。** 在 500 篇副本中核对全站 500、六种用途数量、各课程顺序和各主题成员，多主题成员不增加全站数；每页最多 25 项，无越界产物。draft sentinel 不出现在公开集合、统计或 Pagefind；index／侧栏不携带正文或全站文章数组，当前课程导航只含当前课程。报告保留真实构建秒数／峰值 RSS，并记录代表集合、文章、搜索首屏的 HTML／JS／Pagefind 实际网络传输字节（效果关闭、冷缓存，媒体单独记录）。
-- [ ] **Step 2：运行全部检查一次。** 依次运行 `pnpm test`、`pnpm lint:check`、`pnpm check`、`pnpm type-check`、`pnpm build`、`pnpm verify:site`、`pnpm audit:migration`、`pnpm test:authoring`、`pnpm test:e2e`、`git diff --check`。浏览器用 build 后 preview；本机 Chromium 已在 `/tmp/astro-firefly-browsers`，可设 `PLAYWRIGHT_BROWSERS_PATH` 复用。针对新增失败回到归属任务修复，检查通过后不无理由重复全部构建。
-- [ ] **Step 3：运行改造后 500 篇构建并比较。** 使用新目录 `/tmp/goongmly-hubs-after-20261004`。与 Task 1 基线使用相同 Node／pnpm、样本、preview 配置、机器和测量方式，分别报告构建耗时、峰值内存、传输体积及变化。测量基线传输时运行基线副本独立 preview，退出该任务自己的服务，不影响现有 4321 预览。任何显著回退定位到新增聚合／路由／布局，不凭装饰效果掩盖性能问题。
-- [ ] **Step 4：记录视觉与内容验收。** 保存六种宽度下首页、Papers 聚合／主题、课程正文的截图并逐张检查；确认统计／目录位置、主题状态、长标题、英文词数、无 JS 数值。运行原 `reading-rendering.spec.ts`、媒体和蓝色主题检查，保持下标、分子不裁切、图片居中、自定义媒体及失败降级；迁移审计继续证明正文／原图保全。
-- [ ] **Step 5：写维护说明与交付记录。** README 更新四入口、受控主题配置、项目 `topics/updated` 示例、统计口径与 25 项分页；旧 Notes 路由作为兼容入口。验收记录列明实际结果、前后规模指标、截图位置及真实限制，不写预期结果冒充完成。按 Native 执行技能完成整体代码审查，修复发现后只重跑受影响检查；确认原 main 工作区未受改动。
-- [ ] **Step 6：提交并交付本地预览。** 提交：`docs: verify topic hubs at 500-note scale`。最终说明当前分支、真实检查结果和本地预览；用户可检查专题／统计效果。本计划不合并、不推送、不部署。
+- [x] **Step 1：为规模报告新增有意义的断言。** 在 500 篇副本中核对全站 500、六种用途数量、各课程顺序和各主题成员，多主题成员不增加全站数；每页最多 25 项，无越界产物。draft sentinel 不出现在公开集合、统计或 Pagefind；index／侧栏不携带正文或全站文章数组，当前课程导航只含当前课程。报告保留真实构建秒数／峰值 RSS，并记录代表集合、文章、搜索首屏的 HTML／JS／Pagefind 实际网络传输字节（效果关闭、冷缓存，媒体单独记录）。
+- [x] **Step 2：运行全部检查一次。** 依次运行 `pnpm test`、`pnpm lint:check`、`pnpm check`、`pnpm type-check`、`pnpm build`、`pnpm verify:site`、`pnpm audit:migration`、`pnpm test:authoring`、`pnpm test:e2e`、`git diff --check`。浏览器用 build 后 preview；本机 Chromium 已在 `/tmp/astro-firefly-browsers`，可设 `PLAYWRIGHT_BROWSERS_PATH` 复用。针对新增失败回到归属任务修复，检查通过后不无理由重复全部构建。
+- [x] **Step 3：运行改造后 500 篇构建并比较。** 使用新目录 `/tmp/goongmly-hubs-after-20261004`。与 Task 1 基线使用相同 Node／pnpm、样本、preview 配置、机器和测量方式，分别报告构建耗时、峰值内存、传输体积及变化。测量基线传输时运行基线副本独立 preview，退出该任务自己的服务，不影响现有 4321 预览。任何显著回退定位到新增聚合／路由／布局，不凭装饰效果掩盖性能问题。
+- [x] **Step 4：记录视觉与内容验收。** 保存六种宽度下首页、Papers 聚合／主题、课程正文的截图并逐张检查；确认统计／目录位置、主题状态、长标题、英文词数、无 JS 数值。运行原 `reading-rendering.spec.ts`、媒体和蓝色主题检查，保持下标、分子不裁切、图片居中、自定义媒体及失败降级；迁移审计继续证明正文／原图保全。
+- [x] **Step 5：写维护说明与交付记录。** README 更新四入口、受控主题配置、项目 `topics/updated` 示例、统计口径与 25 项分页；旧 Notes 路由作为兼容入口。验收记录列明实际结果、前后规模指标、截图位置及真实限制，不写预期结果冒充完成。按 Native 执行技能完成整体代码审查，修复发现后只重跑受影响检查；确认原 main 工作区未受改动。
+- [x] **Step 6：提交并交付本地预览。** 提交：`docs: verify topic hubs at 500-note scale`。最终说明当前分支、真实检查结果和本地预览；用户可检查专题／统计效果。本计划不合并、不推送、不部署。
 
 ## 规格覆盖与执行顺序
 

@@ -27,6 +27,7 @@ export class TOCManager {
 	private contentId: string;
 	private indicatorId: string;
 	private scrollOffset: number;
+	private readonly clickHandler = this.handleClick.bind(this);
 
 	constructor(config: TOCConfig) {
 		this.contentId = config.contentId;
@@ -350,7 +351,7 @@ export class TOCManager {
 	 */
 	public bindClickEvents(): void {
 		this.tocItems.forEach((item) => {
-			item.addEventListener("click", this.handleClick.bind(this));
+			item.addEventListener("click", this.clickHandler);
 		});
 	}
 
@@ -358,6 +359,10 @@ export class TOCManager {
 	 * 清理
 	 */
 	public cleanup(): void {
+		this.tocItems.forEach((item) => {
+			item.removeEventListener("click", this.clickHandler);
+		});
+		this.tocItems = [];
 		if (this.observer) {
 			this.observer.disconnect();
 			this.observer = null;
