@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 test('homepage to course, article, next lecture and back',async({page})=>{
  await page.goto('/');await expect(page.locator('h1')).toHaveText('Goongmly Research Notes');
  await page.getByRole('navigation',{name:'知识入口'}).getByRole('link',{name:'课程',exact:false}).click();
- await page.getByRole('heading').getByRole('link',{name:'操作系统',exact:true}).click();
+ await page.locator('main .topic-groups').getByRole('link',{name:/^操作系统/}).click();
  await expect(page.locator('h1')).toHaveText('操作系统');
  await page.locator('.post-card-title').filter({hasText:'Lec0: 课程介绍与成绩'}).click();
  await expect(page.locator('h1')).toHaveText('Lec0: 课程介绍与成绩');

@@ -1,18 +1,8 @@
 ---
-import NoteList from "../../components/knowledge/NoteList.astro";
-import { topics } from "../../data/catalog";
-import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
-import { asNoteRecord, getSortedPosts } from "../../utils/content-utils";
-import { toSummary } from "../../utils/note-model";
-export function getStaticPaths() {
-	return topics.map((topic) => ({
-		params: { id: topic.id },
-		props: { topic },
-	}));
-}
-const { topic } = Astro.props;
-const notes = (await getSortedPosts())
-	.filter((p) => p.data.topics.includes(topic.id))
-	.map((p) => toSummary(asNoteRecord(p)));
+import CollectionPage from '../../components/knowledge/CollectionPage.astro';
+import {getKnowledgeIndex} from '../../utils/knowledge-index';
+import {buildCollectionRoutes} from '../../utils/knowledge-model';
+export async function getStaticPaths(){return buildCollectionRoutes(await getKnowledgeIndex()).filter(r=>r.page===1&&r.group.url.startsWith('/topics/')).map(route=>({params:{id:route.group.id},props:{route}}));}
+const {route}=Astro.props;
 ---
-<KnowledgeLayout title={topic.name} description={topic.description}><a href="/topics/">← 全部主题</a><NoteList notes={notes}/></KnowledgeLayout>
+<CollectionPage route={route} backUrl='/topics/' backLabel='全部主题'/>

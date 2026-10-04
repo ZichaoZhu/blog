@@ -699,6 +699,15 @@ html {
 .knowledge-shell h2 { font-size: 1.35rem; font-weight: 700; margin: .8rem 0; }
 .knowledge-shell p { line-height: 1.8; }
 .knowledge-list,.collection-list { list-style: none; padding:0; display:grid; gap:1rem; }
+.topic-group {display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.25rem 1.5rem;border:1px solid var(--line-divider);}
+.topic-group:hover {border-color:var(--primary);}
+.topic-group h2 {margin:0 0 .4rem;overflow-wrap:anywhere;}
+.topic-group p {color:var(--deep-text);margin:0 0 .65rem;}
+.topic-count,.collection-summary {font-size:.875rem;color:var(--deep-text);}
+.topic-arrow {color:var(--primary);font-size:1.75rem;flex:none;}
+.collection-pagination {display:flex;align-items:center;justify-content:center;gap:1.25rem;flex-wrap:wrap;padding:1rem;}
+.collection-pagination a,.collection-back,.note-subjects a {color:var(--primary);}
+.collection-intro summary {cursor:pointer;font-weight:650;}
 .note-context { display:flex; justify-content:space-between; flex-wrap:wrap; gap:.5rem; padding:.5rem 1rem; font-size:.85rem; }
 .knowledge-entries { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.2rem; }
 .knowledge-entries a {display:flex;flex-direction:column;gap:.4rem;}

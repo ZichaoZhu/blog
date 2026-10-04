@@ -1,19 +1,8 @@
 ---
-import NoteList from "../../../components/knowledge/NoteList.astro";
-import KnowledgeLayout from "../../../layouts/KnowledgeLayout.astro";
-import { asNoteRecord, getSortedPosts } from "../../../utils/content-utils";
-import { paginateNotes, toSummary } from "../../../utils/note-model";
-export async function getStaticPaths() {
-	const notes = (await getSortedPosts()).map((p) => toSummary(asNoteRecord(p)));
-	return Array.from(
-		{ length: Math.max(0, Math.ceil(notes.length / 25) - 1) },
-		(_, i) => ({
-			params: { page: String(i + 2) },
-			props: { notes, page: i + 2 },
-		}),
-	);
-}
-const { notes, page } = Astro.props;
-const { items, totalPages } = paginateNotes(notes, page);
+import CollectionPage from '../../../components/knowledge/CollectionPage.astro';
+import {getKnowledgeIndex} from '../../../utils/knowledge-index';
+import {buildCollectionRoutes} from '../../../utils/knowledge-model';
+export async function getStaticPaths(){return buildCollectionRoutes(await getKnowledgeIndex()).filter(r=>r.group.url==='/notes/'&&r.page>1).map(route=>({params:{page:String(route.page)},props:{route}}));}
+const {route}=Astro.props;
 ---
-<KnowledgeLayout title={`全部笔记 · 第 ${page} 页`}><NoteList notes={items}/><nav aria-label="分页"><a href={page===2?'/notes/':`/notes/page/${page-1}/`}>← 上一页</a><span aria-current="page">{page} / {totalPages}</span>{page < totalPages && <a href={`/notes/page/${page+1}/`}>下一页 →</a>}</nav></KnowledgeLayout>
+<CollectionPage route={route} backUrl='/search/' backLabel='搜索记录'/>

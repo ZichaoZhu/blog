@@ -146,6 +146,7 @@ const minutes = remarkPluginFrontmatter?.minutes;
     </a>
 
     <!-- metadata -->
+    <slot name="metadata">
     <PostMetadata
       published={published}
       tags={tags}
@@ -163,6 +164,7 @@ const minutes = remarkPluginFrontmatter?.minutes;
       showReadingTime={metaShowReadingTime}
       className="mb-4 post-meta card-header-meta"
     />
+    </slot>
 
     <!-- description -->
     <div

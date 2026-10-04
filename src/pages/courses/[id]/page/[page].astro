@@ -1,0 +1,8 @@
+---
+import CollectionPage from '../../../../components/knowledge/CollectionPage.astro';
+import {getKnowledgeIndex} from '../../../../utils/knowledge-index';
+import {buildCollectionRoutes} from '../../../../utils/knowledge-model';
+export async function getStaticPaths(){return buildCollectionRoutes(await getKnowledgeIndex()).filter(r=>r.group.url.startsWith('/courses/')&&r.page>1).map(route=>({params:{id:route.group.id,page:String(route.page)},props:{route}}));}
+const {route}=Astro.props;
+---
+<CollectionPage route={route} backUrl='/courses/' backLabel='全部课程'/>

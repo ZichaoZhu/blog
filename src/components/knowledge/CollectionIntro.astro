@@ -14,4 +14,4 @@ const entry = (await getCollection("posts")).find(
 const rendered = entry?.body?.trim() ? await render(entry) : null;
 const Content = rendered?.Content;
 ---
-{Content&&<section class="card-base p-6" data-pagefind-ignore><Markdown class=""><Content/></Markdown></section>}
+{Content&&<details class="card-base p-5 collection-intro" data-pagefind-ignore><summary>专题介绍</summary><Markdown class="pt-4"><Content/></Markdown></details>}

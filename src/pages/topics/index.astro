@@ -1,8 +1,7 @@
 ---
-import { topics } from "../../data/catalog";
-import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
-import { getSortedPosts } from "../../utils/content-utils";
-
-const notes = await getSortedPosts();
+import TopicGroups from '../../components/knowledge/TopicGroups.astro';
+import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
+import {getKnowledgeIndex} from '../../utils/knowledge-index';
+const groups=Object.values((await getKnowledgeIndex()).lists).filter(g=>g.url.startsWith('/topics/'));
 ---
-<KnowledgeLayout title="主题" description="主题可横跨课程、论文与研究记录。"><ul class="collection-list">{topics.map(t=><li class="card-base p-6"><h2><a href={`/topics/${t.id}/`}>{t.name}</a></h2><p>{t.description}</p><span>{notes.filter(n=>n.data.topics.includes(t.id)).length} 篇笔记</span></li>)}</ul></KnowledgeLayout>
+<KnowledgeLayout title='主题' description='主题可横跨课程、论文、研究记录与项目。'><TopicGroups groups={groups}/></KnowledgeLayout>

@@ -42,6 +42,41 @@ export type KnowledgeIndex = {
 	lists: Record<string, CollectionGroup>;
 	stats: SiteStatsData;
 };
+export type CollectionRoute = {
+	url: string;
+	group: CollectionGroup;
+	page: number;
+	items: KnowledgeItem[];
+	totalPages: number;
+};
+export function collectionPageUrl(baseUrl: string, page: number): string {
+	return page === 1 ? baseUrl : `${baseUrl}page/${page}/`;
+}
+export function getCollectionPage(
+	group: CollectionGroup,
+	page: number,
+): CollectionRoute {
+	const totalPages = Math.max(1, Math.ceil(group.items.length / 25));
+	if (!Number.isInteger(page) || page < 1 || page > totalPages)
+		throw new RangeError(`invalid collection page: ${group.url} ${page}`);
+	return {
+		url: collectionPageUrl(group.url, page),
+		group,
+		page,
+		items: group.items.slice((page - 1) * 25, page * 25),
+		totalPages,
+	};
+}
+export function buildCollectionRoutes(
+	index: KnowledgeIndex,
+): CollectionRoute[] {
+	return Object.values(index.lists).flatMap((group) =>
+		Array.from(
+			{ length: Math.max(1, Math.ceil(group.items.length / 25)) },
+			(_, i) => getCollectionPage(group, i + 1),
+		),
+	);
+}
 
 export function isPublicProject(
 	project: Pick<ProjectInput, "data" | "hasBody">,

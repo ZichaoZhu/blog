@@ -1,0 +1,9 @@
+---
+import CollectionPage from '../../../../components/knowledge/CollectionPage.astro';
+import {getKnowledgeIndex} from '../../../../utils/knowledge-index';
+import {buildCollectionRoutes} from '../../../../utils/knowledge-model';
+export async function getStaticPaths(){return buildCollectionRoutes(await getKnowledgeIndex()).filter(r=>r.group.url.includes('/topics/')&&['papers','research','projects'].includes(r.group.url.split('/')[1])).map(route=>({params:{hub:route.group.url.split('/')[1],id:route.group.id,page:route.page===1?undefined:'page/'+route.page},props:{route}}));}
+const {route}=Astro.props;
+const hub=(await getKnowledgeIndex()).hubs[Astro.params.hub as 'papers'|'research'|'projects'];
+---
+<CollectionPage route={route} backUrl={hub.url} backLabel={hub.title}/>

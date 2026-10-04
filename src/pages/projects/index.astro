@@ -1,9 +1,7 @@
 ---
-import ProjectCard from "../../components/pages/projects/ProjectCard.astro";
-import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
-import { getSortedProjects } from "../../utils/content-utils";
-import { getFileDirFromPath, removeFileExtension } from "../../utils/url-utils";
-
-const projects = await getSortedProjects();
+import TopicGroups from '../../components/knowledge/TopicGroups.astro';
+import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
+import {getKnowledgeIndex} from '../../utils/knowledge-index';
+const hub=(await getKnowledgeIndex()).hubs.projects;
 ---
-<KnowledgeLayout title="项目" description="公开项目与代码资料。">{projects.length ? <ul class="collection-list">{projects.map(p=><li><ProjectCard {...p.data} id={removeFileExtension(p.id)} basePath={getFileDirFromPath(p.filePath||'')}/></li>)}</ul> : <p class="empty-state">暂无已整理的公开项目。</p>}</KnowledgeLayout>
+<KnowledgeLayout title={hub.title} description={hub.description}>{hub.groups.length?<TopicGroups groups={hub.groups}/>:<p class='empty-state'>暂无已整理的公开项目。</p>}</KnowledgeLayout>

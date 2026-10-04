@@ -1,21 +1,8 @@
 ---
-import NoteList from "../../components/knowledge/NoteList.astro";
-import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
-import { asNoteRecord, getSortedPosts } from "../../utils/content-utils";
-import { toSummary } from "../../utils/note-model";
-export function getStaticPaths() {
-	return [
-		["logs", "log", "研究日志"],
-		["ideas", "idea", "研究想法"],
-		["experiments", "experiment", "实验记录"],
-	].map(([path, type, title]) => ({
-		params: { type: path },
-		props: { type, title },
-	}));
-}
-const { type, title } = Astro.props;
-const notes = (await getSortedPosts())
-	.filter((p) => p.data.type === type)
-	.map((p) => toSummary(asNoteRecord(p)));
+import CollectionPage from '../../components/knowledge/CollectionPage.astro';
+import {getKnowledgeIndex} from '../../utils/knowledge-index';
+import {getCollectionPage} from '../../utils/knowledge-model';
+export async function getStaticPaths(){const index=await getKnowledgeIndex();return ['logs','ideas','experiments'].map(type=>({params:{type},props:{route:getCollectionPage(index.lists['/research/'+type+'/'],1)}}));}
+const {route}=Astro.props;
 ---
-<KnowledgeLayout title={title}><a href="/research/">← 研究</a><NoteList notes={notes}/></KnowledgeLayout>
+<CollectionPage route={route} backUrl='/research/' backLabel='研究'/>

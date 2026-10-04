@@ -1,12 +1,14 @@
 ---
-import { courses } from "../../data/catalog";
+import { courses, topics } from "../../data/catalog";
+import type {HubId} from "../../utils/knowledge-model";
 import type { NoteSummary } from "../../utils/note-model";
 import PostCard from "../layout/PostCard.astro";
 
 interface Props {
 	notes: NoteSummary[];
+	hub?: HubId;
 }
-const { notes } = Astro.props;
+const { notes, hub } = Astro.props;
 const labels = {
 	course: "课程笔记",
 	paper: "论文阅读",
@@ -18,5 +20,11 @@ const labels = {
 ---
 {notes.length ? <ul class="knowledge-list">{notes.map(note=><li>
  <div class="note-context">{note.course ? <a href={`/courses/${note.course.id}/`}>{courses.find(c=>c.id===note.course?.id)?.title}</a> : labels[note.type]}{note.date ? <time datetime={note.date}>{note.date}</time>:<span>日期未记录</span>}</div>
- <PostCard title={note.title} url={note.url} description={note.description} tags={[]} category={null} image="" draft={false} style="" />
+ <PostCard title={note.title} url={note.url} description={note.description} tags={[]} category={null} image="" draft={false} style="">
+  <div slot="metadata" class="note-subjects collection-links" data-pagefind-ignore>
+   {note.course&&note.type==='course'&&<a href={`/courses/${note.course.id}/`}>{courses.find(c=>c.id===note.course?.id)?.title}</a>}
+   {[...new Set(note.topics)].map(id=><a href={hub&&hub!=='courses'?`/${hub}/topics/${id}/`:`/topics/${id}/`}>{topics.find(t=>t.id===id)?.name}</a>)}
+   {!note.topics.length&&note.type!=='course'&&<span>未设置主题</span>}
+  </div>
+ </PostCard>
 </li>)}</ul> : <p class="empty-state">暂无公开记录。</p>}
