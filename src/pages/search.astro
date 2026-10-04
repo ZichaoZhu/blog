@@ -2,8 +2,8 @@
 import AdvancedSearch from "../components/pages/AdvancedSearch.svelte";
 import KnowledgeLayout from "../layouts/KnowledgeLayout.astro";
 ---
-<KnowledgeLayout title="搜索" description="检索公开笔记的标题、摘要、章节与正文。">
+<KnowledgeLayout title="搜索" description="检索公开记录与项目的标题、摘要、章节和正文。">
  <AdvancedSearch client:load />
- <nav aria-label="搜索备用入口" class="card-base p-5 collection-links" data-pagefind-ignore><a href="/notes/">全部笔记</a><a href="/courses/">课程</a><a href="/papers/">论文</a><a href="/topics/">主题</a></nav>
+ <nav aria-label="搜索备用入口" class="card-base p-5 collection-links" data-pagefind-ignore><a href="/courses/">课程</a><a href="/papers/">论文</a><a href="/research/">研究</a><a href="/projects/">项目</a><a href="/topics/">全站主题</a></nav>
  <noscript><p class="card-base p-5">全文搜索需要 JavaScript。可使用上方入口和分页浏览全部公开内容。</p></noscript>
 </KnowledgeLayout>

@@ -14,10 +14,10 @@ test('filters, refresh, back, empty and missing queries retain usable state',asy
  await page.goto('/search/?q=Bellman&type=course&topic=reinforcement-learning&course=reinforcement-learning');
  await expect(page.locator('[data-search-result]')).not.toHaveCount(0);await expect(page.getByLabel('课程',{exact:true})).toHaveValue('reinforcement-learning');
  await page.reload();await expect(page.getByLabel('关键词')).toHaveValue('Bellman');
- await page.getByLabel('关键词').fill('zzzzunfindable');await page.getByRole('button',{name:'搜索',exact:true}).click();await expect(page.getByText('没有匹配的公开笔记。')).toBeVisible();
+ await page.getByLabel('关键词').fill('zzzzunfindable');await page.getByRole('button',{name:'搜索',exact:true}).click();await expect(page.getByText('没有匹配的公开记录。')).toBeVisible();
  await page.goBack();await expect(page.getByLabel('关键词')).toHaveValue('Bellman');await expect(page.locator('[data-search-result]')).not.toHaveCount(0);
  await page.getByLabel('关键词').fill('');await page.getByLabel('类型',{exact:true}).selectOption('');await page.getByLabel('主题',{exact:true}).selectOption('');await page.getByLabel('课程',{exact:true}).selectOption('');await page.getByRole('button',{name:'搜索',exact:true}).click();await expect(page.getByText('输入关键词，或选择筛选条件。')).toBeVisible();
- await page.getByLabel('关键词').fill('"Typora 语法兼容性测试"');await page.getByRole('button',{name:'搜索',exact:true}).click();if(!publicNotes.some(n=>n.slug==='typora-test'))await expect(page.getByText('没有匹配的公开笔记。')).toBeVisible();
+ await page.getByLabel('关键词').fill('"Typora 语法兼容性测试"');await page.getByRole('button',{name:'搜索',exact:true}).click();if(!publicNotes.some(n=>n.slug==='typora-test'))await expect(page.getByText('没有匹配的公开记录。')).toBeVisible();
 });
 test('a delayed old Pagefind fragment cannot overwrite a newer query',async({page})=>{
  let release!:()=>void;const gate=new Promise<void>(r=>release=r);let intercepted!:()=>void;const held=new Promise<void>(r=>intercepted=r);let first=true;let heldUrl='';

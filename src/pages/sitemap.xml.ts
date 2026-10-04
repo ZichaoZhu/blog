@@ -1,45 +1,35 @@
 import { siteContext } from "../config/siteContext";
-import { courses, topics } from "../data/catalog";
-import {
-	asNoteRecord,
-	getSortedPosts,
-	getSortedProjects,
-} from "../utils/content-utils";
 import { escapeXml } from "../utils/feed-utils";
-import { removeFileExtension } from "../utils/url-utils";
+import { getKnowledgeIndex } from "../utils/knowledge-index";
+import { buildCollectionRoutes } from "../utils/knowledge-model";
 export async function GET(): Promise<Response> {
-	const notes = (await getSortedPosts()).map(asNoteRecord);
-	const paths = [
+	const index = await getKnowledgeIndex();
+	const paths = new Set([
 		"/",
-		"/notes/",
-		"/courses/",
-		"/papers/",
-		"/research/",
-		"/research/logs/",
-		"/research/ideas/",
-		"/research/experiments/",
-		"/projects/",
 		"/topics/",
 		"/about/",
-		...courses.map((c) => `/courses/${c.id}/`),
-		...topics.map((t) => `/topics/${t.id}/`),
-		...Array.from(
-			{ length: Math.max(0, Math.ceil(notes.length / 25) - 1) },
-			(_, i) => `/notes/page/${i + 2}/`,
-		),
-	];
-	const projects = await getSortedProjects();
-	const entries = [
-		...projects.map((p) => ({
-			path: `/projects/${removeFileExtension(p.id)}/`,
-			date: p.data.published?.toISOString().slice(0, 10),
-		})),
-		...paths.map((path) => ({ path, date: undefined as string | undefined })),
-		...notes.map((n) => ({
-			path: `/notes/${n.data.slug}/`,
-			date: n.data.updatedAt ?? n.data.date,
-		})),
-	];
+		"/search/",
+		...Object.values(index.hubs).map((h) => h.url),
+		...buildCollectionRoutes(index).map((r) => r.url),
+	]);
+	const entries = [...paths].map((path) => ({
+		path,
+		date: undefined as string | undefined,
+	}));
+	for (const item of index.publicItems) {
+		const dates =
+			item.kind === "post"
+				? [item.post.data.date, item.post.data.updatedAt]
+						.filter(Boolean)
+						.map((d) => new Date(d as string))
+				: [item.project.data.published, item.project.data.updated].filter(
+						(d): d is Date => !!d,
+					);
+		const latest = dates
+			.filter((d) => Number.isFinite(d.getTime()))
+			.sort((a, b) => b.getTime() - a.getTime())[0];
+		entries.push({ path: item.url, date: latest?.toISOString().slice(0, 10) });
+	}
 	return new Response(
 		'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
 			entries
