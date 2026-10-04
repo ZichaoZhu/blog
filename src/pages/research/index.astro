@@ -1,8 +1,9 @@
 ---
-import CollectionIntro from '../../components/knowledge/CollectionIntro.astro';
-import TopicGroups from '../../components/knowledge/TopicGroups.astro';
-import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
-import {getKnowledgeIndex} from '../../utils/knowledge-index';
-const hub=(await getKnowledgeIndex()).hubs.research;
+import CollectionIntro from "../../components/knowledge/CollectionIntro.astro";
+import TopicGroups from "../../components/knowledge/TopicGroups.astro";
+import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
+import { getKnowledgeIndex } from "../../utils/knowledge-index";
+
+const hub = (await getKnowledgeIndex()).hubs.research;
 ---
 <KnowledgeLayout title={hub.title} description={hub.description}><CollectionIntro slug='reaserch-note'/><TopicGroups groups={hub.groups}/><nav class='collection-links' aria-label='研究记录类型'><a href='/research/logs/'>研究日志</a><a href='/research/ideas/'>研究想法</a><a href='/research/experiments/'>实验记录</a></nav></KnowledgeLayout>

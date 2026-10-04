@@ -2,7 +2,7 @@
 
 个人科研知识主页，采用 Astro 静态构建、Markdown Content Collections、Svelte 交互和 Pagefind 搜索。基于真实 [Firefly](https://github.com/CuteLeaf/Firefly/tree/6d82554bfe1cb3d4b43adb0969dad1d43ac6dee3) 模板 6.16.8，锁定提交 `6d82554bfe1cb3d4b43adb0969dad1d43ac6dee3`；保留上游 MIT 许可与致谢。
 
-迁移在 `feat/astro-firefly` 分支实施，原 Next 工作区保留。内容与验收证据见 [ACCEPTANCE](docs/migration/ACCEPTANCE.md)，恢复步骤见 [ROLLBACK](docs/migration/ROLLBACK.md)。本地预览已完成，生产域名、托管平台与个人媒体尚待确定。
+迁移在 `feat/astro-firefly` 分支实施，原 Next 工作区保留。内容与验收证据见 [ACCEPTANCE](docs/migration/ACCEPTANCE.md)，专题与统计验收见 [TOPIC-HUBS-ACCEPTANCE](docs/migration/TOPIC-HUBS-ACCEPTANCE.md)，恢复步骤见 [ROLLBACK](docs/migration/ROLLBACK.md)。本地预览使用已替换的个人媒体；生产域名与托管平台待确定。
 
 ## 运行与检查
 
@@ -65,7 +65,32 @@ course: { id: operating-systems, order: 14 }
 
 旧 `/blog/...`、筛选查询、标题锚点和 `/api/images/...` 在静态预览提供兼容访问。旧地址映射见 [legacy-routes.json](src/data/legacy-routes.json) 和 [LINK_REPORT](docs/migration/LINK_REPORT.md)。正式 HTTP 301/308 规则需选定托管平台后生成和验证；静态兼容页不是 HTTP 重定向。
 
-Pagefind 索引仅含公开且非空的文章正文。`/search/` 支持关键词、类型、主题和课程筛选，以及返回/刷新状态。分页每页 25 条，搜索每批 20 条。无 JS 时仍可阅读、按课程/主题和分页导航；全文搜索需要 JS。检索的实际多语言限制见验收报告。
+Pagefind 索引包含公开且非空的文章和项目正文，每份正文只有一个地址。`/search/` 支持关键词、类型（含项目）、主题和课程筛选，以及返回/刷新状态。分页每页 25 条，搜索每批 20 条。无 JS 时仍可阅读、按课程/主题和分页导航；全文搜索需要 JS。检索的实际多语言限制见验收报告。
+
+## 专题与统计
+
+主导航为首页、Courses、Papers、Research、Projects。课程专题按 `course.id` 分组并按讲次阅读；论文、研究和项目按受控 `topics` 分组。Research 的日志、想法、实验入口继续保留。主题卡展示简介和真实数量，点整行进入专题内主题页；多主题记录可以出现在多个组，全站文章、字数只统计一次。
+
+`/notes/` 和 `/notes/page/2/` 保留为旧总览，原 `/notes/<slug>/` 正文地址保持有效。`type: note` 仍可通过搜索和全站主题发现。不要根据文件夹或标题猜测分类；新主题先加到 `src/data/catalog.ts`，删除主题前应迁移引用，否则构建会指出源文件。零篇课程仍可访问；无主题论文、研究或项目进入“未设置主题”。未知集合和越界分页为 404，各分页保留自身 canonical。
+
+项目放在 `src/content/projects/`；`draft: false` 且正文非空才进入发现、搜索、统计和 sitemap，例如：
+
+```yaml
+---
+title: 项目名称
+published: 2026-10-03
+updated: 2026-10-04
+topics: [robotics, 3d-vision]
+tags: [实验]
+draft: false
+---
+```
+
+站点统计由构建时共享索引生成，包含公开文章及公开项目；介绍、draft、unlisted 和空正文均不计入。分类是实际使用的受控主题去重，标签去除首尾空白后去重；总字数使用正文的 `reading-time` 算法（中文按字符、英文按词）。最后活动取真实发布／更新日期最大值，缺失日期不推测，未来日期显示“日期待核实”。
+
+运行时长读取 `siteConfig.siteStartDate`（当前 `2025-01-01`），按 `Asia/Shanghai` 自然日计算，建站当天为第 0 天。无 JS 显示构建时的真实统计与日期；有 JS 每分钟及恢复可见时更新时间，内容变化仍需重新构建。开发模式不缓存共享索引，公开／草稿、正文和主题修改会更新预览。
+
+1024px 以下在标题后使用原生可展开专题／讲次导航；1024–1359px 左侧导航、统计在正文底部；1360px 起左侧导航、正文、右侧目录与统计三栏。统计和音乐各保留一个实例，Swup 只替换上下文和正文。
 
 ## 风格与媒体
 

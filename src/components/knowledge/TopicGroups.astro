@@ -1,7 +1,10 @@
 ---
 import type { CollectionGroup } from "../../utils/knowledge-model";
-interface Props { groups: CollectionGroup[] }
-const {groups}=Astro.props;
+
+interface Props {
+	groups: CollectionGroup[];
+}
+const { groups } = Astro.props;
 ---
 <ul class="collection-list topic-groups" data-pagefind-ignore>
  {groups.map(group=><li><a href={group.url} class="card-base topic-group">

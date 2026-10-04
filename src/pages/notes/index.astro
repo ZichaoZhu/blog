@@ -1,7 +1,11 @@
 ---
-import CollectionPage from '../../components/knowledge/CollectionPage.astro';
-import {getKnowledgeIndex} from '../../utils/knowledge-index';
-import {getCollectionPage} from '../../utils/knowledge-model';
-const route=getCollectionPage((await getKnowledgeIndex()).lists['/notes/'],1);
+import CollectionPage from "../../components/knowledge/CollectionPage.astro";
+import { getKnowledgeIndex } from "../../utils/knowledge-index";
+import { getCollectionPage } from "../../utils/knowledge-model";
+
+const route = getCollectionPage(
+	(await getKnowledgeIndex()).lists["/notes/"],
+	1,
+);
 ---
 <CollectionPage route={route} backUrl='/search/' backLabel='搜索记录'/>

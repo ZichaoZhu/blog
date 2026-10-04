@@ -1,4 +1,7 @@
 import {test,expect} from '@playwright/test';
+test('long mobile titles and every subject link remain clear of the card arrow',async({page})=>{
+ for(const width of [320,390]){await page.setViewportSize({width,height:900});await page.goto('/papers/topics/robotics/');const result=await page.locator('main .knowledge-list .post-card-wrapper').evaluateAll(cards=>cards.every(card=>{const title=card.querySelector('.post-card-title') as HTMLElement;const arrow=card.querySelector('.post-card-enter-btn') as HTMLElement;return title.getBoundingClientRect().right<=arrow.getBoundingClientRect().left-1&&title.scrollWidth<=title.clientWidth+1&&[...card.querySelectorAll('.note-subjects a')].every(a=>a.getBoundingClientRect().right<=arrow.getBoundingClientRect().left-1);}));expect(result,String(width)).toBe(true);}
+});
 test('papers and research group records by actual subjects and links reach the right members',async({page})=>{
  await page.goto('/papers/');const groups=page.locator('main .topic-groups');await expect(groups.getByRole('link',{name:/^机器人/})).toBeVisible();
  await expect(page.locator('main .post-card-title')).toHaveCount(0);await groups.getByRole('link',{name:/^机器人/}).click();

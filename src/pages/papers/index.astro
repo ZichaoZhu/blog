@@ -1,8 +1,9 @@
 ---
-import CollectionIntro from '../../components/knowledge/CollectionIntro.astro';
-import TopicGroups from '../../components/knowledge/TopicGroups.astro';
-import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
-import {getKnowledgeIndex} from '../../utils/knowledge-index';
-const hub=(await getKnowledgeIndex()).hubs.papers;
+import CollectionIntro from "../../components/knowledge/CollectionIntro.astro";
+import TopicGroups from "../../components/knowledge/TopicGroups.astro";
+import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
+import { getKnowledgeIndex } from "../../utils/knowledge-index";
+
+const hub = (await getKnowledgeIndex()).hubs.papers;
 ---
 <KnowledgeLayout title={hub.title} description={hub.description}><CollectionIntro slug='paper-reading'/><TopicGroups groups={hub.groups}/><a href='/search/?type=paper'>搜索论文 →</a></KnowledgeLayout>

@@ -2,21 +2,19 @@
 import { render } from "astro:content";
 import Markdown from "../../components/common/Markdown.astro";
 import KatexManager from "../../components/features/KatexManager.astro";
+import KnowledgeContext from "../../components/knowledge/KnowledgeContext.astro";
 import { siteConfig } from "../../config";
 import { siteContext } from "../../config/siteContext";
 import { courses, topics } from "../../data/catalog";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
-import KnowledgeContext from "../../components/knowledge/KnowledgeContext.astro";
-import {getKnowledgeIndex} from "../../utils/knowledge-index";
-import {getSidebarContext} from "../../utils/knowledge-model";
 import {
 	asNoteRecord,
 	getRoutablePosts,
 	getSortedPosts,
 } from "../../utils/content-utils";
-import {
-	getCourseNeighbors,
-} from "../../utils/note-model";
+import { getKnowledgeIndex } from "../../utils/knowledge-index";
+import { getSidebarContext } from "../../utils/knowledge-model";
+import { getCourseNeighbors } from "../../utils/note-model";
 export async function getStaticPaths() {
 	return (await getRoutablePosts()).map((entry) => ({
 		params: { slug: entry.data.slug },
@@ -25,12 +23,24 @@ export async function getStaticPaths() {
 }
 const { entry } = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(entry);
-const records = (await getSortedPosts()).map(asNoteRecord).filter(n=>n.data.type==="course");
+const records = (await getSortedPosts())
+	.map(asNoteRecord)
+	.filter((n) => n.data.type === "course");
 const neighbors = getCourseNeighbors(records, entry.data.slug);
-const course = entry.data.type==="course" && entry.data.course
-	? courses.find((c) => c.id === entry.data.course?.id)
-	: undefined;
-const sidebarContext=getSidebarContext(await getKnowledgeIndex(),Astro.url.pathname,{url:`/notes/${entry.data.slug}/`,type:entry.data.type,topics:entry.data.topics,course:entry.data.course});
+const course =
+	entry.data.type === "course" && entry.data.course
+		? courses.find((c) => c.id === entry.data.course?.id)
+		: undefined;
+const sidebarContext = getSidebarContext(
+	await getKnowledgeIndex(),
+	Astro.url.pathname,
+	{
+		url: `/notes/${entry.data.slug}/`,
+		type: entry.data.type,
+		topics: entry.data.topics,
+		course: entry.data.course,
+	},
+);
 const paper = entry.data.paper;
 const sources = paper
 	? [

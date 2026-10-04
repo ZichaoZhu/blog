@@ -1,13 +1,21 @@
 ---
-import {getCollection} from 'astro:content';
-import CollectionIntro from '../../components/knowledge/CollectionIntro.astro';
-import CollectionPage from '../../components/knowledge/CollectionPage.astro';
-import {getKnowledgeIndex} from '../../utils/knowledge-index';
-import {getCollectionPage} from '../../utils/knowledge-model';
-import {asNoteRecord} from '../../utils/content-utils';
-import {isPublicCollection} from '../../utils/note-model';
-export async function getStaticPaths(){return (await getKnowledgeIndex()).hubs.courses.groups.map(group=>({params:{id:group.id},props:{route:getCollectionPage(group,1)}}));}
-const {route}=Astro.props;
-const intro=(await getCollection('posts')).find(p=>isPublicCollection(asNoteRecord(p))&&p.data.course?.id===route.group.id);
+import { getCollection } from "astro:content";
+import CollectionIntro from "../../components/knowledge/CollectionIntro.astro";
+import CollectionPage from "../../components/knowledge/CollectionPage.astro";
+import { asNoteRecord } from "../../utils/content-utils";
+import { getKnowledgeIndex } from "../../utils/knowledge-index";
+import { getCollectionPage } from "../../utils/knowledge-model";
+import { isPublicCollection } from "../../utils/note-model";
+export async function getStaticPaths() {
+	return (await getKnowledgeIndex()).hubs.courses.groups.map((group) => ({
+		params: { id: group.id },
+		props: { route: getCollectionPage(group, 1) },
+	}));
+}
+const { route } = Astro.props;
+const intro = (await getCollection("posts")).find(
+	(p) =>
+		isPublicCollection(asNoteRecord(p)) && p.data.course?.id === route.group.id,
+);
 ---
 <CollectionPage route={route} backUrl='/courses/' backLabel='全部课程'>{intro&&<CollectionIntro slot='intro' slug={intro.data.slug}/>}</CollectionPage>

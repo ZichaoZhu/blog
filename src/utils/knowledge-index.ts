@@ -45,16 +45,13 @@ async function loadIndex(): Promise<KnowledgeIndex> {
 		{ posts: noteInputs, projects: projectInputs },
 		{ courses, topics },
 	);
-	await Promise.all(
-		noteInputs.map(async (p, i) => {
-			if (isPublicNote(p)) p.words = await words(posts[i]);
-		}),
-	);
-	await Promise.all(
-		projectInputs.map(async (p, i) => {
-			if (isPublicProject(p)) p.words = await words(projects[i]);
-		}),
-	);
+	// Avoid loading hundreds of rendered Markdown modules at once for statistics.
+	for (const [i, post] of noteInputs.entries()) {
+		if (isPublicNote(post)) post.words = await words(posts[i]);
+	}
+	for (const [i, project] of projectInputs.entries()) {
+		if (isPublicProject(project)) project.words = await words(projects[i]);
+	}
 	return buildKnowledgeIndex(
 		{ posts: noteInputs, projects: projectInputs },
 		{ courses, topics },

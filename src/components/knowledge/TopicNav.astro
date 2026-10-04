@@ -1,7 +1,11 @@
 ---
-import type {SidebarContext} from '../../utils/knowledge-model';
-interface Props {context:SidebarContext;id:string}
-const {context,id}=Astro.props;
+import type { SidebarContext } from "../../utils/knowledge-model";
+
+interface Props {
+	context: SidebarContext;
+	id: string;
+}
+const { context, id } = Astro.props;
 ---
 <nav id={id} class="topic-nav card-base p-4" aria-label={context.title} data-pagefind-ignore>
  <h2 class="font-bold mb-3">{context.title}</h2>

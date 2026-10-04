@@ -1,7 +1,8 @@
 ---
-import TopicGroups from '../../components/knowledge/TopicGroups.astro';
-import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
-import {getKnowledgeIndex} from '../../utils/knowledge-index';
-const hub=(await getKnowledgeIndex()).hubs.projects;
+import TopicGroups from "../../components/knowledge/TopicGroups.astro";
+import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
+import { getKnowledgeIndex } from "../../utils/knowledge-index";
+
+const hub = (await getKnowledgeIndex()).hubs.projects;
 ---
 <KnowledgeLayout title={hub.title} description={hub.description}>{hub.groups.length?<TopicGroups groups={hub.groups}/>:<p class='empty-state'>暂无已整理的公开项目。</p>}</KnowledgeLayout>

@@ -1,7 +1,10 @@
 ---
-import TopicGroups from '../../components/knowledge/TopicGroups.astro';
-import KnowledgeLayout from '../../layouts/KnowledgeLayout.astro';
-import {getKnowledgeIndex} from '../../utils/knowledge-index';
-const groups=Object.values((await getKnowledgeIndex()).lists).filter(g=>g.url.startsWith('/topics/'));
+import TopicGroups from "../../components/knowledge/TopicGroups.astro";
+import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
+import { getKnowledgeIndex } from "../../utils/knowledge-index";
+
+const groups = Object.values((await getKnowledgeIndex()).lists).filter((g) =>
+	g.url.startsWith("/topics/"),
+);
 ---
 <KnowledgeLayout title='主题' description='主题可横跨课程、论文、研究记录与项目。'><TopicGroups groups={groups}/></KnowledgeLayout>

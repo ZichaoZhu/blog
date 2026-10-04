@@ -1,16 +1,27 @@
 ---
 import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
-import {type CollectionRoute,type HubId} from "../../utils/knowledge-model";
-import {toSummary} from "../../utils/note-model";
-import {getFileDirFromPath,removeFileExtension} from "../../utils/url-utils";
+import { type CollectionRoute, type HubId } from "../../utils/knowledge-model";
+import { toSummary } from "../../utils/note-model";
+import { getFileDirFromPath, removeFileExtension } from "../../utils/url-utils";
 import ProjectCard from "../pages/projects/ProjectCard.astro";
-import NoteList from "./NoteList.astro";
 import CollectionPagination from "./CollectionPagination.astro";
-interface Props { route:CollectionRoute;backUrl:string;backLabel:string }
-const {route,backUrl,backLabel}=Astro.props;
-const hub = ['courses','papers','research','projects'].find(h=>route.group.url.startsWith(`/${h}/`)) as HubId|undefined;
-const notes=route.items.flatMap(item=>item.kind==='post'?[toSummary(item.post)]:[]);
-const projects=route.items.flatMap(item=>item.kind==='project'?[item.project]:[]);
+import NoteList from "./NoteList.astro";
+
+interface Props {
+	route: CollectionRoute;
+	backUrl: string;
+	backLabel: string;
+}
+const { route, backUrl, backLabel } = Astro.props;
+const hub = ["courses", "papers", "research", "projects"].find((h) =>
+	route.group.url.startsWith(`/${h}/`),
+) as HubId | undefined;
+const notes = route.items.flatMap((item) =>
+	item.kind === "post" ? [toSummary(item.post)] : [],
+);
+const projects = route.items.flatMap((item) =>
+	item.kind === "project" ? [item.project] : [],
+);
 ---
 <KnowledgeLayout title={`${route.group.title}${route.page>1?` · 第 ${route.page} 页`:''}`} description={route.group.description}>
  <a href={backUrl} class="collection-back">← {backLabel}</a>

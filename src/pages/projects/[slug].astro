@@ -3,15 +3,15 @@ import { render } from "astro:content";
 import Markdown from "@components/common/Markdown.astro";
 import { Icon } from "astro-icon/components";
 import CoverImage from "@/components/common/CoverImage.astro";
+import KnowledgeContext from "@/components/knowledge/KnowledgeContext.astro";
 import { siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
-import KnowledgeContext from "@/components/knowledge/KnowledgeContext.astro";
-import {getKnowledgeIndex} from "@/utils/knowledge-index";
-import {getSidebarContext} from "@/utils/knowledge-model";
 import { getSortedProjects } from "@/utils/content-utils";
 import { formatDateToYYYYMMDD } from "@/utils/date-utils";
+import { getKnowledgeIndex } from "@/utils/knowledge-index";
+import { getSidebarContext } from "@/utils/knowledge-model";
 import {
 	getProjectStatusMeta,
 	resolveLinkIcon,
@@ -60,7 +60,10 @@ const statusMeta = status ? getProjectStatusMeta(status) : null;
 
 // 标签：详情页完整显示所有标签（不折叠成 +N）
 const visibleTags = tags || [];
-const sidebarContext=getSidebarContext(await getKnowledgeIndex(),Astro.url.pathname);
+const sidebarContext = getSidebarContext(
+	await getKnowledgeIndex(),
+	Astro.url.pathname,
+);
 ---
 
 <MainGridLayout

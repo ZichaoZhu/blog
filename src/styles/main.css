@@ -709,6 +709,9 @@ html {
 .collection-pagination a,.collection-back,.note-subjects a {color:var(--primary);}
 .collection-intro summary {cursor:pointer;font-weight:650;}
 .note-context { display:flex; justify-content:space-between; flex-wrap:wrap; gap:.5rem; padding:.5rem 1rem; font-size:.85rem; }
+.knowledge-list .no-cover .post-card-content {width:calc(100% - 64px);min-width:0;}
+.knowledge-list .post-card-title {overflow-wrap:anywhere;}
+.note-subjects.collection-links {justify-content:flex-start;gap:.45rem .75rem;margin-bottom:.6rem;}
 .knowledge-entries { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.2rem; }
 .knowledge-entries a {display:flex;flex-direction:column;gap:.4rem;}
 .knowledge-entries strong {font-size:1.3rem;}

@@ -1,8 +1,11 @@
 ---
-import MainGridLayout from "./MainGridLayout.astro";
 import KnowledgeContext from "../components/knowledge/KnowledgeContext.astro";
-import {getKnowledgeIndex} from "../utils/knowledge-index";
-import {getSidebarContext,type SidebarContext} from "../utils/knowledge-model";
+import { getKnowledgeIndex } from "../utils/knowledge-index";
+import {
+	getSidebarContext,
+	type SidebarContext,
+} from "../utils/knowledge-model";
+import MainGridLayout from "./MainGridLayout.astro";
 
 interface Props {
 	title: string;
@@ -10,7 +13,9 @@ interface Props {
 	sidebarContext?: SidebarContext;
 }
 const { title, description } = Astro.props;
-const context=Astro.props.sidebarContext??getSidebarContext(await getKnowledgeIndex(),Astro.url.pathname);
+const context =
+	Astro.props.sidebarContext ??
+	getSidebarContext(await getKnowledgeIndex(), Astro.url.pathname);
 ---
 <MainGridLayout title={title} description={description} hideHeading={true} sidebarContext={context}>
  <section class="knowledge-shell"><header class="card-base p-6"><h1>{title}</h1>{description && <p>{description}</p>}</header><KnowledgeContext context={context} location="inline"/><slot /></section>

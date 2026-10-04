@@ -1,9 +1,9 @@
 ---
 import NoteList from "../components/knowledge/NoteList.astro";
 import KnowledgeLayout from "../layouts/KnowledgeLayout.astro";
-import {getKnowledgeIndex} from "../utils/knowledge-index";
-import type {HubId} from "../utils/knowledge-model";
 import { asNoteRecord, getSortedPosts } from "../utils/content-utils";
+import { getKnowledgeIndex } from "../utils/knowledge-index";
+import type { HubId } from "../utils/knowledge-model";
 import { toSummary } from "../utils/note-model";
 
 const notes = (await getSortedPosts()).map((p) => toSummary(asNoteRecord(p)));
@@ -14,8 +14,8 @@ const featured = notes.filter((n) =>
 		"reinforcement-learning-lec2-bellman-equation",
 	].includes(n.slug),
 );
-const index=await getKnowledgeIndex();
-const entries:Array<[HubId,string,string]> = [
+const index = await getKnowledgeIndex();
+const entries: Array<[HubId, string, string]> = [
 	["courses", "课程", "按课程与讲次系统阅读"],
 	["papers", "论文", "论文阅读与方法理解"],
 	["research", "研究", "日志、想法与实验"],

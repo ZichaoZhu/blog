@@ -18,18 +18,18 @@ import {
 	siteConfig,
 } from "@/config";
 import { getBannerVisibilityState } from "@/utils/banner-visibility-utils";
+import { getKnowledgeIndex } from "@/utils/knowledge-index";
+import { getSidebarContext } from "@/utils/knowledge-model";
 import { getBackgroundImages, isHomePage } from "@/utils/layout-utils";
 import { resolveNavMenuLinks } from "@/utils/nav-menu-utils";
 import { getEffectiveSidebarState } from "@/utils/sidebar-effective-utils";
+import { isArticleDetailPage } from "@/utils/url-utils";
 import Layout from "./Layout.astro";
-import {getKnowledgeIndex} from "@/utils/knowledge-index";
-import {getSidebarContext} from "@/utils/knowledge-model";
-import {isArticleDetailPage} from "@/utils/url-utils";
 
 import "@/styles/expressive-code.css";
 
 interface Props {
-	sidebarContext?: import('@/utils/knowledge-model').SidebarContext;
+	sidebarContext?: import("@/utils/knowledge-model").SidebarContext;
 	title?: string;
 	description?: string;
 	lang?: string;
@@ -77,7 +77,9 @@ const {
 
 const isHomePageCheck = isHomePage(Astro.url.pathname);
 const isPostPage = isArticleDetailPage(Astro.url.pathname);
-const sidebarContext = suppliedContext ?? getSidebarContext(await getKnowledgeIndex(), Astro.url.pathname);
+const sidebarContext =
+	suppliedContext ??
+	getSidebarContext(await getKnowledgeIndex(), Astro.url.pathname);
 const shouldRenderCategoryBar = !!siteConfig.categoryBar;
 const navbarWidthFull = siteConfig.navbar.widthFull ?? false;
 
