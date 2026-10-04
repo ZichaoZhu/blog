@@ -11,12 +11,19 @@ interface Props {
 	title: string;
 	description?: string;
 	sidebarContext?: SidebarContext;
+	directory?: boolean;
 }
-const { title, description } = Astro.props;
+const { title, description, directory = false } = Astro.props;
 const context =
 	Astro.props.sidebarContext ??
 	getSidebarContext(await getKnowledgeIndex(), Astro.url.pathname);
 ---
 <MainGridLayout title={title} description={description} hideHeading={true} sidebarContext={context}>
- <section class="knowledge-shell"><header class="card-base p-6"><h1>{title}</h1>{description && <p>{description}</p>}</header><KnowledgeContext context={context} location="inline"/><slot /></section>
+ <section class="knowledge-shell">
+  <div class:list={["knowledge-layout-surface",{"knowledge-directory card-base":directory}]}>
+   <header class:list={[{"card-base p-6":!directory,"knowledge-directory-header":directory}]}><h1>{title}</h1>{description && <p>{description}</p>}</header>
+   <KnowledgeContext context={context} location="inline"/>
+   <div class:list={["knowledge-layout-content",{"knowledge-directory-content":directory}]}><slot /></div>
+  </div>
+ </section>
 </MainGridLayout>

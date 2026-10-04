@@ -15,3 +15,45 @@ test('configured empty course and projects stay honest, and compatibility pagina
  await page.goto('/projects/');await expect(page.getByText('暂无已整理的公开项目。',{exact:true})).toBeVisible();
  await page.goto('/notes/');await expect(page.locator('.post-card-title')).toHaveCount(25);await page.getByRole('navigation',{name:'分页',exact:true}).getByRole('link',{name:/下一页/}).click();await expect(page.locator('.post-card-title')).toHaveCount(19);await page.reload();await expect(page.locator('.post-card-title')).toHaveCount(19);
 });
+test('the four hub directories use one nested surface with a direct introduction',async({page})=>{
+ for(const path of ['/courses/','/papers/','/research/','/projects/']){
+  await page.goto(path);
+  const directory=page.locator('main .knowledge-directory');
+  await expect(directory).toHaveCount(1);
+  await expect(directory.locator(':scope > .knowledge-directory-header h1')).toBeVisible();
+  await expect(directory.locator(':scope > .knowledge-directory-header p')).toBeVisible();
+  await expect(directory.locator('details.collection-intro')).toHaveCount(0);
+  await expect(directory.locator('.topic-groups, .empty-state')).toHaveCount(1);
+ }
+});
+test('directory typography, theme surfaces and topic-card states form one system',async({page})=>{
+ await page.setViewportSize({width:1440,height:900});
+ await page.goto('/courses/');
+ const directory=page.locator('main .knowledge-directory');
+ await expect(directory).toHaveCount(1);
+ const card=directory.locator('.topic-group').first();
+ const styles=await page.evaluate(()=>{
+  const read=(selector:string)=>{const style=getComputedStyle(document.querySelector(selector)!);return {background:style.backgroundColor,color:style.color,font:style.fontFamily,size:style.fontSize,weight:Number(style.fontWeight)};};
+  return {body:read('body'),directory:read('.knowledge-directory'),heading:read('.knowledge-directory-header h1'),intro:read('.knowledge-directory-header p'),title:read('.topic-group h2'),description:read('.topic-group p'),card:read('.topic-group')};
+ });
+ expect(styles.body.font).toContain('Noto Sans SC');
+ expect(styles.directory.background).toBe('rgb(255, 255, 255)');
+ expect(styles.card.background).toBe('rgb(255, 255, 255)');
+ expect(styles.heading.size).toBe('24px');
+ expect(styles.intro.size).toBe('20px');
+ expect(styles.title.size).toBe(styles.intro.size);
+ expect(styles.title.weight).toBeGreaterThanOrEqual(700);
+ expect(styles.description.size).toBe('16px');
+ expect(styles.description.color).not.toBe(styles.title.color);
+ const rest=await card.evaluate(el=>getComputedStyle(el).backgroundColor);
+ await card.hover();await page.waitForTimeout(180);
+ const hover=await card.evaluate(el=>getComputedStyle(el).backgroundColor);
+ expect(hover).not.toBe(rest);
+ await page.mouse.down();await page.waitForTimeout(180);
+ const active=await card.evaluate(el=>getComputedStyle(el).backgroundColor);
+ expect(active).not.toBe(hover);
+ await page.mouse.up();await card.focus();
+ expect(await card.evaluate(el=>Number.parseFloat(getComputedStyle(el).outlineWidth))).toBeGreaterThan(0);
+ await page.evaluate(()=>document.documentElement.classList.add('dark'));
+ await expect.poll(()=>directory.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe('rgb(255, 255, 255)');
+});

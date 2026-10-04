@@ -24,7 +24,7 @@ const projects = route.items.flatMap((item) =>
 );
 ---
 <KnowledgeLayout title={`${route.group.title}${route.page>1?` · 第 ${route.page} 页`:''}`} description={route.group.description}>
- <a href={backUrl} class="collection-back">← {backLabel}</a>
+ <a href={backUrl} class="collection-back knowledge-action">← {backLabel}</a>
  <slot name="intro"/>
  <p class="collection-summary">{route.group.items.length} 篇公开记录</p>
  {(notes.length>0||projects.length===0)&&<NoteList notes={notes} hub={hub}/>}

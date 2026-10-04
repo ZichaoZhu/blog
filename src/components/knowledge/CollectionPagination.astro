@@ -9,7 +9,7 @@ interface Props {
 const { baseUrl, page, totalPages } = Astro.props;
 ---
 {totalPages>1 && <nav aria-label="分页" class="collection-pagination" data-pagefind-ignore>
- {page>1 && <a href={collectionPageUrl(baseUrl,page-1)}>← 上一页</a>}
+ {page>1 && <a class="knowledge-action" href={collectionPageUrl(baseUrl,page-1)}>← 上一页</a>}
  <span aria-current="page">{page} / {totalPages}</span>
- {page < totalPages && <a href={collectionPageUrl(baseUrl,page+1)}>下一页 →</a>}
+ {page < totalPages && <a class="knowledge-action" href={collectionPageUrl(baseUrl,page+1)}>下一页 →</a>}
 </nav>}

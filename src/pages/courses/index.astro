@@ -1,9 +1,8 @@
 ---
-import CollectionIntro from "../../components/knowledge/CollectionIntro.astro";
 import TopicGroups from "../../components/knowledge/TopicGroups.astro";
 import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
 import { getKnowledgeIndex } from "../../utils/knowledge-index";
 
 const hub = (await getKnowledgeIndex()).hubs.courses;
 ---
-<KnowledgeLayout title={hub.title} description={hub.description}><CollectionIntro slug='coure-notebook'/><TopicGroups groups={hub.groups}/></KnowledgeLayout>
+<KnowledgeLayout title={hub.title} description={hub.description} directory><TopicGroups groups={hub.groups}/></KnowledgeLayout>

@@ -5,4 +5,4 @@ import { getKnowledgeIndex } from "../../utils/knowledge-index";
 
 const hub = (await getKnowledgeIndex()).hubs.projects;
 ---
-<KnowledgeLayout title={hub.title} description={hub.description}>{hub.groups.length?<TopicGroups groups={hub.groups}/>:<p class='empty-state'>暂无已整理的公开项目。</p>}</KnowledgeLayout>
+<KnowledgeLayout title={hub.title} description={hub.description} directory>{hub.groups.length?<TopicGroups groups={hub.groups}/>:<p class='empty-state'>暂无已整理的公开项目。</p>}</KnowledgeLayout>
