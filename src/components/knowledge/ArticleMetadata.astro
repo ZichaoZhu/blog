@@ -1,0 +1,29 @@
+---
+import { Icon } from "astro-icon/components";
+import { getArticleMetadata } from "../../utils/article-meta";
+import type { NoteData } from "../../utils/note-model";
+
+interface Props {
+	data: NoteData;
+	words?: number;
+	minutes?: number;
+}
+const { data, words, minutes } = Astro.props;
+const rows = getArticleMetadata(data, { words, minutes });
+// Inline icons stay self-contained when Swup replaces the article.
+---
+<section class="article-metadata" aria-label="文章信息" data-pagefind-ignore>
+ {rows.map(row=><dl class="article-meta-row">{row.map(field=><div class:list={["article-meta-field",{"article-meta-caption":field.caption}]} data-meta-field={field.key}>
+  <dt class="meta-icon"><Icon name={field.icon} is:inline class="text-base" aria-hidden="true"/><span class="sr-only">{field.label}</span></dt>
+  <dd class="article-meta-values">{field.values.map(value=>value.url?<a href={value.url} class="btn-plain article-meta-link" aria-label={`${field.label}：${value.text}`}>{value.text}</a>:value.date?<time datetime={value.date}>{value.text}</time>:<span>{value.text}</span>)}</dd>
+ </div>)}</dl>)}
+</section>
+<style>
+ .article-metadata{display:grid;gap:.65rem;margin-block:1.25rem;font-size:var(--type-small);color:var(--content-meta);}
+ .article-meta-row{display:flex;flex-wrap:wrap;gap:.65rem 1.25rem;align-items:center;}
+ .article-meta-field{display:flex;align-items:center;max-width:100%;min-width:0;}
+ .meta-icon{flex-shrink:0;}
+ .article-meta-values{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;min-width:0;overflow-wrap:anywhere;}
+ .article-meta-link{padding:.35rem .45rem;min-height:2rem;border-radius:.5rem;overflow-wrap:anywhere;text-align:left;}
+ .article-meta-caption{font-size:var(--type-caption);font-variant-numeric:tabular-nums;}
+</style>

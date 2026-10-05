@@ -254,7 +254,7 @@ body.wallpaper-transparent .expressive-code .ec-collapse__gradient {
   --tooltip-bg: var(--primary);
   color: var(--ff-copy-on-accent);
   border-radius: var(--radius-md);
-  font-size: 0.75rem;
+  font-size: var(--type-small);
 }
 
 /* ── 触屏设备：默认隐藏，点一下代码块才显形 ── */

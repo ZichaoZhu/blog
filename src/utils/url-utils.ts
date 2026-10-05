@@ -94,7 +94,7 @@ export function url(path: string): string {
 	}
 
 	// 只有本地相对路径才添加BASE_URL
-	return joinUrl("", import.meta.env.BASE_URL, path);
+	return joinUrl("", import.meta.env?.BASE_URL ?? "/", path);
 }
 
 // 内容详情页路径模式：文章(/posts/、/post/) 与 项目详情(/projects/<slug>/)

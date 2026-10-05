@@ -45,10 +45,10 @@
 
 /* Four shared text roles, used by content and navigation alike. */
 :root {
-    --type-caption: 10px;
-    --type-small: 12px;
-    --type-body: 16px;
-    --type-heading: 20px;
+    --type-caption: 12px;
+    --type-small: 14px;
+    --type-body: 18px;
+    --type-heading: 22px;
     --type-title: var(--type-heading);
     --type-subheading: var(--type-body);
 }

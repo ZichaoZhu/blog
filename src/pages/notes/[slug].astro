@@ -1,11 +1,13 @@
 ---
 import { render } from "astro:content";
+import { Icon } from "astro-icon/components";
 import Markdown from "../../components/common/Markdown.astro";
 import KatexManager from "../../components/features/KatexManager.astro";
+import ArticleMetadata from "../../components/knowledge/ArticleMetadata.astro";
 import KnowledgeContext from "../../components/knowledge/KnowledgeContext.astro";
 import { siteConfig } from "../../config";
 import { siteContext } from "../../config/siteContext";
-import { courses, topics } from "../../data/catalog";
+import { courses } from "../../data/catalog";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 import {
 	asNoteRecord,
@@ -31,6 +33,17 @@ const course =
 	entry.data.type === "course" && entry.data.course
 		? courses.find((c) => c.id === entry.data.course?.id)
 		: undefined;
+const researchNote = ["log", "idea", "experiment"].includes(entry.data.type);
+const backUrl = course
+	? `/courses/${course.id}/`
+	: entry.data.type === "paper"
+		? "/papers/"
+		: researchNote
+			? "/research/"
+			: "/notes/";
+const backLabel =
+	course?.title ??
+	(entry.data.type === "paper" ? "论文" : researchNote ? "研究" : "全部笔记");
 const sidebarContext = getSidebarContext(
 	await getKnowledgeIndex(),
 	Astro.url.pathname,
@@ -77,22 +90,35 @@ const schema = {
  </Fragment>
  <article class="card-base p-5 md:p-9 min-w-0" data-pagefind-body={published?true:undefined} data-pagefind-ignore={!published?'all':undefined}>
   {published&&<div hidden data-pagefind-ignore><span data-pagefind-filter={`type:${entry.data.type}`}/>{entry.data.topics.map(id=><span data-pagefind-filter={`topic:${id}`}/>)}{entry.data.course&&<span data-pagefind-filter={`course:${entry.data.course.id}`}/>}</div>}
-  <nav aria-label="文章位置" class="collection-links text-sm mb-5" data-pagefind-ignore>
-   {course ? <a href={`/courses/${course.id}/`}>{course.title} · 返回课程</a>:<a href={entry.data.type==='paper'?'/papers/':['log','idea','experiment'].includes(entry.data.type)?'/research/':'/notes/'}>← 返回集合</a>}
-   <a href="/topics/">主题</a>
+  <nav aria-label="文章位置" class="article-position mb-5" data-pagefind-ignore>
+   <a href={backUrl} class="btn-plain article-link" aria-label={course?`返回课程：${course.title}`:`返回${backLabel}`}><Icon name="material-symbols:arrow-back-rounded" is:inline aria-hidden="true"/><span>返回{backLabel}</span></a>
+   <a href="/topics/" class="btn-plain article-link"><Icon name="material-symbols:category-outline-rounded" is:inline aria-hidden="true"/><span>浏览主题</span></a>
   </nav>
   <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-4" data-pagefind-meta={published?'title':undefined} data-pagefind-weight="10">{entry.data.title}</h1>
   <p class="leading-relaxed mb-4">{entry.data.description}</p>
-  <div class="note-context px-0" data-pagefind-ignore>
-   <span>作者：{entry.data.author}</span>{entry.data.date?<time datetime={entry.data.date}>发布：{entry.data.date}</time>:<span>日期未记录</span>}{entry.data.updatedAt&&<time datetime={entry.data.updatedAt}>更新：{entry.data.updatedAt}</time>}
-   <span>{remarkPluginFrontmatter.minutes} 分钟阅读</span>
-  </div>
+  <ArticleMetadata data={entry.data} words={remarkPluginFrontmatter.words} minutes={remarkPluginFrontmatter.minutes}/>
   <KnowledgeContext context={sidebarContext} location="inline"/>
-  <nav aria-label="文章主题" class="collection-links my-4" data-pagefind-ignore>{entry.data.topics.map(id=><a href={`/topics/${id}/`}>{topics.find(t=>t.id===id)?.name}</a>)}</nav>
-  {paper && <section aria-label="论文资料" class="paper-details my-5" data-pagefind-ignore><h2 class="font-bold">论文资料</h2>{paper.title&&<p>{paper.title}</p>}{paper.authors?.length&&<p>{paper.authors.join(', ')}</p>}{(paper.venue||paper.year)&&<p>{paper.venue} {paper.year}</p>}<div class="collection-links">{sources.map(([label,url])=><a href={url} target="_blank" rel="noopener noreferrer">{label} ↗</a>)}</div></section>}
+  {paper && <section aria-label="论文资料" class="paper-details my-5" data-pagefind-ignore><h2 class="font-bold">论文资料</h2>{paper.title&&<p>{paper.title}</p>}{paper.authors?.length&&<p>{paper.authors.join(', ')}</p>}{(paper.venue||paper.year)&&<p>{paper.venue} {paper.year}</p>}<div class="collection-links">{sources.map(([label,url])=><a class="btn-plain article-link" href={url} target="_blank" rel="noopener noreferrer">{label} ↗</a>)}</div></section>}
   {headings.length>0 && <details class="my-5 inline-toc" data-pagefind-ignore><summary>文章目录</summary><nav aria-label="文章目录"><ol class="grid gap-2 p-3">{headings.map(h=><li style={`padding-left:${Math.max(0,h.depth-2)*.75}rem`}><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol></nav></details>}
   <Markdown class="mt-6"><Content/></Markdown>
-  {course && <nav aria-label="上下讲" class="collection-links mt-8 pt-5 border-t border-(--line-divider)" data-pagefind-ignore>{neighbors.previous&&<a href={neighbors.previous.url}>← 上一讲：{neighbors.previous.title}</a>}{neighbors.next&&<a href={neighbors.next.url}>下一讲：{neighbors.next.title} →</a>}</nav>}
  </article>
+ {course&&(neighbors.previous||neighbors.next)&&<nav aria-label="上下讲" class="article-neighbors" data-pagefind-ignore>
+  {neighbors.previous&&<a href={neighbors.previous.url} class="btn-card article-neighbor article-neighbor-previous" aria-label={`上一讲：${neighbors.previous.title}`} title={neighbors.previous.title}><Icon name="material-symbols:chevron-left-rounded" is:inline aria-hidden="true"/><span class="article-neighbor-copy"><span class="article-neighbor-label">上一讲</span><span class="article-neighbor-title">{neighbors.previous.title}</span></span></a>}
+  {neighbors.next&&<a href={neighbors.next.url} class="btn-card article-neighbor article-neighbor-next" aria-label={`下一讲：${neighbors.next.title}`} title={neighbors.next.title}><span class="article-neighbor-copy"><span class="article-neighbor-label">下一讲</span><span class="article-neighbor-title">{neighbors.next.title}</span></span><Icon name="material-symbols:chevron-right-rounded" is:inline aria-hidden="true"/></a>}
+ </nav>}
  <KatexManager/>
 </MainGridLayout>
+<style>
+ .article-position{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
+ .article-link{display:inline-flex;gap:.45rem;min-width:0;min-height:44px;padding:.55rem .75rem;border-radius:.875rem;font-size:var(--type-small);text-align:left;overflow-wrap:anywhere;}
+ .article-link :global(svg){flex-shrink:0;color:var(--primary);font-size:var(--type-heading);}
+ .article-neighbors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1rem;}
+ .article-neighbor{justify-content:space-between;gap:1rem;min-width:0;min-height:88px;padding:1.1rem 1.25rem;border-radius:var(--radius-large);}
+ .article-neighbor :global(svg){flex-shrink:0;color:var(--primary);font-size:var(--type-heading);}
+ .article-neighbor-copy{display:grid;gap:.25rem;min-width:0;}
+ .article-neighbor-label{font-size:var(--type-small);color:var(--content-meta);}
+ .article-neighbor-title{font-size:var(--type-body);font-weight:700;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
+ .article-neighbor-previous{text-align:left;}
+ .article-neighbor-next{grid-column:2;text-align:right;}
+ @media(max-width:640px){.article-neighbors{grid-template-columns:minmax(0,1fr);}.article-neighbor-next{grid-column:auto;}}
+</style>
