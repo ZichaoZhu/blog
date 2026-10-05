@@ -1,9 +1,9 @@
 import {test,expect} from '@playwright/test';
-test('desktop and mobile navigation use four hubs, homepage shows actual counts and search discovery',async({page})=>{
- await page.goto('/');const links=page.locator('#navbar a').filter({hasText:/^(首页|Notes|Courses|Papers|Research|Projects)$/});await expect(links).toHaveCount(5);
+test('desktop and mobile navigation expose four hubs and archive, homepage shows actual counts and search discovery',async({page})=>{
+ await page.goto('/');const links=page.locator('#navbar a').filter({hasText:/^(首页|Notes|Courses|Papers|Research|Projects|归档)$/});await expect(links).toHaveCount(6);
  for(const [path,count] of [['courses','32'],['papers','12'],['research','1'],['projects','0']])await expect(page.locator(`nav[aria-label="知识入口"] a[href="/${path}/"]`)).toContainText(`${count} 篇`);
  await expect(page.getByRole('link',{name:'搜索记录',exact:true})).toHaveAttribute('href','/search/');
- await page.setViewportSize({width:390,height:844});await page.locator('#nav-menu-switch').click();await expect(page.locator('#nav-menu-panel a[href="/notes/"]')).toHaveCount(0);
+ await page.setViewportSize({width:390,height:844});await page.locator('#nav-menu-switch').click();await expect(page.locator('#nav-menu-panel a[href="/notes/"]')).toHaveCount(0);await expect(page.locator('#nav-menu-panel a[href="/archive/"]')).toBeVisible();
  await page.keyboard.press('Escape');await page.goto('/search/');await expect(page.getByRole('navigation',{name:'搜索备用入口'}).getByRole('link')).toHaveCount(5);
 });
 test('homepage to course, article, next lecture and back',async({page})=>{

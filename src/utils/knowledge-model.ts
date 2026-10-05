@@ -1,4 +1,5 @@
 import type { ProjectData } from "../content/schema";
+import { buildArchiveGroups } from "./archive-model";
 import {
 	assertCatalog,
 	type Catalog,
@@ -37,6 +38,26 @@ export function getSidebarContext(
 	},
 ): SidebarContext {
 	const path = `${pathname.replace(/\/$/, "")}/`;
+	if (path.startsWith("/archive/"))
+		return {
+			hub: null,
+			title: "年份",
+			items: Object.values(index.lists)
+				.filter((group) => group.url.startsWith("/archive/"))
+				.map((group) => ({
+					id: group.id,
+					title:
+						group.id === "archive"
+							? "全部文章"
+							: group.id === "undated"
+								? "日期未记录"
+								: group.id,
+					url: group.url,
+					count: group.items.length,
+					state:
+						group.url === path.replace(/page\/\d+\/$/, "") ? "current" : "none",
+				})),
+		};
 	const item = index.publicItems.find((item) => item.url === path);
 	const record =
 		article ??
@@ -396,6 +417,8 @@ export function buildKnowledgeIndex(
 			`/topics/${topic.id}/`,
 			publicItems.filter((p) => itemTopics(p).includes(topic.id)),
 		);
+	for (const archive of buildArchiveGroups(publicItems))
+		lists[archive.url] = archive;
 	const topicIds = new Set<string>();
 	const tags = new Set<string>();
 	let totalWords = 0;

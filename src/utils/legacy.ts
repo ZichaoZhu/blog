@@ -83,6 +83,8 @@ export function resolveLegacyMap(
 	if (folder || category || tag)
 		return "/search/?q=" + encodeURIComponent(folder || category || tag || "");
 	const page = Number(query.get("page"));
-	if (Number.isInteger(page) && page > 1) return `/notes/page/${page}/`;
+	if (Number.isInteger(page) && page > 1)
+		return `${path === "/archive" ? "/archive" : "/notes"}/page/${page}/`;
+	if (path === "/archive") return null;
 	return path === "/notes" && !query.size ? null : "/notes/";
 }

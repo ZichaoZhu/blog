@@ -71,7 +71,7 @@ test('mobile article contents give feedback and preserve keyboard anchor navigat
 });
 
 test('auxiliary controls distinguish rest, hover and pressed states and retain focus feedback',async({page})=>{
- for(const [path,selector] of [['/categories/','main a.card-base'],['/tags/','main a[href*="archive"][class*="rounded-lg"]'],['/archive/','main .collection-back'],['/series/','.series-acc-header'],['/rss/','#copy-rss-btn'],['/atom/','#copy-atom-btn'],['/404.html','main .back-link']]){
+ for(const [path,selector] of [['/categories/','main a.card-base'],['/tags/','main a[href*="archive"][class*="rounded-lg"]'],['/archive/','main .archive-post'],['/series/','.series-acc-header'],['/rss/','#copy-rss-btn'],['/atom/','#copy-atom-btn'],['/404.html','main .back-link']]){
   await page.goto(path);const control=page.locator(selector).first();await expect(control).toBeVisible();
   await page.mouse.move(0,0);const rest=await control.evaluate(el=>getComputedStyle(el).backgroundColor);
   await control.hover();await expect.poll(()=>control.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe(rest);

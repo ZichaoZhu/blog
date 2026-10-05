@@ -1,0 +1,34 @@
+---
+import ArchivePanel from "../../components/controls/ArchivePanel.astro";
+import BackLink from "../../components/knowledge/BackLink.astro";
+import CollectionPagination from "../../components/knowledge/CollectionPagination.astro";
+import KnowledgeLayout from "../../layouts/KnowledgeLayout.astro";
+import { getKnowledgeIndex } from "../../utils/knowledge-index";
+import {
+	buildCollectionRoutes,
+	type CollectionRoute,
+} from "../../utils/knowledge-model";
+
+export async function getStaticPaths() {
+	return buildCollectionRoutes(await getKnowledgeIndex())
+		.filter((route) => route.group.url.startsWith("/archive/"))
+		.map((route) => ({
+			params: {
+				path:
+					route.url.slice("/archive/".length).replace(/\/$/, "") || undefined,
+			},
+			props: { route },
+		}));
+}
+interface Props {
+	route: CollectionRoute;
+}
+const { route } = Astro.props;
+const title = `${route.group.title}${route.page > 1 ? ` · 第 ${route.page} 页` : ""}`;
+const description = `${route.group.items.length} 篇公开文章；${route.group.description}`;
+---
+<KnowledgeLayout title={title} description={description} directory={true}>
+ {route.group.id !== "archive" && <BackLink href="/archive/" label="全部归档" class="collection-back"/>}
+ <ArchivePanel items={route.items}/>
+ <CollectionPagination baseUrl={route.group.url} page={route.page} totalPages={route.totalPages}/>
+</KnowledgeLayout>

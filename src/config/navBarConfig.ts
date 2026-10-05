@@ -19,5 +19,10 @@ export const navBarConfig: NavBarConfig = {
 			url: "/projects/",
 			icon: "material-symbols:rocket-launch",
 		},
+		{
+			name: "归档",
+			url: "/archive/",
+			icon: "material-symbols:archive-outline-rounded",
+		},
 	],
 };
