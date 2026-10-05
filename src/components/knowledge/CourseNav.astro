@@ -1,6 +1,7 @@
 ---
 import { courses } from "../../data/catalog";
 import type { NoteSummary } from "../../utils/note-model";
+import BackLink from "./BackLink.astro";
 
 interface Props {
 	courseId: string;
@@ -11,6 +12,6 @@ const { courseId, currentSlug, notes } = Astro.props;
 const course = courses.find((c) => c.id === courseId);
 ---
 <nav aria-label="课程讲次" class="card-base p-4 course-nav" data-pagefind-ignore>
- <a href={`/courses/${courseId}/`} class="toc-item sidebar-nav-item font-bold"><span class="toc-label">{course?.title} · 返回课程</span></a>
+ <BackLink href={`/courses/${courseId}/`} label={`返回${course?.title ?? '课程'}`} ariaLabel={`返回课程：${course?.title ?? courseId}`} sidebar class="font-bold"/>
  <ol class="toc-content toc-scroll-container custom-scrollbar">{notes.map(note=><li><a class="toc-item sidebar-nav-item" href={note.url} aria-current={note.slug===currentSlug?'page':undefined}><span class="toc-badge toc-badge-index" aria-hidden="true">{note.course?.order ?? <span class="toc-badge-dot"/>}</span><span class="toc-label toc-label-primary">{note.title}</span></a></li>)}</ol>
 </nav>

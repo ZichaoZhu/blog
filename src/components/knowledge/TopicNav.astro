@@ -1,5 +1,6 @@
 ---
 import type { SidebarContext } from "../../utils/knowledge-model";
+import BackLink from "./BackLink.astro";
 
 interface Props {
 	context: SidebarContext;
@@ -10,5 +11,5 @@ const { context, id } = Astro.props;
 <nav id={id} class="topic-nav card-base p-4" aria-label={context.title} data-pagefind-ignore>
  <h2 class="font-bold mb-3">{context.title}</h2>
  {context.items.length?<ul class="toc-content toc-scroll-container custom-scrollbar">{context.items.map((item,index)=><li><a class="toc-item sidebar-nav-item" href={item.url} aria-current={item.state==='current'?'page':undefined} data-related={item.state==='related'?true:undefined}><span class="toc-badge toc-badge-index" aria-hidden="true">{index+1}</span><span class="toc-label toc-label-primary">{item.title}</span><span class="topic-nav-count">{item.count}</span></a></li>)}</ul>:<p class="text-50">暂无主题</p>}
- {context.hub&&<a class="topic-nav-back toc-item sidebar-nav-item" href={`/${context.hub}/`}><span class="toc-label">← 全部{context.hub==='courses'?'课程':context.hub==='papers'?'论文':context.hub==='research'?'研究':'项目'}</span></a>}
+ {context.hub&&<BackLink class="topic-nav-back" sidebar href={`/${context.hub}/`} label={`全部${context.hub==='courses'?'课程':context.hub==='papers'?'论文':context.hub==='research'?'研究':'项目'}`}/>}
 </nav>

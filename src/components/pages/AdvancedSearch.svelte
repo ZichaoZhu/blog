@@ -111,7 +111,7 @@ onMount(() => {
 });
 </script>
 <div class="card-base p-5 md:p-8">
-<form on:submit|preventDefault={()=>search(true)} class="grid gap-4" aria-label="搜索公开记录">
+<form on:submit|preventDefault={()=>search(true)} class="knowledge-form grid gap-4" aria-label="搜索公开记录">
  <label class="grid gap-1">关键词<input name="q" type="search" bind:value={keyword} class="border rounded-lg p-3 w-full bg-transparent" placeholder="标题、术语或正文" /></label>
  <div class="grid gap-3 sm:grid-cols-3">
  <label class="grid gap-1">类型<select aria-label="类型" name="type" bind:value={type} class="border rounded-lg p-2 bg-(--card-bg)"><option value="">全部类型</option>{#each types as [id,label]}<option value={id}>{label}</option>{/each}</select></label>
@@ -120,6 +120,6 @@ onMount(() => {
  </div><button type="submit" class="btn-regular rounded-lg px-5 py-3 justify-self-start">搜索</button>
 </form>
 <p role="status" aria-live="polite" class="my-5">{loading?'正在搜索…':error||(!searched?'输入关键词，或选择筛选条件。':total?`找到 ${total} 篇公开记录。`:'没有匹配的公开记录。')}</p>
-<ul class="grid gap-5">{#each results as result}<li data-search-result class="border-t border-(--line-divider) pt-4"><a href={result.url} class="font-bold text-xl text-(--primary)">{result.meta.title}</a><p class="mt-2 leading-relaxed">{@html result.excerpt}</p></li>{/each}</ul>
+<ul class="collection-list">{#each results as result}<li data-search-result><a href={result.url} class="topic-group search-result" aria-label={result.meta.title}><div><h2>{result.meta.title}</h2><p>{@html result.excerpt}</p></div><span class="topic-arrow" aria-hidden="true">›</span></a></li>{/each}</ul>
 {#if results.length<total}<button type="button" on:click={more} disabled={loading} class="btn-regular px-5 py-3 mt-5 rounded-lg">加载更多</button>{/if}
 </div>

@@ -7,4 +7,4 @@ const groups = Object.values((await getKnowledgeIndex()).lists).filter((g) =>
 	g.url.startsWith("/topics/"),
 );
 ---
-<KnowledgeLayout title='主题' description='主题可横跨课程、论文、研究记录与项目。'><TopicGroups groups={groups}/></KnowledgeLayout>
+<KnowledgeLayout title='主题' description='主题可横跨课程、论文、研究记录与项目。' directory><TopicGroups groups={groups}/></KnowledgeLayout>

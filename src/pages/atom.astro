@@ -1,29 +1,18 @@
 ---
-import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getSortedPosts } from "@utils/content-utils";
-import { formatDateToYYYYMMDD } from "@utils/date-utils";
+import NoteList from "@components/knowledge/NoteList.astro";
+import KnowledgeLayout from "@layouts/KnowledgeLayout.astro";
+import { asNoteRecord, getSortedPosts } from "@utils/content-utils";
+import { toSummary } from "@utils/note-model";
 import { Icon } from "astro-icon/components";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 
 const posts = await getSortedPosts();
-const recentPosts = posts.slice(0, 6);
+const recentPosts = posts.slice(0, 6).map((p) => toSummary(asNoteRecord(p)));
 ---
 
-<MainGridLayout title={i18n(I18nKey.atom)} description={i18n(I18nKey.atomDescription)}>
-    <div class="onload-animation">
-        <!-- Atom 标题和介绍 -->
-        <div class="card-base rounded-(--radius-large) p-8 mb-6">
-            <div class="text-center">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-(--primary) rounded-2xl mb-4">
-                    <Icon name="material-symbols:rss-feed" class="text-white text-3xl" />
-                </div>
-                <div class="text-3xl font-bold text-(--primary) mb-3">{i18n(I18nKey.atom)}</div>
-                <p class="text-75 max-w-2xl mx-auto">
-                    {i18n(I18nKey.atomSubtitle)}
-                </p>
-            </div>
-        </div>
+<KnowledgeLayout title={i18n(I18nKey.atom)} description={i18n(I18nKey.atomDescription)}>
+    <div>
 
         <!-- Atom 链接复制区域 -->
         <div class="card-base rounded-(--radius-large) p-6 mb-6">
@@ -43,7 +32,7 @@ const recentPosts = posts.slice(0, 6);
                     </code>
                     <button
                         id="copy-atom-btn"
-                        class="px-4 py-2 bg-(--primary) text-white rounded-lg hover:opacity-80 transition-all duration-200 font-medium text-sm whitespace-nowrap"
+                        class="btn-regular knowledge-action px-4 py-2 font-medium whitespace-nowrap"
                         data-url={`${Astro.site}atom.xml`}
                         data-copied-text={i18n(I18nKey.atomCopied)}
                         data-failed-text={i18n(I18nKey.rssCopyFailed)}
@@ -60,27 +49,7 @@ const recentPosts = posts.slice(0, 6);
                 <Icon name="material-symbols:article" class="mr-2 text-(--primary)" />
                 {i18n(I18nKey.rssLatestPosts)}
             </h2>
-            <div class="space-y-4">
-                {recentPosts.map((post) => (
-                    <article class="bg-(--card-bg) rounded-xl p-4 border border-(--line-divider) hover:border-(--primary) transition-all duration-300">
-                        <h3 class="text-lg font-semibold text-90 mb-2 hover:text-(--primary) transition-colors">
-                            <a href={`/notes/${post.data.slug}/`} class="hover:underline">
-                                {post.data.title}
-                            </a>
-                        </h3>
-                        {post.data.description && (
-                            <p class="text-75 mb-3 line-clamp-2">
-                                {post.data.description}
-                            </p>
-                        )}
-                        <div class="flex items-center gap-4 text-sm text-60">
-                            {post.data.published && <time datetime={post.data.published.toISOString()} class="text-75">
-                                {formatDateToYYYYMMDD(post.data.published)}
-                            </time>}
-                        </div>
-                    </article>
-                ))}
-            </div>
+            <NoteList notes={recentPosts}/>
         </div>
     </div>
 
@@ -102,11 +71,9 @@ const recentPosts = posts.slice(0, 6);
                     await navigator.clipboard.writeText(url);
                     const originalText = btn.textContent;
                     btn.textContent = btn.getAttribute('data-copied-text') || '';
-                    btn.style.backgroundColor = 'var(--success-color, #10b981)';
 
                     setTimeout(() => {
                         btn.textContent = originalText;
-                        btn.style.backgroundColor = '';
                     }, 2000);
                 } catch (err) {
                     console.error("Copy failed:", err);
@@ -135,4 +102,4 @@ const recentPosts = posts.slice(0, 6);
             });
         }
     </script>
-</MainGridLayout>
+</KnowledgeLayout>

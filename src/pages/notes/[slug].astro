@@ -3,7 +3,9 @@ import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import Markdown from "../../components/common/Markdown.astro";
 import KatexManager from "../../components/features/KatexManager.astro";
+import ArticleContents from "../../components/knowledge/ArticleContents.astro";
 import ArticleMetadata from "../../components/knowledge/ArticleMetadata.astro";
+import BackLink from "../../components/knowledge/BackLink.astro";
 import KnowledgeContext from "../../components/knowledge/KnowledgeContext.astro";
 import { siteConfig } from "../../config";
 import { siteContext } from "../../config/siteContext";
@@ -91,15 +93,15 @@ const schema = {
  <article class="card-base p-5 md:p-9 min-w-0" data-pagefind-body={published?true:undefined} data-pagefind-ignore={!published?'all':undefined}>
   {published&&<div hidden data-pagefind-ignore><span data-pagefind-filter={`type:${entry.data.type}`}/>{entry.data.topics.map(id=><span data-pagefind-filter={`topic:${id}`}/>)}{entry.data.course&&<span data-pagefind-filter={`course:${entry.data.course.id}`}/>}</div>}
   <nav aria-label="文章位置" class="article-position mb-5" data-pagefind-ignore>
-   <a href={backUrl} class="btn-plain article-link" aria-label={course?`返回课程：${course.title}`:`返回${backLabel}`}><Icon name="material-symbols:arrow-back-rounded" is:inline aria-hidden="true"/><span>返回{backLabel}</span></a>
-   <a href="/topics/" class="btn-plain article-link"><Icon name="material-symbols:category-outline-rounded" is:inline aria-hidden="true"/><span>浏览主题</span></a>
+   <BackLink href={backUrl} label={`返回${backLabel}`} ariaLabel={course?`返回课程：${course.title}`:`返回${backLabel}`}/>
+   <a href="/topics/" class="btn-plain knowledge-action"><Icon name="material-symbols:category-outline-rounded" is:inline aria-hidden="true"/><span>浏览主题</span></a>
   </nav>
   <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-4" data-pagefind-meta={published?'title':undefined} data-pagefind-weight="10">{entry.data.title}</h1>
   <p class="leading-relaxed mb-4">{entry.data.description}</p>
   <ArticleMetadata data={entry.data} words={remarkPluginFrontmatter.words} minutes={remarkPluginFrontmatter.minutes}/>
   <KnowledgeContext context={sidebarContext} location="inline"/>
-  {paper && <section aria-label="论文资料" class="paper-details my-5" data-pagefind-ignore><h2 class="font-bold">论文资料</h2>{paper.title&&<p>{paper.title}</p>}{paper.authors?.length&&<p>{paper.authors.join(', ')}</p>}{(paper.venue||paper.year)&&<p>{paper.venue} {paper.year}</p>}<div class="collection-links">{sources.map(([label,url])=><a class="btn-plain article-link" href={url} target="_blank" rel="noopener noreferrer">{label} ↗</a>)}</div></section>}
-  {headings.length>0 && <details class="my-5 inline-toc" data-pagefind-ignore><summary>文章目录</summary><nav aria-label="文章目录"><ol class="grid gap-2 p-3">{headings.map(h=><li style={`padding-left:${Math.max(0,h.depth-2)*.75}rem`}><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol></nav></details>}
+  {paper && <section aria-label="论文资料" class="paper-details my-5" data-pagefind-ignore><h2 class="font-bold">论文资料</h2>{paper.title&&<p>{paper.title}</p>}{paper.authors?.length&&<p>{paper.authors.join(', ')}</p>}{(paper.venue||paper.year)&&<p>{paper.venue} {paper.year}</p>}<div class="collection-links">{sources.map(([label,url])=><a class="btn-plain knowledge-action" href={url} target="_blank" rel="noopener noreferrer">{label} ↗</a>)}</div></section>}
+  <ArticleContents headings={headings}/>
   <Markdown class="mt-6"><Content/></Markdown>
  </article>
  {course&&(neighbors.previous||neighbors.next)&&<nav aria-label="上下讲" class="article-neighbors" data-pagefind-ignore>
@@ -110,8 +112,6 @@ const schema = {
 </MainGridLayout>
 <style>
  .article-position{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
- .article-link{display:inline-flex;gap:.45rem;min-width:0;min-height:44px;padding:.55rem .75rem;border-radius:.875rem;font-size:var(--type-small);text-align:left;overflow-wrap:anywhere;}
- .article-link :global(svg){flex-shrink:0;color:var(--primary);font-size:var(--type-heading);}
  .article-neighbors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1rem;}
  .article-neighbor{justify-content:space-between;gap:1rem;min-width:0;min-height:88px;padding:1.1rem 1.25rem;border-radius:var(--radius-large);}
  .article-neighbor :global(svg){flex-shrink:0;color:var(--primary);font-size:var(--type-heading);}

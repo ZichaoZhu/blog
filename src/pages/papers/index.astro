@@ -5,4 +5,4 @@ import { getKnowledgeIndex } from "../../utils/knowledge-index";
 
 const hub = (await getKnowledgeIndex()).hubs.papers;
 ---
-<KnowledgeLayout title={hub.title} description={hub.description} directory><TopicGroups groups={hub.groups}/><a class="knowledge-action" href='/search/?type=paper'>搜索论文 →</a></KnowledgeLayout>
+<KnowledgeLayout title={hub.title} description={hub.description} directory><TopicGroups groups={hub.groups}/><a class="btn-plain knowledge-action" href='/search/?type=paper'>搜索论文</a></KnowledgeLayout>

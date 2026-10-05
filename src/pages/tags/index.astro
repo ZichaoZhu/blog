@@ -2,7 +2,7 @@
 import { Icon } from "astro-icon/components";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
-import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import KnowledgeLayout from "@/layouts/KnowledgeLayout.astro";
 import { getTagList } from "@/utils/content-utils";
 import { getTagUrl } from "@/utils/url-utils";
 
@@ -13,16 +13,7 @@ const topTags = [...tags].sort((a, b) => b.count - a.count).slice(0, 10);
 const topMaxCount = topTags.length > 0 ? topTags[0].count : 1;
 ---
 
-<MainGridLayout title={i18n(I18nKey.tags)} description={i18n(I18nKey.allTags)}>
-    <!-- 页面标题 -->
-    <div class="card-base px-8 py-6 mb-4">
-        <div class="text-2xl font-bold text-(--primary) mb-2">
-            {i18n(I18nKey.tags)}
-        </div>
-        <p class="text-30 text-sm">
-            {i18n(I18nKey.allTags)} · {tags.length} {i18n(I18nKey.tagsCount)}
-        </p>
-    </div>
+<KnowledgeLayout title={i18n(I18nKey.tags)} description={`${i18n(I18nKey.allTags)} · ${tags.length} ${i18n(I18nKey.tagsCount)}`} directory>
 
     <div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
         <div class="card-base z-10 px-9 py-6 relative w-full">
@@ -67,9 +58,9 @@ const topMaxCount = topTags.length > 0 ? topTags[0].count : 1;
             <div class="flex flex-col gap-3">
                 {topTags.map((t, i) => (
                     <a href={getTagUrl(t.name)}
-                       class="flex items-center gap-3 group hover:bg-(--btn-card-bg-hover) rounded-lg px-3 py-2 -mx-3 transition-colors"
+                       class="toc-item sidebar-nav-item group rounded-lg"
                     >
-                        <span class="text-sm font-bold text-(--primary) w-5 text-right shrink-0">
+                        <span class="toc-badge toc-badge-index">
                             {i + 1}
                         </span>
                         <div class="flex-1 min-w-0">
@@ -93,4 +84,4 @@ const topMaxCount = topTags.length > 0 ? topTags[0].count : 1;
             </div>
         </div>
     )}
-</MainGridLayout>
+</KnowledgeLayout>

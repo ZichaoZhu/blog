@@ -4,6 +4,7 @@ import { type CollectionRoute, type HubId } from "../../utils/knowledge-model";
 import { toSummary } from "../../utils/note-model";
 import { getFileDirFromPath, removeFileExtension } from "../../utils/url-utils";
 import ProjectCard from "../pages/projects/ProjectCard.astro";
+import BackLink from "./BackLink.astro";
 import CollectionPagination from "./CollectionPagination.astro";
 import NoteList from "./NoteList.astro";
 
@@ -24,7 +25,7 @@ const projects = route.items.flatMap((item) =>
 );
 ---
 <KnowledgeLayout title={`${route.group.title}${route.page>1?` · 第 ${route.page} 页`:''}`} description={route.group.description} directory={true}>
- <a href={backUrl} class="collection-back knowledge-action">← {backLabel}</a>
+ <BackLink href={backUrl} label={backLabel} class="collection-back"/>
  <p class="collection-summary">{route.group.items.length} 篇公开记录</p>
  {(notes.length>0||projects.length===0)&&<NoteList notes={notes} hub={hub}/>}
  {projects.length>0&&<ul class="collection-list">{projects.map(project=><li><ProjectCard {...project.data} id={removeFileExtension(project.entryId)} basePath={getFileDirFromPath(project.filePath||'')}/></li>)}</ul>}

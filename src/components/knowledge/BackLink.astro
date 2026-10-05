@@ -1,0 +1,19 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	href: string;
+	label: string;
+	ariaLabel?: string;
+	sidebar?: boolean;
+	class?: string;
+}
+const { href, label, ariaLabel, sidebar = false } = Astro.props;
+---
+<a href={href} aria-label={ariaLabel ?? label} class:list={[sidebar ? "toc-item sidebar-nav-item" : "btn-plain knowledge-action", "back-link", Astro.props.class]}>
+ <Icon name="material-symbols:chevron-left-rounded" is:inline aria-hidden="true"/>
+ <span class:list={[{"toc-label":sidebar}]}>{label}</span>
+</a>
+<style>
+ .back-link :global(svg){flex-shrink:0;font-size:var(--type-heading);color:var(--primary);}
+</style>

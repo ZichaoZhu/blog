@@ -76,6 +76,7 @@ const coverClass = gridCoverFullWidth
     <div class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
       <Icon
         name="material-symbols:chevron-right-rounded"
+        is:inline
         class="transition opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 text-white text-5xl"
       />
     </div>
@@ -172,7 +173,7 @@ const coverClass = gridCoverFullWidth
           class="inline-flex items-center gap-1 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-(--primary) transition-colors ml-auto"
         >
           {i18n(I18nKey.projectDetails)}
-          <Icon name="material-symbols:chevron-right-rounded" class="text-sm" />
+          <Icon name="material-symbols:chevron-right-rounded" is:inline class="text-sm" />
         </a>
       </div>
   </div>

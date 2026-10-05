@@ -1,0 +1,12 @@
+---
+interface Props {
+	headings: Array<{ depth: number; slug: string; text: string }>;
+}
+const { headings } = Astro.props;
+---
+{headings.length>0&&<details class="my-5 inline-toc" data-pagefind-ignore>
+ <summary>文章目录</summary>
+ <nav aria-label="文章目录"><ol class="toc-content p-3">{headings.map(h=><li>
+  <a class="toc-item sidebar-nav-item" style={`padding-left:${.62+Math.max(0,h.depth-2)*.75}rem`} href={`#${h.slug}`}><span class="toc-label toc-label-primary">{h.text}</span></a>
+ </li>)}</ol></nav>
+</details>}

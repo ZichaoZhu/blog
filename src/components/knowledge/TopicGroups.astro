@@ -1,13 +1,15 @@
 ---
+import { Icon } from "astro-icon/components";
 import type { CollectionGroup } from "../../utils/knowledge-model";
 
 interface Props {
 	groups: CollectionGroup[];
+	class?: string;
 }
 const { groups } = Astro.props;
 ---
-<ul class="collection-list topic-groups" data-pagefind-ignore>
+<ul class:list={["collection-list topic-groups",Astro.props.class]} data-pagefind-ignore>
  {groups.map(group=><li><a href={group.url} class="card-base topic-group">
-  <div><h2>{group.title}</h2><p>{group.description}</p><span class="topic-count">{group.items.length} 篇公开记录</span></div><span aria-hidden="true" class="topic-arrow">›</span>
+  <div><h2>{group.title}</h2><p>{group.description}</p><span class="topic-count">{group.items.length} 篇公开记录</span></div><Icon name="material-symbols:chevron-right-rounded" is:inline aria-hidden="true" class="topic-arrow"/>
  </a></li>)}
 </ul>
