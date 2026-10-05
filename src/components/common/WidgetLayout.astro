@@ -50,7 +50,7 @@ const className = Astro.props.class;
         {moreUrl ? (
             <a
                 href={moreUrl}
-                class="btn-plain rounded-lg w-full h-9 flex items-center justify-center"
+                class="sidebar-control btn-plain w-full h-9 flex items-center justify-center"
                 title={i18n(I18nKey.more)}
             >
                 <div class="text-(--primary) flex items-center justify-center gap-2 -translate-x-2">
@@ -60,7 +60,7 @@ const className = Astro.props.class;
             </a>
         ) : (
             <button
-                class="btn-plain rounded-lg w-full h-9"
+                class="sidebar-control btn-plain w-full h-9"
                 title={i18n(I18nKey.more)}
                 aria-label={i18n(I18nKey.more)}
                 data-show-more={i18n(I18nKey.more)}

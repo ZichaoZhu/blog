@@ -11,6 +11,6 @@ const { courseId, currentSlug, notes } = Astro.props;
 const course = courses.find((c) => c.id === courseId);
 ---
 <nav aria-label="课程讲次" class="card-base p-4 course-nav" data-pagefind-ignore>
- <a href={`/courses/${courseId}/`} class="font-bold">{course?.title} · 返回课程</a>
- <ol>{notes.map(note=><li><a href={note.url} aria-current={note.slug===currentSlug?'page':undefined}>{note.course?.order!==undefined && <span>Lec{note.course.order} · </span>}{note.title}</a></li>)}</ol>
+ <a href={`/courses/${courseId}/`} class="toc-item sidebar-nav-item font-bold"><span class="toc-label">{course?.title} · 返回课程</span></a>
+ <ol class="toc-content toc-scroll-container custom-scrollbar">{notes.map(note=><li><a class="toc-item sidebar-nav-item" href={note.url} aria-current={note.slug===currentSlug?'page':undefined}><span class="toc-badge toc-badge-index" aria-hidden="true">{note.course?.order ?? <span class="toc-badge-dot"/>}</span><span class="toc-label toc-label-primary">{note.title}</span></a></li>)}</ol>
 </nav>

@@ -15,15 +15,21 @@ test('configured empty course and projects stay honest, and compatibility pagina
  await page.goto('/projects/');await expect(page.getByText('暂无已整理的公开项目。',{exact:true})).toBeVisible();
  await page.goto('/notes/');await expect(page.locator('.post-card-title')).toHaveCount(25);await page.getByRole('navigation',{name:'分页',exact:true}).getByRole('link',{name:/下一页/}).click();await expect(page.locator('.post-card-title')).toHaveCount(19);await page.reload();await expect(page.locator('.post-card-title')).toHaveCount(19);
 });
-test('the four hub directories use one nested surface with a direct introduction',async({page})=>{
- for(const path of ['/courses/','/papers/','/research/','/projects/']){
+test('hub and subject directories keep their records inside one surface with a direct introduction',async({page})=>{
+ for(const path of ['/courses/','/papers/','/research/','/projects/','/courses/compiler-principles/','/courses/reinforcement-learning/','/papers/topics/robotics/','/research/topics/3d-vision/']){
   await page.goto(path);
   const directory=page.locator('main .knowledge-directory');
   await expect(directory).toHaveCount(1);
   await expect(directory.locator(':scope > .knowledge-directory-header h1')).toBeVisible();
   await expect(directory.locator(':scope > .knowledge-directory-header p')).toBeVisible();
-  await expect(directory.locator('details.collection-intro')).toHaveCount(0);
-  await expect(directory.locator('.topic-groups, .empty-state')).toHaveCount(1);
+  await expect(directory.locator('.topic-groups, .knowledge-list, .empty-state')).toHaveCount(1);
+  if(path==='/courses/compiler-principles/'){
+   const intro=directory.locator('details.collection-intro');
+   const list=directory.locator('.knowledge-list');
+   expect((await intro.boundingBox())!.y).toBeGreaterThan((await list.boundingBox())!.y);
+   await intro.locator('summary').click();
+   await expect(intro).toContainText('分数构成');
+  }
  }
 });
 test('directory typography, theme surfaces and topic-card states form one system',async({page})=>{
@@ -36,14 +42,12 @@ test('directory typography, theme surfaces and topic-card states form one system
   const read=(selector:string)=>{const style=getComputedStyle(document.querySelector(selector)!);return {background:style.backgroundColor,color:style.color,font:style.fontFamily,size:style.fontSize,weight:Number(style.fontWeight)};};
   return {body:read('body'),directory:read('.knowledge-directory'),heading:read('.knowledge-directory-header h1'),intro:read('.knowledge-directory-header p'),title:read('.topic-group h2'),description:read('.topic-group p'),card:read('.topic-group')};
  });
- expect(styles.body.font).toContain('Noto Sans SC');
  expect(styles.directory.background).toBe('rgb(255, 255, 255)');
  expect(styles.card.background).toBe('rgb(255, 255, 255)');
- expect(styles.heading.size).toBe('24px');
- expect(styles.intro.size).toBe('20px');
+ expect(Number.parseFloat(styles.heading.size)).toBeGreaterThan(Number.parseFloat(styles.intro.size));
  expect(styles.title.size).toBe(styles.intro.size);
  expect(styles.title.weight).toBeGreaterThanOrEqual(700);
- expect(styles.description.size).toBe('16px');
+ expect(Number.parseFloat(styles.description.size)).toBeLessThan(Number.parseFloat(styles.title.size));
  expect(styles.description.color).not.toBe(styles.title.color);
  const rest=await card.evaluate(el=>getComputedStyle(el).backgroundColor);
  await card.hover();await page.waitForTimeout(180);

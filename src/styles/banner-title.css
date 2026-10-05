@@ -3,7 +3,7 @@
 /* 横幅背景暗层透明度 - 通过配置文件 common.dimOpacity 控制，内联样式覆盖 */
 
 .banner-page-title {
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: var(--type-heading);
     text-shadow: 0 4px 24px rgba(0, 0, 0, 0.65);
     display: inline-flex;
     align-items: center;

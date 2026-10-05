@@ -213,7 +213,9 @@ export default defineConfig({
 			},
 			styleOverrides: {
 				borderRadius: "0.75rem",
-				codeFontSize: "0.875rem",
+				codeFontSize: "var(--type-small)",
+				uiFontSize: "var(--type-small)",
+				uiFontFamily: "var(--font-sans)",
 				codeFontFamily:
 					"var(--font-code, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace)",
 				codeLineHeight: "1.5rem",

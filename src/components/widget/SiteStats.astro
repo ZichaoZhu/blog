@@ -73,10 +73,10 @@ const rows = [
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateDates();});
 </script>
 <style>
- .site-stat-list{display:grid;gap:.9rem;font-size:.875rem;}
+ .site-stat-list{display:grid;gap:.9rem;font-size:var(--type-small);}
  .site-stat-list>div{display:flex;justify-content:space-between;gap:.5rem;}
  dt{display:flex;align-items:center;gap:.5rem;flex-shrink:0;}
  dt :global(svg){color:var(--primary);width:1.1rem;height:1.1rem;}
- dd{font-weight:600;text-align:right;overflow-wrap:anywhere;}
- time{font-weight:400;font-size:.8rem;}
+ dd{font-weight:600;font-size:var(--type-caption);text-align:right;overflow-wrap:anywhere;}
+ time{font-weight:400;font-size:var(--type-caption);}
 </style>

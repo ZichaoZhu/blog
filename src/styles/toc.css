@@ -26,17 +26,19 @@
 }
 
 /* TOC 链接样式 */
+.toc-item,
+.sidebar-control {
+	border-radius: 0.875rem;
+	font-size: var(--type-small);
+	transition: background-color 0.14s ease, transform 0.14s ease, color 0.14s ease;
+}
+
 .toc-item {
 	display: flex;
 	align-items: center;
 	gap: 0.55rem;
 	text-decoration: none;
 	color: inherit;
-	border-radius: 0.875rem;
-	transition:
-		background-color 0.14s ease,
-		transform 0.14s ease,
-		color 0.14s ease;
 	width: 100%;
 	min-width: 0;
 	flex-shrink: 0;
@@ -48,12 +50,16 @@
 	min-height: 2.2rem;
 }
 
-.toc-item:hover {
+.toc-item:hover,
+.toc-item:focus-visible,
+.sidebar-control:hover,
+.sidebar-control:focus-visible {
 	background: color-mix(in oklab, var(--toc-btn-hover), transparent);
 	transform: translateX(1px);
 }
 
-.toc-item:active {
+.toc-item:active,
+.sidebar-control:active {
 	background: color-mix(in oklab, var(--toc-btn-active), transparent);
 }
 
@@ -73,7 +79,7 @@
 	flex: 1;
 	max-width: calc(100% - 2.4rem);
 	box-sizing: border-box;
-	font-size: 0.86rem;
+	font-size: var(--type-small);
 	line-height: 1.3;
 	letter-spacing: 0.01em;
 }
@@ -93,7 +99,7 @@
 	width: 1.35rem;
 	height: 1.35rem;
 	border-radius: 0.5rem;
-	font-size: 0.68rem;
+	font-size: var(--type-caption);
 	font-weight: 700;
 	line-height: 1;
 }
@@ -124,6 +130,25 @@
 .toc-item.visible .toc-badge-dot,
 .toc-item.visible .toc-badge-dot-sm {
 	background: var(--primary);
+}
+
+/* Cross-page navigation reuses TOC presentation, without its scroll controller. */
+.sidebar-nav-item .toc-label {
+	white-space: normal;
+	text-overflow: clip;
+	overflow-wrap: anywhere;
+	max-width: none;
+}
+
+.sidebar-nav-item[aria-current="page"],
+.sidebar-nav-item[data-related] {
+	background: var(--toc-indicator-bg);
+	font-weight: 700;
+}
+
+.sidebar-nav-item[aria-current="page"] .toc-label,
+.sidebar-nav-item[data-related] .toc-label {
+	color: var(--primary);
 }
 
 /* 活动指示器基础样式 */

@@ -25,3 +25,20 @@ test('navigation and the single stats instance fit all six widths with TOC above
  if(width<1360){expect(stats!.y).toBeGreaterThan(main!.y+main!.height-1);await expect(page.locator('.inline-toc')).toBeVisible();}else{expect(main!.width).toBeGreaterThan(640);const toc=await page.locator('#sidebar-toc').boundingBox();expect(toc!.y).toBeLessThan(stats!.y);}
  }
 });
+test('lecture links show each title once and keep keyboard navigation inside the sidebar',async({page})=>{
+ await page.setViewportSize({width:1440,height:900});
+ await page.goto('/courses/compiler-principles/');
+ await page.locator('main .post-card-title').first().click();
+ const nav=page.locator('#left-sidebar-dynamic .course-nav');
+ const current=nav.locator('ol a[aria-current="page"]');
+ await expect(current).toHaveCount(1);
+ expect((await current.innerText()).match(/Lec\s*1/g)).toHaveLength(1);
+ const next=nav.locator('ol a').nth(1);
+ await next.focus();
+ expect(await next.evaluate(el=>Number.parseFloat(getComputedStyle(el).outlineWidth))).toBeGreaterThan(0);
+ const destination=await next.getAttribute('href');
+ await page.keyboard.press('Enter');
+ await expect(page).toHaveURL(destination!);
+ await expect(nav.locator('ol a[aria-current="page"]')).toHaveAttribute('href',destination!);
+ expect(await nav.locator('ol a').evaluateAll(links=>links.every(el=>el.scrollWidth<=el.clientWidth+1))).toBe(true);
+});

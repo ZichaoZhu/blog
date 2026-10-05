@@ -23,11 +23,11 @@ const projects = route.items.flatMap((item) =>
 	item.kind === "project" ? [item.project] : [],
 );
 ---
-<KnowledgeLayout title={`${route.group.title}${route.page>1?` · 第 ${route.page} 页`:''}`} description={route.group.description}>
+<KnowledgeLayout title={`${route.group.title}${route.page>1?` · 第 ${route.page} 页`:''}`} description={route.group.description} directory={true}>
  <a href={backUrl} class="collection-back knowledge-action">← {backLabel}</a>
- <slot name="intro"/>
  <p class="collection-summary">{route.group.items.length} 篇公开记录</p>
  {(notes.length>0||projects.length===0)&&<NoteList notes={notes} hub={hub}/>}
  {projects.length>0&&<ul class="collection-list">{projects.map(project=><li><ProjectCard {...project.data} id={removeFileExtension(project.entryId)} basePath={getFileDirFromPath(project.filePath||'')}/></li>)}</ul>}
  <CollectionPagination baseUrl={route.group.url} page={route.page} totalPages={route.totalPages}/>
+ <slot name="intro"/>
 </KnowledgeLayout>

@@ -1,4 +1,13 @@
 .expressive-code {
+  .ln {
+    font-size: var(--type-caption);
+  }
+
+  .ec-collapse__text-expand,
+  .ec-collapse__text-collapse {
+    font-size: var(--type-small);
+  }
+
   .frame {
     @apply shadow-none!;
   }

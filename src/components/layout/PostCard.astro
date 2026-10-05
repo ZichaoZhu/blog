@@ -326,7 +326,7 @@ const minutes = remarkPluginFrontmatter?.minutes;
   }
 
   :global(.list-mode) .post-card-title {
-    font-size: 1.125rem !important;
+    font-size: var(--type-body) !important;
     line-height: 1.75rem !important;
     margin-bottom: 0.5rem !important;
   }
@@ -349,7 +349,7 @@ const minutes = remarkPluginFrontmatter?.minutes;
 
   /* 移动端列表模式 - 隐藏tags，只在有空间时显示 */
   :global(.list-mode) .stats a {
-    font-size: 0.65rem !important;
+    font-size: var(--type-caption) !important;
     padding: 0.125rem 0.375rem !important;
     height: 1.25rem !important;
   }
@@ -389,7 +389,7 @@ const minutes = remarkPluginFrontmatter?.minutes;
     }
 
     :global(.list-mode) .post-card-title {
-      font-size: 1.5rem !important;
+      font-size: var(--type-body) !important;
       line-height: 2rem !important;
       margin-bottom: 0.75rem !important;
     }
@@ -401,11 +401,11 @@ const minutes = remarkPluginFrontmatter?.minutes;
     }
 
     :global(.list-mode) .description {
-      font-size: inherit !important;
+      font-size: var(--type-small) !important;
     }
 
     :global(.list-mode) .stats a {
-      font-size: 0.75rem !important;
+      font-size: var(--type-small) !important;
       padding: 0.25rem 0.5rem !important;
       height: 1.5rem !important;
     }

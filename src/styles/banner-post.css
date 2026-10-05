@@ -2,7 +2,7 @@
 
 .banner-post-title {
     max-width: 72rem;
-    font-size: 2.75rem;
+    font-size: var(--type-heading);
     text-shadow: 0 4px 24px rgba(0, 0, 0, 0.65);
 }
 
@@ -12,7 +12,7 @@
     padding: 0.85rem 2.25rem;
     border-radius: var(--radius-large);
     background: rgba(0, 0, 0, 0.16);
-    font-size: 0.95rem;
+    font-size: var(--type-small);
     line-height: 1.7;
     font-weight: 400;
     text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
@@ -22,7 +22,7 @@
 .banner-post-description-quote {
     position: absolute;
     color: rgba(255, 255, 255, 0.35);
-    font-size: 1.5rem;
+    font-size: var(--type-heading);
     pointer-events: none;
 }
 
@@ -43,10 +43,4 @@
 
 .banner-post-meta-list {
     text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
-}
-
-@media (max-width: 1280px) {
-    .banner-post-title {
-        font-size: 2.35rem;
-    }
 }
