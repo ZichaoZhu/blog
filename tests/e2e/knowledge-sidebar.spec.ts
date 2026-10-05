@@ -28,12 +28,12 @@ test('navigation and the single stats instance fit all six widths with TOC above
 test('lecture links show each title once and keep keyboard navigation inside the sidebar',async({page})=>{
  await page.setViewportSize({width:1440,height:900});
  await page.goto('/courses/compiler-principles/');
- await page.locator('main .post-card-title').first().click();
+ await page.locator('main .post-card-title[href="/notes/compiler-principles-lec1/"]').click();
  const nav=page.locator('#left-sidebar-dynamic .course-nav');
  const current=nav.locator('ol a[aria-current="page"]');
  await expect(current).toHaveCount(1);
  expect((await current.innerText()).match(/Lec\s*1/g)).toHaveLength(1);
- const next=nav.locator('ol a').nth(1);
+ const next=nav.locator('ol a[href="/notes/compiler-principles-lec2/"]');
  await next.focus();
  expect(await next.evaluate(el=>Number.parseFloat(getComputedStyle(el).outlineWidth))).toBeGreaterThan(0);
  const destination=await next.getAttribute('href');

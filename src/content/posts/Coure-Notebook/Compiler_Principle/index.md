@@ -3,13 +3,13 @@ id: "compiler-principles-compiler-principle"
 slug: "compiler-principles-compiler-principle"
 title: "课程介绍与评分"
 description: "编译原理课程的第一堂课，介绍了课程的分数构成、习题课安排以及实验目标。学生需要编写一个编译器，将源语言SysY编译成RISC-V 32汇编语言。实验报告需要详细描述实验思路，并且需要独立完成，禁止使用AI工具。"
-contentKind: "collection"
+contentKind: "note"
 type: "course"
 topics: ["compilers"]
 visibility: "published"
 author: "zhuzichao"
 date: "2026-03-06"
-course: {"id":"compiler-principles"}
+course: {"id":"compiler-principles","order":0}
 image: ""
 tags: ["编译原理","课程笔记","计算机科学"]
 category: "编译原理"

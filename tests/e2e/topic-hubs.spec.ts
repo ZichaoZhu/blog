@@ -13,7 +13,7 @@ test('papers and research group records by actual subjects and links reach the r
 test('configured empty course and projects stay honest, and compatibility pagination is usable',async({page})=>{
  await page.goto('/courses/deep-learning-computer-vision/');await expect(page.getByText('暂无公开记录。',{exact:true})).toBeVisible();
  await page.goto('/projects/');await expect(page.getByText('暂无已整理的公开项目。',{exact:true})).toBeVisible();
- await page.goto('/notes/');await expect(page.locator('.post-card-title')).toHaveCount(25);await page.getByRole('navigation',{name:'分页',exact:true}).getByRole('link',{name:/下一页/}).click();await expect(page.locator('.post-card-title')).toHaveCount(19);await page.reload();await expect(page.locator('.post-card-title')).toHaveCount(19);
+ await page.goto('/notes/');await expect(page.locator('.post-card-title')).toHaveCount(25);await page.getByRole('navigation',{name:'分页',exact:true}).getByRole('link',{name:/下一页/}).click();await expect(page.locator('.post-card-title')).toHaveCount(20);await page.reload();await expect(page.locator('.post-card-title')).toHaveCount(20);
 });
 test('hub and subject directories keep their records inside one surface with a direct introduction',async({page})=>{
  for(const path of ['/courses/','/papers/','/research/','/projects/','/courses/compiler-principles/','/courses/reinforcement-learning/','/papers/topics/robotics/','/research/topics/3d-vision/']){
@@ -23,14 +23,34 @@ test('hub and subject directories keep their records inside one surface with a d
   await expect(directory.locator(':scope > .knowledge-directory-header h1')).toBeVisible();
   await expect(directory.locator(':scope > .knowledge-directory-header p')).toBeVisible();
   await expect(directory.locator('.topic-groups, .knowledge-list, .empty-state')).toHaveCount(1);
-  if(path==='/courses/compiler-principles/'){
-   const intro=directory.locator('details.collection-intro');
-   const list=directory.locator('.knowledge-list');
-   expect((await intro.boundingBox())!.y).toBeGreaterThan((await list.boundingBox())!.y);
-   await intro.locator('summary').click();
-   await expect(intro).toContainText('分数构成');
-  }
  }
+});
+test('compiler grading document is a peer lecture with neighbors, discovery and its old link',async({page})=>{
+ const introduction='/notes/compiler-principles-compiler-principle/';
+ await page.goto('/courses/compiler-principles/');
+ const list=page.locator('main .post-card-title');
+ await expect(list).toHaveCount(11);
+ await expect(list.first()).toHaveText('课程介绍与评分');
+ await expect(page.locator('details.collection-intro')).toHaveCount(0);
+ await list.first().click();
+ await expect(page).toHaveURL(introduction);
+ await expect(page.locator('main .custom-md')).toContainText('分数构成');
+ const lectures=page.locator('#left-sidebar-dynamic .course-nav ol a');
+ await expect(lectures).toHaveCount(11);
+ await expect(lectures.first()).toHaveAttribute('aria-current','page');
+ await expect(page.getByRole('navigation',{name:'上下讲'}).getByRole('link')).toHaveCount(1);
+ await page.getByRole('navigation',{name:'上下讲'}).getByRole('link',{name:/下一讲/}).click();
+ await expect(page).toHaveURL('/notes/compiler-principles-lec1/');
+ await page.getByRole('navigation',{name:'上下讲'}).getByRole('link',{name:'上一讲：课程介绍与评分'}).click();
+ await expect(page).toHaveURL(introduction);
+ await page.goto('/search/?q=评分&course=compiler-principles');
+ await expect(page.locator('[data-search-result] a[href="'+introduction+'"]')).toBeVisible();
+ const sitemap=await (await page.request.get('/sitemap.xml')).text();
+ expect(sitemap).toContain(introduction+'</loc>');
+ for(const feed of ['/rss.xml','/atom.xml'])expect(await (await page.request.get(feed)).text()).toContain(introduction);
+ await page.goto('/blog/Coure-Notebook/Compiler_Principle/#'+encodeURIComponent('分数构成'));
+ await expect(page).toHaveURL(new RegExp(introduction));
+ await expect.poll(()=>page.evaluate(()=>!!document.getElementById(decodeURIComponent(location.hash.slice(1))))).toBe(true);
 });
 test('directory typography, theme surfaces and topic-card states form one system',async({page})=>{
  await page.setViewportSize({width:1440,height:900});

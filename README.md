@@ -57,6 +57,8 @@ course: { id: operating-systems, order: 14 }
 
 类型为 `course / paper / log / idea / experiment / note`；课程和主题在 [catalog.ts](src/data/catalog.ts) 维护。课程讲次允许 0，按数字排序，只连接同课程上下篇。合集简介使用 `contentKind: collection`，不冒充文章。空正文不计入公开笔记。未知日期保持未知，RSS/Atom 只收录有真实日期的公开文章。
 
+编译原理的《课程介绍与评分》作为普通课程文章，与 Lec1–Lec10 平级；文件仍为 `Compiler_Principle/index.md`，使用 `contentKind: note` 和 `course.order: 0` 排在 Lec1 前面。它进入文章、讲次导航、搜索、统计和订阅，旧内容链接已指向独立文章页。
+
 论文可添加 `paper: { title, authors, year, venue, paperUrl, arxivUrl, doiUrl, codeUrl }`；只填已核实信息。研究日志、想法和实验使用各自类型；项目尚无公开条目，保留真实空状态。
 
 文章标题和简介下方的元信息按固定顺序展示，顺序不受 YAML 字段书写位置影响：第一行是作者、发布日期、更新日期、记录类型；第二行是课程及讲次、主题、标签；第三行是正文计算的字数、预计阅读时长。未填写的可选字段省略，未知发布日期显示“日期未记录”；ID、slug、visibility 等管理字段不展示。课程、主题和标签可以点击，论文专属资料继续放在独立资料区。

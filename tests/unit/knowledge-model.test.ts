@@ -47,10 +47,13 @@ test('activity uses actual publication and updates including projects and preser
  const i=buildKnowledgeIndex({posts:[makePost('old',{date:'2020-01-01',updatedAt:'2026-10-03'})],projects:[makeProject('project',{published:new Date('2025-01-01'),updated:new Date('2026-10-05')})]},catalog);
  assert.equal(i.stats.lastActivityISO,'2026-10-05T00:00:00.000Z');
 });
-test('actual content preserves the 44 public records and controlled topics and tags',async()=>{
+test('actual content includes the grading document in public records and controlled topics and tags',async()=>{
  const m=await readCurrentManifest('src/content/posts');
  const posts=m.records.map(r=>({entryId:r.sourcePath,data:r,hasBody:r.hasBody,pinned:false,words:0}));
  const i=buildKnowledgeIndex({posts,projects:[]},catalog);
- assert.equal(i.stats.articleCount,44);assert.equal(i.stats.categoryCount,9);assert.equal(i.stats.tagCount,21);
- assert.deepEqual(Object.values(i.hubs).map(h=>h.items.length),[31,12,1,0]);
+ assert.equal(i.stats.articleCount,45);assert.equal(i.stats.categoryCount,9);assert.equal(i.stats.tagCount,21);
+ assert.deepEqual(Object.values(i.hubs).map(h=>h.items.length),[32,12,1,0]);
+ const compiler=i.lists['/courses/compiler-principles/'].items;
+ assert.equal(compiler.length,11);
+ assert.equal(compiler[0].url,'/notes/compiler-principles-compiler-principle/');
 });
