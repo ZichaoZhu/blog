@@ -13,7 +13,7 @@ test('article position buttons respond to pointer and keyboard and return to the
  expect(pressed).not.toBe(rest);
  await nav.getByRole('link',{name:'浏览主题',exact:true}).focus();
  await page.keyboard.press('Enter');await expect(page).toHaveURL('/topics/');
- await page.goBack();await back.focus();await page.keyboard.press('Enter');
+ await page.goBack();await expect(page.locator('html')).not.toHaveClass(/is-page-transitioning/);await back.focus();await page.keyboard.press('Enter');
  await expect(page).toHaveURL('/courses/japanese/');
 });
 
@@ -25,6 +25,7 @@ test('lecture cards preserve first, middle and last boundaries outside the readi
  await nav.getByRole('link',{name:/下一讲/}).click();
  await expect(page).toHaveURL('/notes/japanese-lec2-pitch-accent/');
  await expect(nav.getByRole('link')).toHaveCount(2);
+ await expect(page.locator('html')).not.toHaveClass(/is-page-transitioning/);
  await nav.getByRole('link',{name:/下一讲/}).focus();await page.keyboard.press('Enter');
  await expect(page).toHaveURL('/notes/japanese-lec3-dakuon-and-choon/');
  await expect(nav.getByRole('link')).toHaveCount(1);
