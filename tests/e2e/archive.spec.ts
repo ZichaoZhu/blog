@@ -9,9 +9,9 @@ test('archive entry, pagination, year selection and article links survive soft n
  await expect(page.locator('#topic-nav-sidebar a[aria-current="page"]')).toContainText('全部文章');
  await page.getByRole('navigation',{name:'分页',exact:true}).getByRole('link',{name:'下一页'}).click();
  await expect(page).toHaveURL('/archive/page/2/');
- await expect(page.locator('main .archive-post')).toHaveCount(20);
+ await expect(page.locator('main .archive-post')).toHaveCount(25);
  await expect(page.locator('main .archive-year h2')).toHaveText(['2026','2025','日期未记录']);
- await expect(page.locator('main .archive-year').last().locator('a')).toHaveCount(2);
+ await expect(page.locator('main .archive-year').last().locator('a')).toHaveCount(7);
  await page.locator('#topic-nav-sidebar a[href="/archive/2025/"]').click();
  await expect(page).toHaveURL('/archive/2025/');
  await expect(page.locator('main .archive-post')).toHaveCount(12);
@@ -31,7 +31,7 @@ test('archive fits narrow screens and timeline rows reuse pointer and keyboard f
  await page.addInitScript(()=>localStorage.setItem('firefly-effects','off'));
  for(const width of [320,390,768,1024,1280,1440]){
   await page.setViewportSize({width,height:1000});await page.goto('/archive/undated/');
-  await expect(page.locator('main .archive-post')).toHaveCount(2);
+  await expect(page.locator('main .archive-post')).toHaveCount(25);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),String(width)).toBe(true);
   expect(await page.locator('main .archive-post').evaluateAll(rows=>rows.every(row=>row.scrollWidth<=row.clientWidth+1))).toBe(true);
   if(width<1024){await page.locator('.knowledge-context-inline>summary').click();await expect(page.locator('#topic-nav-inline a[href="/archive/2025/"]')).toBeVisible();}
@@ -54,7 +54,7 @@ test('static archive exposes real links without JavaScript and excludes nonexist
   await expect(page.locator('main .archive-post')).toHaveCount(6);
   const canonical=await page.locator('link[rel="canonical"]').getAttribute('href');expect(canonical).toMatch(/\/archive\/2026\/page\/2\/$/);
  }finally{await context.close();}
- for(const path of ['/archive/1900/','/archive/page/0/','/archive/page/1/','/archive/page/3/','/archive/2025/page/2/'])expect((await request.get(path)).status(),path).toBe(404);
+ for(const path of ['/archive/1900/','/archive/page/0/','/archive/page/1/','/archive/page/4/','/archive/2025/page/2/','/archive/undated/page/3/'])expect((await request.get(path)).status(),path).toBe(404);
 });
 
 test('archive navigation labels stay on one line without colliding with the brand or controls',async({page})=>{

@@ -42,3 +42,31 @@ test('lecture links show each title once and keep keyboard navigation inside the
  await expect(nav.locator('ol a[aria-current="page"]')).toHaveAttribute('href',destination!);
  expect(await nav.locator('ol a').evaluateAll(links=>links.every(el=>el.scrollWidth<=el.clientWidth+1))).toBe(true);
 });
+
+test('undated imported courses stay searchable and lecture navigation skips missing numbers',async({page})=>{
+ await page.route('**/*.mp4',r=>r.abort());
+ await page.goto('/courses/machine-learning/');
+ await expect(page.locator('main h1')).toHaveText('Machine Learning');
+ const titles=page.locator('main .post-card-title');
+ await expect(titles.first()).toHaveText('Lec1: 机器学习导论');
+ await titles.first().click();
+ const meta=page.getByRole('region',{name:'文章信息',exact:true});
+ await expect(meta.locator('[data-meta-field="author"]')).toContainText('Goongmly');
+ await expect(meta.locator('[data-meta-field="date"]')).toContainText('日期未记录');
+ await expect(meta.locator('[data-meta-field="date"] time')).toHaveCount(0);
+ await expect(page.getByRole('navigation',{name:'上下讲',exact:true}).getByRole('link',{name:/下一讲/})).toHaveAttribute('href','/notes/machine-learning-lec2/');
+ await page.goto('/search/?q=Lasso&type=course&course=machine-learning');
+ await expect(page.locator('[data-search-result] a[href="/notes/machine-learning-lec8/"]')).toBeVisible();
+ await page.goto('/notes/compiler-principles-lec12/');
+ await expect(page.getByRole('navigation',{name:'上下讲',exact:true}).getByRole('link',{name:/下一讲/})).toHaveAttribute('href','/notes/compiler-principles-lec14/');
+ await expect(meta.locator('[data-meta-field="author"]')).toContainText('Goongmly');
+ await page.goto('/courses/deep-learning-computer-vision/');
+ await expect(titles.first()).toHaveText('Lec2: 图像分类与线性分类器');
+ await titles.first().click();
+ await page.getByRole('navigation',{name:'上下讲',exact:true}).getByRole('link',{name:/下一讲/}).click();
+ await expect(page).toHaveURL('/notes/deep-learning-computer-vision-lec3/');
+ await expect(page.locator('article img[data-source-asset]')).toHaveCount(3);
+ await page.setViewportSize({width:390,height:900});
+ await page.reload();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+});

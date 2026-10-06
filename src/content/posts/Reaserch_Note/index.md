@@ -7,7 +7,7 @@ contentKind: "collection"
 type: "note"
 topics: []
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2026-07-08"
 image: ""
 tags: ["科研","日志"]

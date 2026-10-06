@@ -7,7 +7,7 @@ contentKind: "note"
 type: "paper"
 topics: ["reinforcement-learning","robotics"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2026-04-12"
 image: ""
 tags: ["论文阅读","强化学习","四足机器人","本体感知"]

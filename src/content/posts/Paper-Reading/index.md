@@ -7,7 +7,7 @@ contentKind: "collection"
 type: "note"
 topics: ["robotics","reinforcement-learning"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2026-05-12"
 image: ""
 tags: ["论文阅读","机器人","强化学习"]

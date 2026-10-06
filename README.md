@@ -57,7 +57,9 @@ course: { id: operating-systems, order: 14 }
 
 类型为 `course / paper / log / idea / experiment / note`；课程和主题在 [catalog.ts](src/data/catalog.ts) 维护。课程讲次允许 0，按数字排序，只连接同课程上下篇。合集简介使用 `contentKind: collection`，不冒充文章。空正文不计入公开笔记。未知日期保持未知，RSS/Atom 只收录有真实日期的公开文章。
 
-编译原理的《课程介绍与评分》作为普通课程文章，与 Lec1–Lec10 平级；文件仍为 `Compiler_Principle/index.md`，使用 `contentKind: note` 和 `course.order: 0` 排在 Lec1 前面。它进入文章、讲次导航、搜索、统计和订阅，旧内容链接已指向独立文章页。
+编译原理的《课程介绍与评分》作为普通课程文章，与各讲平级；文件仍为 `Compiler_Principle/index.md`，使用 `contentKind: note` 和 `course.order: 0` 排在 Lec1 前面。它进入文章、讲次导航、搜索、统计和订阅，旧内容链接已指向独立文章页。
+
+2026-10-06 更新课程笔记：编译原理修订 Lec5、Lec10，并补入 Lec11、Lec12、Lec14、Lec15；Deep Learning for Computer Vision 导入 Lec2–Lec16；Machine Learning 导入 Lec1–Lec8。缺失讲次不补写、不重新编号。新增 27 篇没有真实发布日期，进入“日期未记录”归档，仍可通过课程、主题和全文搜索发现。编译原理复用已有图片，DL4CV 仅复制正文引用的 60 张图片；ML 的本地课件／详细笔记入口没有公开导入，正文保留。原有 zhuzichao 作者字段统一改为 Goongmly，历史迁移快照和旧作者地址的兼容映射保留。
 
 论文可添加 `paper: { title, authors, year, venue, paperUrl, arxivUrl, doiUrl, codeUrl }`；只填已核实信息。研究日志、想法和实验使用各自类型；项目尚无公开条目，保留真实空状态。
 

@@ -7,7 +7,7 @@ contentKind: "note"
 type: "course"
 topics: ["operating-systems"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2025-10-09"
 course: {"id":"operating-systems","order":3}
 image: ""

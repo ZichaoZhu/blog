@@ -10,10 +10,10 @@ test('papers and research group records by actual subjects and links reach the r
  await page.goto('/research/');await page.locator('main .topic-groups').getByRole('link',{name:/三维视觉/}).click();await expect(page.locator('main .post-card-title')).toHaveCount(1);
  for(const path of ['/papers/topics/not-real/','/research/topics/robotics/','/papers/topics/robotics/page/99/'])expect((await page.request.get(path)).status()).toBe(404);
 });
-test('configured empty course and projects stay honest, and compatibility pagination is usable',async({page})=>{
- await page.goto('/courses/deep-learning-computer-vision/');await expect(page.getByText('暂无公开记录。',{exact:true})).toBeVisible();
+test('imported course and empty projects stay honest, and compatibility pagination is usable',async({page})=>{
+ await page.goto('/courses/deep-learning-computer-vision/');await expect(page.locator('.post-card-title')).toHaveCount(15);await expect(page.getByText('暂无公开记录。',{exact:true})).toHaveCount(0);
  await page.goto('/projects/');await expect(page.getByText('暂无已整理的公开项目。',{exact:true})).toBeVisible();
- await page.goto('/notes/');await expect(page.locator('.post-card-title')).toHaveCount(25);await page.getByRole('navigation',{name:'分页',exact:true}).getByRole('link',{name:/下一页/}).click();await expect(page.locator('.post-card-title')).toHaveCount(20);await page.reload();await expect(page.locator('.post-card-title')).toHaveCount(20);
+ await page.goto('/notes/');await expect(page.locator('.post-card-title')).toHaveCount(25);await page.getByRole('navigation',{name:'分页',exact:true}).getByRole('link',{name:/下一页/}).click();await expect(page.locator('.post-card-title')).toHaveCount(25);await page.reload();await expect(page.locator('.post-card-title')).toHaveCount(25);
 });
 test('hub and subject directories keep their records inside one surface with a direct introduction',async({page})=>{
  for(const path of ['/courses/','/papers/','/research/','/projects/','/courses/compiler-principles/','/courses/reinforcement-learning/','/papers/topics/robotics/','/research/topics/3d-vision/']){
@@ -29,14 +29,14 @@ test('compiler grading document is a peer lecture with neighbors, discovery and 
  const introduction='/notes/compiler-principles-compiler-principle/';
  await page.goto('/courses/compiler-principles/');
  const list=page.locator('main .post-card-title');
- await expect(list).toHaveCount(11);
+ await expect(list).toHaveCount(15);
  await expect(list.first()).toHaveText('课程介绍与评分');
  await expect(page.locator('details.collection-intro')).toHaveCount(0);
  await list.first().click();
  await expect(page).toHaveURL(introduction);
  await expect(page.locator('main .custom-md')).toContainText('分数构成');
  const lectures=page.locator('#left-sidebar-dynamic .course-nav ol a');
- await expect(lectures).toHaveCount(11);
+ await expect(lectures).toHaveCount(15);
  await expect(lectures.first()).toHaveAttribute('aria-current','page');
  await expect(page.getByRole('navigation',{name:'上下讲'}).getByRole('link')).toHaveCount(1);
  await page.getByRole('navigation',{name:'上下讲'}).getByRole('link',{name:/下一讲/}).click();

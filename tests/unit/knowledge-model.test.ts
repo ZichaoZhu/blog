@@ -51,9 +51,9 @@ test('actual content includes the grading document in public records and control
  const m=await readCurrentManifest('src/content/posts');
  const posts=m.records.map(r=>({entryId:r.sourcePath,data:r,hasBody:r.hasBody,pinned:false,words:0}));
  const i=buildKnowledgeIndex({posts,projects:[]},catalog);
- assert.equal(i.stats.articleCount,45);assert.equal(i.stats.categoryCount,9);assert.equal(i.stats.tagCount,21);
- assert.deepEqual(Object.values(i.hubs).map(h=>h.items.length),[32,12,1,0]);
+ assert.equal(i.stats.articleCount,72);assert.equal(i.stats.categoryCount,11);assert.equal(i.stats.tagCount,24);
+ assert.deepEqual(Object.values(i.hubs).map(h=>h.items.length),[59,12,1,0]);
  const compiler=i.lists['/courses/compiler-principles/'].items;
- assert.equal(compiler.length,11);
+ assert.equal(compiler.length,15);
  assert.equal(compiler[0].url,'/notes/compiler-principles-compiler-principle/');
 });

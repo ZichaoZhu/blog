@@ -7,8 +7,9 @@ contentKind: "note"
 type: "course"
 topics: ["compilers"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2026-04-10"
+updatedAt: "2026-10-06"
 course: {"id":"compiler-principles","order":5}
 image: ""
 tags: ["编译原理","课程笔记","计算机科学"]
@@ -829,6 +830,38 @@ ty      → type-id
         | array of type-id
 tyfields → ε
         | id : type-id {, id : type-id}
+```
+
+#### 非终结符解释
+
+| 非终结符 | 含义 | 例子 |
+|---|---|---|
+| `typec` | 一条完整的类型声明 | `type point = {x:int, y:int}` |
+| `ty` | 类型体（`=` 右边的部分） | `{x:int, y:int}` / `int` / `array of int` |
+| `tyfields` | record 花括号**内部**的字段列表 | `x:int, y:int` |
+| `type-id` | 已存在的类型名（终结符） | `int`, `string`, `point` |
+| `id` | 字段名（终结符） | `x`, `y` |
+
+**层级关系：**
+
+```
+typec           ← 整条声明
+  └── ty        ← 声明的类型体
+        └── tyfields   ← 如果是 record，里面的字段列表
+              └── id + type-id   ← 字段名 + 字段类型
+```
+
+**串起来看：**
+
+```tiger
+type point = {x: int, y: int}
+│    │       │  │    │  │
+│    │       │  │    │  └── type-id
+│    │       │  │    └──── id
+│    │       │  └──────── type-id  (以上构成 tyfields)
+│    │       └───────── ty (record 类型)
+│    └─ type-id (新类型名)
+└── typec（整条声明）
 ```
 
 ### Tiger 中类型的内部表示

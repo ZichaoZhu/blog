@@ -5,9 +5,9 @@ title: "Deep_Learning_for_Computer_Vision"
 description: "课程简介 这是 Stanford CS231N Deep Learning for Computer Vision，由李飞飞教授主讲。 课程网站"
 contentKind: "collection"
 type: "course"
-topics: ["3d-vision"]
+topics: ["computer-vision"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 course: {"id":"deep-learning-computer-vision"}
 image: ""
 tags: []

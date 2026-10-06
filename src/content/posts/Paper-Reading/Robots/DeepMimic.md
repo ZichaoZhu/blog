@@ -7,7 +7,7 @@ contentKind: "note"
 type: "paper"
 topics: ["reinforcement-learning","imitation-learning","robotics"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2026-04-10"
 image: ""
 tags: ["论文阅读","强化学习","角色动画","模仿学习"]

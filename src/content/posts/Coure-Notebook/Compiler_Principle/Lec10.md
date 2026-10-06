@@ -7,8 +7,9 @@ contentKind: "note"
 type: "course"
 topics: ["compilers"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2026-04-24"
+updatedAt: "2026-10-06"
 course: {"id":"compiler-principles","order":10}
 image: ""
 tags: ["编译原理","课程笔记","计算机科学"]
@@ -360,6 +361,30 @@ until in'[n] = in[n] AND out'[n] = out[n] for all n
 - **X 和 Y 都满足方程**(Y 是把变量 d "假装也活着")。两个都是 valid 解。
 - **Z 不满足方程**——基于 Z 会推出"b 和 c 不冲突",可能把它们分到同一寄存器,**程序就错了**。
 
+### 这张表对应的程序(从 X 反推)
+
+```
+1:     a := 0
+2:     b := a + 1
+3:     c := c + b
+4:     a := b * 2
+5:     if a < N goto 2
+6:     return c
+```
+
+| 节点 | def | use |
+|---|---|---|
+| 1 | {a} | {} |
+| 2 | {b} | {a} |
+| 3 | {c} | {b, c} |
+| 4 | {a} | {b} |
+| 5 | {} | {a} |
+| 6 | {} | {c} |
+
+注意 **d 在程序里一次都没出现**——既没被 use,也没被 def。所以 d 在任何节点之后都"实际不活"(没人会读 d 的当前值),X 才不会把 d 放进任何集合。
+
+但 Y 把 d 强行塞进所有 in/out:由于 d 不在任何 def[n] 里,`out[n] - def[n]` 不会把它去掉,方程的等式照样成立——这就是 Y 是合法不动点的原因。它只是**多算了一个根本没人关心的变量**。
+
 > 满足方程的解称为 **fixed point**。其中**最小的**(变量最少的)那个叫 **least fixed point**。
 
 **Theorem.** 迭代算法从空集出发,每次只增不减,最后收敛到的就是 **least fixed point**。
@@ -383,14 +408,16 @@ until in'[n] = in[n] AND out'[n] = out[n] for all n
 1: a := b * b              ← a >= 0
 2: c := a + b              ← c >= b
 3: if c >= b               ← always true!
-4:     return a            ← dead branch
-5:     return c
+4:     return a            ← 条件为「假」时走这条 → dead branch
+5:     return c            ← 条件为「真」时走这条
 ```
+
+为什么 line 4 是 dead branch?代数推一下:`c - b = (b² + b) - b = b² ≥ 0`,所以 `c >= b` 永远成立,跳进 line 4 的"假分支"在动态执行中**永远进不去**。
 
 - **Dynamic liveness**:某个**实际执行**会从 n 走到 use(a),且不经过 def(a)。
 - **Static liveness**:CFG 上**存在一条路径**从 n 到 use(a),不经过 def(a)。
 
-例子里 node 4 在动态执行中**永远到不了**,但 static analysis 看到 CFG 边就认为它能到——所以认为 a 在 node 1 之后是 live 的。
+例子里 node 4 在动态执行中**永远到不了**,但 static analysis 只看 CFG 结构、不做算术推理,看到 node 3 → node 4 这条边就认为它可达——所以认为 a 在 node 1 之后是 live 的。
 
 > Static 总是 ⊇ Dynamic,所以 static liveness 是 dynamic liveness 的保守近似。
 
@@ -433,15 +460,18 @@ c  x  x
 ### Undirected Graph
 
 ```
-   b
-   │
-   ●
-   │
-   a ─── c
+    b
+    │
+    │      ← b 和 c 之间的边(b 与 c 干涉)
+    c
+    │
+    │      ← c 和 a 之间的边(c 与 a 干涉)
+    a
 ```
 
-- **node** = 每个 temporary
-- **edge** = "这两个不能同寄存器"
+- **node** = 每个 temporary(图中 a、b、c 三个节点)
+- **edge** = "这两个 temp 互相干涉,不能同寄存器"
+- **a 和 b 之间没有边** —— 因为它们不冲突,可以共享寄存器
 
 > 这就是 **interference graph**——下一章 register allocation 把它当成图染色问题:用 K 种颜色(寄存器)染图,相邻节点不同色。
 

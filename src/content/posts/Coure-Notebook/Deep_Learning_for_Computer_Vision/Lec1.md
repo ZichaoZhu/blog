@@ -5,9 +5,9 @@ title: "Lec1"
 description: ""
 contentKind: "note"
 type: "course"
-topics: ["3d-vision"]
+topics: ["computer-vision"]
 visibility: "unlisted"
-author: "zhuzichao"
+author: "Goongmly"
 course: {"id":"deep-learning-computer-vision","order":1}
 image: ""
 tags: []

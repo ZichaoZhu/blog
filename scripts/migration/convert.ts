@@ -123,7 +123,7 @@ export async function buildManifest(
 			visibility: data.draft
 				? "draft"
 				: (data.visibility ?? fallback.visibility),
-			author: data.author ?? "zhuzichao",
+			author: data.author ?? "Goongmly",
 			date: date(data.date),
 			updatedAt: date(data.updatedAt),
 			tags,

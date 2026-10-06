@@ -7,7 +7,7 @@ contentKind: "note"
 type: "course"
 topics: ["japanese"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2026-01-30"
 course: {"id":"japanese","order":1}
 image: ""

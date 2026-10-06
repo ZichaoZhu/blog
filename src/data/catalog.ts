@@ -9,7 +9,8 @@ export const courses: CourseDefinition[] = [
 	{
 		id: "compiler-principles",
 		title: "编译原理",
-		description: "从词法、语法与语义分析，到中间代码、指令选择和活跃性分析。",
+		description:
+			"从词法与语法分析，到代码生成、寄存器分配、垃圾回收和循环优化。",
 		sourcePrefix: "Coure-Notebook/Compiler_Principle",
 		topic: "compilers",
 		introPath: "Coure-Notebook/Compiler_Principle",
@@ -31,10 +32,18 @@ export const courses: CourseDefinition[] = [
 	{
 		id: "deep-learning-computer-vision",
 		title: "Deep Learning for Computer Vision",
-		description: "Stanford CS231N 课程笔记。",
+		description:
+			"Stanford CS231N：从图像分类与卷积网络，到 Transformer、生成模型和三维视觉。",
 		sourcePrefix: "Coure-Notebook/Deep_Learning_for_Computer_Vision",
-		topic: "3d-vision",
+		topic: "computer-vision",
 		introPath: "Coure-Notebook/Deep_Learning_for_Computer_Vision",
+	},
+	{
+		id: "machine-learning",
+		title: "Machine Learning",
+		description: "从数据处理与模型评价，到概率建模、聚类、线性回归和正则化。",
+		sourcePrefix: "Coure-Notebook/Machine_Learning",
+		topic: "machine-learning",
 	},
 	{
 		id: "japanese",
@@ -46,6 +55,16 @@ export const courses: CourseDefinition[] = [
 ];
 
 export const topics: TopicDefinition[] = [
+	{
+		id: "machine-learning",
+		name: "机器学习",
+		description: "数据、模型、概率推断与泛化能力。",
+	},
+	{
+		id: "computer-vision",
+		name: "计算机视觉",
+		description: "图像与视频理解、视觉表示和生成模型。",
+	},
 	{
 		id: "reinforcement-learning",
 		name: "强化学习",

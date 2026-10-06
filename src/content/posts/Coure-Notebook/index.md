@@ -7,7 +7,7 @@ contentKind: "collection"
 type: "note"
 topics: []
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2026-04-14"
 image: ""
 tags: ["课程笔记","计算机科学"]

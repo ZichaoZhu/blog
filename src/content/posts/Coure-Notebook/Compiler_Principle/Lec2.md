@@ -7,7 +7,7 @@ contentKind: "note"
 type: "course"
 topics: ["compilers"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2026-03-20"
 course: {"id":"compiler-principles","order":2}
 image: ""

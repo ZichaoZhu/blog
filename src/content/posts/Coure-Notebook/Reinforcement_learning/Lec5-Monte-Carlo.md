@@ -7,7 +7,7 @@ contentKind: "note"
 type: "course"
 topics: ["reinforcement-learning"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 date: "2026-02-12"
 course: {"id":"reinforcement-learning","order":5}
 image: ""

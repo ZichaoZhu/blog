@@ -7,7 +7,7 @@ contentKind: "note"
 type: "paper"
 topics: ["3d-vision"]
 visibility: "published"
-author: "zhuzichao"
+author: "Goongmly"
 image: ""
 tags: []
 category: "未分类"
