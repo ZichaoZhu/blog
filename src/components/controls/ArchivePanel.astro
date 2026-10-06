@@ -53,11 +53,10 @@ for (const item of items) {
  .archive-content {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,30%);align-items:center;gap:.5rem 1.25rem;min-width:0;}
  .archive-title,.archive-subject {display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
  .archive-title {font-size:var(--type-small);font-weight:700;line-height:1.6;}
- .archive-subject {font-size:var(--type-small);color:var(--content-meta);line-height:1.5;text-align:left;justify-self:end;width:fit-content;max-width:100%;}
+ .archive-subject {font-size:var(--type-small);color:var(--content-meta);line-height:1.5;text-align:left;}
  .archive-post:hover .archive-title,.archive-post:focus-visible .archive-title {color:var(--primary);}
  @media(max-width:767px) {
   .archive-post {grid-template-columns:2.75rem .75rem minmax(0,1fr);gap:.45rem;}
   .archive-content {grid-template-columns:minmax(0,1fr);gap:.25rem;}
-  .archive-subject {justify-self:start;}
  }
 </style>
