@@ -58,9 +58,8 @@ test('static archive exposes real links without JavaScript and excludes nonexist
  for(const path of ['/archive/1900/','/archive/page/0/','/archive/page/1/','/archive/page/4/','/archive/2025/page/2/','/archive/undated/page/3/'])expect((await request.get(path)).status(),path).toBe(404);
 });
 
-test('archive navigation labels stay on one line without colliding with the brand or controls',async({page})=>{
- for(const width of [1024,1280,1360,1400,1440,1920]){
-  await page.setViewportSize({width,height:900});await page.goto('/archive/');
+test('desktop navigation stays visible without collisions, including while searching',async({page})=>{
+ const checkLayout=async(width:number)=>{
   const result=await page.locator('#navbar').evaluate(nav=>{
    const brand=nav.querySelector('a[href="/"]')!.getBoundingClientRect();
    const controls=nav.querySelector('#search-bar')!.closest('.col-start-3')!.getBoundingClientRect();
@@ -76,8 +75,24 @@ test('archive navigation labels stay on one line without colliding with the bran
    });
    return {visible:links.length,safe:measured.every(link=>link.safe),measured};
   });
+  expect(result.visible,`Desktop links must be visible at ${width}px`).toBe(6);
   expect(result.safe,`${width} ${JSON.stringify(result.measured)}`).toBe(true);
-  if(!result.visible)await expect(page.locator('#nav-menu-switch')).toBeVisible();
+  await expect(page.locator('#nav-menu-switch')).toBeHidden();
+ };
+ for(const width of [1024,1100,1279,1280,1360,1399,1400,1440,1920]){
+  await page.setViewportSize({width,height:900});await page.goto('/archive/');
+  await checkLayout(width);
+  const searchInput=page.locator('#search-input-desktop');
+  if(await searchInput.isVisible()){
+   await page.addStyleTag({content:'#navbar *{transition:none!important;}'});
+   await searchInput.focus();
+   await checkLayout(width);
+  }else{
+   await page.locator('#search-switch').click();
+   await expect(page.locator('#search-bar-inside input')).toBeVisible();
+   await page.keyboard.press('Escape');
+   await expect(page.locator('#search-switch')).toBeFocused();
+  }
  }
 });
 

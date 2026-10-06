@@ -34,6 +34,7 @@ test('lecture links show each title once and keep keyboard navigation inside the
  await expect(current).toHaveCount(1);
  expect((await current.innerText()).match(/Lec\s*1/g)).toHaveLength(1);
  const next=nav.locator('ol a[href="/notes/compiler-principles-lec2/"]');
+ await expect(page.locator('html')).not.toHaveClass(/is-page-transitioning/);
  await next.focus();
  expect(await next.evaluate(el=>Number.parseFloat(getComputedStyle(el).outlineWidth))).toBeGreaterThan(0);
  const destination=await next.getAttribute('href');

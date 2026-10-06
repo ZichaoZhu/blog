@@ -6,6 +6,15 @@ test('desktop and mobile navigation expose four hubs and archive, homepage shows
  await page.setViewportSize({width:390,height:844});await page.locator('#nav-menu-switch').click();await expect(page.locator('#nav-menu-panel a[href="/notes/"]')).toHaveCount(0);await expect(page.locator('#nav-menu-panel a[href="/archive/"]')).toBeVisible();
  await page.keyboard.press('Escape');await page.goto('/search/');await expect(page.getByRole('navigation',{name:'搜索备用入口'}).getByRole('link')).toHaveCount(5);
 });
+test('a scaled desktop exposes direct hub links without JavaScript',async({browser})=>{
+ const context=await browser.newContext({javaScriptEnabled:false,deviceScaleFactor:2,viewport:{width:1024,height:900}});
+ try{
+  const page=await context.newPage();await page.goto('http://127.0.0.1:4321/');
+  for(const path of ['courses','papers','research','projects','archive'])await expect(page.locator(`#navbar .navbar-links a[href="/${path}/"]`)).toBeVisible();
+  await page.locator('#navbar .navbar-links a[href="/courses/"]').click();await expect(page.locator('main h1')).toHaveText('课程');
+  await page.locator('#navbar .navbar-links a[href="/papers/"]').click();await expect(page.locator('main h1')).toHaveText('论文阅读');
+ }finally{await context.close();}
+});
 test('homepage to course, article, next lecture and back',async({page})=>{
  await page.goto('/');await expect(page.locator('h1')).toHaveText('Goongmly Research Notes');
  await page.getByRole('navigation',{name:'知识入口'}).getByRole('link',{name:'课程',exact:false}).click();
