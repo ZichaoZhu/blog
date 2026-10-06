@@ -12,11 +12,11 @@ const config = {
 	redirects: [
 		...Object.entries(legacy.paths).flatMap(([path, destination]) =>
 			[...new Set([path, path.endsWith("/") ? path : `${path}/`])].map(
-				(source) => ({ source, destination, permanent: true }),
+				(source) => ({ source: encodeURI(source), destination, permanent: true }),
 			),
 		),
 		...Object.entries(legacy.images).map(([path, image]) => ({
-			source: `/api/images/${path.replace(/[()]/g, "\\$&")}`,
+			source: `/api/images/${encodeURI(path).replace(/[()]/g, "\\$&")}`,
 			destination: image.original,
 			permanent: true,
 		})),
