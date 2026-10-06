@@ -2,7 +2,7 @@
 
 个人科研知识主页，采用 Astro 静态构建、Markdown Content Collections、Svelte 交互和 Pagefind 搜索。基于真实 [Firefly](https://github.com/CuteLeaf/Firefly/tree/6d82554bfe1cb3d4b43adb0969dad1d43ac6dee3) 模板 6.16.8，锁定提交 `6d82554bfe1cb3d4b43adb0969dad1d43ac6dee3`；保留上游 MIT 许可与致谢。
 
-迁移在 `feat/astro-firefly` 分支实施，原 Next 工作区保留。内容与验收证据见 [ACCEPTANCE](docs/migration/ACCEPTANCE.md)，专题与统计验收见 [TOPIC-HUBS-ACCEPTANCE](docs/migration/TOPIC-HUBS-ACCEPTANCE.md)，恢复步骤见 [ROLLBACK](docs/migration/ROLLBACK.md)。本地预览使用已替换的个人媒体；生产域名与托管平台待确定。
+迁移在 `feat/astro-firefly` 分支实施，原 Next 工作区保留。内容与验收证据见 [ACCEPTANCE](docs/migration/ACCEPTANCE.md)，专题与统计验收见 [TOPIC-HUBS-ACCEPTANCE](docs/migration/TOPIC-HUBS-ACCEPTANCE.md)，恢复步骤见 [ROLLBACK](docs/migration/ROLLBACK.md)。正式站点为 [blog.blessingworld.cn](https://blog.blessingworld.cn)，沿用 Vercel 的 `zichaozhus-projects/blog` 项目；本地预览使用已替换的个人媒体。
 
 ## 运行与检查
 
@@ -139,8 +139,20 @@ node --import tsx scripts/benchmark-content.ts --count 500 --output-dir /tmp/fir
 
 压力数据只写入新的临时目录，绝不进入真实内容目录。实测结果代表本机与当时语料，不能承诺部署后的 CDN 性能。
 
-## 发布准备
+## 发布
 
-默认产物为 `dist/` 静态预览，全站 noindex。确认生产域名后，以 `SITE_MODE=production SITE_ORIGIN=https://已确认域名 pnpm build` 在同一提交重建；缺少有效 HTTPS origin 时直接失败。检查 canonical/OG/sitemap/RSS/Atom/robots 的域名一致性，再按所选平台设置旧地址永久重定向、验证旧链接及媒体。
+默认 `pnpm build` 生成 `dist/` 静态预览，全站 noindex。正式版使用 `SITE_MODE=production SITE_ORIGIN=https://blog.blessingworld.cn pnpm build`；缺少有效 HTTPS origin 时直接失败。
 
-发布前需保存当前线上 release/产物与规则、执行 [回滚步骤](docs/migration/ROLLBACK.md)。本次交付没有 push、merge、部署或 DNS 操作。
+`vercel.mjs` 指定 Astro、`dist/` 和锁文件安装，并按 `VERCEL_ENV` 区分生产与预览 SEO。旧文章与图片的 HTTP 308 规则直接复用 `src/data/legacy-routes.json`，无需维护另一份映射。
+
+当前图片与视频产物超过 Hobby 的 CLI 源文件上传额度，正式发布使用现有 Git 连接进行远端构建，不删减媒体。先提交并推送迁移分支，再通过 Vercel 创建指定提交的生产部署，设置 `autoAssignCustomDomains: false` 暂缓域名分配。验证新部署后使用 CLI 切换：
+
+```bash
+pnpm dlx vercel@62.2.0 link --yes --project blog --scope zichaozhus-projects
+pnpm dlx vercel@62.2.0 pull --yes --environment production
+pnpm dlx vercel@62.2.0 build --prod # 本地检查正式产物，不上传
+# 在 Vercel 创建指定 Git 提交的生产部署并验证后：
+pnpm dlx vercel@62.2.0 promote <新部署地址> --yes
+```
+
+发布前记录当前部署 ID 和项目配置，按 [回滚步骤](docs/migration/ROLLBACK.md) 保留原部署。`.vercel/` 与 CLI 下载的环境文件不提交。生产域名的 DNS 不需要更改。

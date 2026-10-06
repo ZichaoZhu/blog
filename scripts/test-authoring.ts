@@ -218,13 +218,14 @@ try {
 	const index = manifest.records.find((r) => r.slug === "coure-notebook");
 	const course = manifest.records.find(
 		(r) =>
-			r.contentKind === "collection" && r.course?.id === "compiler-principles",
+			r.contentKind === "collection" &&
+			r.course?.id === "deep-learning-computer-vision",
 	);
 	const paper = manifest.records.find((r) => r.slug === "paper-reading");
 	for (const [entry, visibility, body] of [
 		[index, "draft", "HiddenDraftIntroSentinel"],
 		[course, "unlisted", "HiddenCourseIntroSentinel"],
-		[paper, "published", "VisibleIntroSentinel"],
+		[paper, "published", "PublishedHubIntroSentinel"],
 	] as const) {
 		if (!entry)
 			throw new Error(

@@ -191,7 +191,7 @@ const logoVariants = await Promise.all(
                 </div>
             </a>
             <div class:list={[
-                "navbar-links hidden xl:flex items-center space-x-1 col-start-2",
+                "navbar-links hidden min-[1440px]:flex items-center space-x-1 col-start-2",
                 isNavbarMenuCentered
                     ? "justify-center"
                     : "justify-start pl-2"
@@ -229,7 +229,7 @@ const logoVariants = await Promise.all(
                 )}
                 {/* @ts-ignore */}
                 <EffectsToggle/><LightDarkSwitch client:load></LightDarkSwitch>
-                <button aria-label="导航菜单" aria-controls="nav-menu-panel" aria-expanded="false" name="Nav Menu" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90 xl:hidden!" id="nav-menu-switch">
+                <button aria-label="导航菜单" aria-controls="nav-menu-panel" aria-expanded="false" name="Nav Menu" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90 min-[1440px]:hidden!" id="nav-menu-switch">
                     <Icon name="material-symbols:menu-rounded" class="text-[1.25rem]"></Icon>
                 </button>
             </div>
