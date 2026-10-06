@@ -155,4 +155,4 @@ pnpm dlx vercel@62.2.0 build --prod # 本地检查正式产物，不上传
 pnpm dlx vercel@62.2.0 promote <新部署地址> --yes
 ```
 
-发布前记录当前部署 ID 和项目配置，按 [回滚步骤](docs/migration/ROLLBACK.md) 保留原部署。`.vercel/` 与 CLI 下载的环境文件不提交。生产域名的 DNS 不需要更改。
+发布前记录当前部署 ID 和项目配置，按 [回滚步骤](docs/migration/ROLLBACK.md) 保留原部署。2026-10-06 的实际发布版本、验收结果与旧部署 ID 见 [发布记录](docs/migration/DEPLOYMENT.md)。`.vercel/` 与 CLI 下载的环境文件不提交。生产域名的 DNS 不需要更改。

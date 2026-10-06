@@ -36,16 +36,20 @@ RESTORE
 
 此流程已实际在 `/tmp/firefly-next-baseline-20261003` 恢复，并核对全部 712 hashes 与 22 删除，见 [RESTORE_REPORT.json](RESTORE_REPORT.json)。恢复后的旧 Next 项目也实际完成构建用于同条件性能对照。后续可在新的恢复目录依照该旧项目自己的 package/lockfile 安装和构建，勿套用新分支的 pnpm 依赖。
 
-## 线上切换前
+## 本次正式发布
 
-当前线上托管平台、release ID 和可恢复产物路径尚未提供。上线之前必须记录这三项，并保存对应域名、HTTP 301/308 规则、robots、sitemap 与搜索索引。模板演示媒体不能替代个人媒体的正式验收。
+2026-10-06 已沿用原 Vercel 项目 `zichaozhus-projects/blog` 发布 Astro。正式域名为 `https://blog.blessingworld.cn`，新部署为 `dpl_GgML7Lb9BBV3xhnLrcqTYmamyK9P`。原 Next.js 部署 `dpl_5RAef5zEDq9cbgZjtt1BfW77aHGi` 保留，其地址为 `https://blog-9zshenq3l-zichaozhus-projects.vercel.app`。
 
-部署同一迁移提交的 production 构建；把 release ID 与原 release ID 写入发布记录。切换前抽查旧文章、查询筛选、锚点和图片地址。旧规则的备份应包含 host 层配置，静态 HTML 兼容页不等于 host 层永久重定向。
+生产构建先暂存验收，再切换域名；全部 642 个旧页面与图片地址在正式域名完成 HTTP 308 验证。原部署、项目设置、robots、sitemap 的发布前快照保存于本机 `/tmp/goongmly-release-before-20261006/`，该临时目录不作为长期恢复的唯一依据。正式版本、验证与回退命令见 [DEPLOYMENT.md](DEPLOYMENT.md)。DNS 未改变。
 
 ## 如需线上回退
 
-1. 在同一托管平台恢复已保存的旧 release/完整产物与旧规则；若只能重新构建，使用上述恢复副本生成旧产物。
+1. 在同一 Vercel 项目执行下方命令，恢复保留的完整旧部署与旧规则；若旧部署已被删除，使用上述恢复副本生成旧产物。
 2. 同时恢复旧 robots、sitemap、索引和域名配置；清理平台缓存后验证旧文章、图片和搜索。不能让新 Pagefind 索引混在旧 Next 产物中。
 3. 保留迁移分支和问题证据用于修复。不要 reset 当前 main，也不要删除新写的文章；先单独备份切换后新增的内容再评估回迁。
 
-本次没有改变线上 release、DNS 或 HTTP 规则，不需要执行线上回退。迁移分支保留，原工作区仍可按原流程运行。
+```bash
+pnpm dlx vercel@62.2.0 rollback dpl_5RAef5zEDq9cbgZjtt1BfW77aHGi --yes --scope zichaozhus-projects
+```
+
+回退旧产物不需要重新构建。若后续继续构建旧 Next 源码，再恢复 Vercel 框架为 `nextjs`、Node 为 `24.x`。迁移分支与原工作区保留，勿 reset main；Git 生产分支仍为 main，本次为迁移分支的指定提交手动发布。

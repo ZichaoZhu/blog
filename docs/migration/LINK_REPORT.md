@@ -1,5 +1,7 @@
 # Link and SEO verification
 
+Historical preview evidence follows. On 2026-10-06 the confirmed Vercel production domain was published and all 64 legacy page paths plus 578 image paths passed real HTTP 308 checks, including encoded Chinese and space-containing filenames. See [DEPLOYMENT.md](DEPLOYMENT.md) for the current release and SEO validation.
+
 Preview validation passed 53 legacy content endpoints and 578 legacy image endpoints. Final targets are 47 article routes, 5 collection introductions and one empty lecture routed to its course. Content compatibility pages are noindex and route directly to the final target. Native static image compatibility returns PNG bytes with their original signatures (width queries return the original in preview); the mapping resolver selects actual responsive variants for the requested width.
 
 83 changed heading IDs were discovered by comparing the original Markdown heading pipeline with rendered HTML; aliases remain on the canonical articles. Stable headings retain their IDs. Paths decode once, preserving literal plus/percent signs and rejecting traversal or malformed encodings. Folder/category/tag, author, research area, combined note filters and page 2 are covered by tests.

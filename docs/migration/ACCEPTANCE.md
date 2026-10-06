@@ -1,5 +1,7 @@
 # Migration acceptance
 
+This document preserves the initial local migration evidence. The 2026-10-06 production release, current checks and rollback version are recorded in [DEPLOYMENT.md](DEPLOYMENT.md); statements below about deployment being pending refer to that earlier stage.
+
 Branch: `feat/astro-firefly`. Implementation uses the pinned Firefly template and Astro static output. Production deployment is not part of this delivery.
 
 | Area | Evidence |
