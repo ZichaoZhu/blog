@@ -32,6 +32,12 @@ export function resolveSiteContext(env: {
 }
 const runtime = typeof process !== "undefined" ? process.env : {};
 export const siteContext: SiteContext = resolveSiteContext({
-	SITE_MODE: import.meta.env?.PUBLIC_SITE_MODE ?? runtime.SITE_MODE,
-	SITE_ORIGIN: import.meta.env?.PUBLIC_SITE_ORIGIN ?? runtime.SITE_ORIGIN,
+	SITE_MODE:
+		import.meta.env?.PUBLIC_SITE_MODE ??
+		runtime.PUBLIC_SITE_MODE ??
+		runtime.SITE_MODE,
+	SITE_ORIGIN:
+		import.meta.env?.PUBLIC_SITE_ORIGIN ??
+		runtime.PUBLIC_SITE_ORIGIN ??
+		runtime.SITE_ORIGIN,
 });

@@ -1,7 +1,8 @@
-import legacy from "./src/data/legacy-routes.json" with { type: "json" };
+import { writeFileSync } from "node:fs";
+import legacy from "../src/data/legacy-routes.json" with { type: "json" };
 
 // Reuse the migration map for HTTP redirects, including original image URLs.
-export const config = {
+const config = {
 	framework: "astro",
 	outputDirectory: "dist",
 	installCommand: "pnpm install --frozen-lockfile",
@@ -9,11 +10,11 @@ export const config = {
 		'if [ "$VERCEL_ENV" = "production" ]; then PUBLIC_SITE_MODE=production PUBLIC_SITE_ORIGIN=https://blog.blessingworld.cn pnpm build; else PUBLIC_SITE_MODE=preview PUBLIC_SITE_ORIGIN=http://127.0.0.1:4321 pnpm build; fi',
 	trailingSlash: true,
 	redirects: [
-		...Object.entries(legacy.paths).map(([source, destination]) => ({
-			source,
-			destination,
-			permanent: true,
-		})),
+		...Object.entries(legacy.paths).flatMap(([path, destination]) =>
+			[...new Set([path, path.endsWith("/") ? path : `${path}/`])].map(
+				(source) => ({ source, destination, permanent: true }),
+			),
+		),
 		...Object.entries(legacy.images).map(([path, image]) => ({
 			source: `/api/images/${path.replace(/[()]/g, "\\$&")}`,
 			destination: image.original,
@@ -21,3 +22,10 @@ export const config = {
 		})),
 	],
 };
+
+// Commit the generated static configuration so Git builds receive routing rules
+// before the build starts. The migration map remains the source of truth.
+writeFileSync(
+	new URL("../vercel.json", import.meta.url),
+	`${JSON.stringify(config, null, 2)}\n`,
+);

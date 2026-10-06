@@ -143,7 +143,7 @@ node --import tsx scripts/benchmark-content.ts --count 500 --output-dir /tmp/fir
 
 默认 `pnpm build` 生成 `dist/` 静态预览，全站 noindex。正式版使用 `SITE_MODE=production SITE_ORIGIN=https://blog.blessingworld.cn pnpm build`；缺少有效 HTTPS origin 时直接失败。
 
-`vercel.mjs` 指定 Astro、`dist/` 和锁文件安装，并按 `VERCEL_ENV` 区分生产与预览 SEO。旧文章与图片的 HTTP 308 规则直接复用 `src/data/legacy-routes.json`，无需维护另一份映射。
+`vercel.json` 指定 Astro、`dist/` 和锁文件安装，并按 `VERCEL_ENV` 区分生产与预览 SEO。配置由 `node scripts/generate-vercel-config.mjs` 从 `src/data/legacy-routes.json` 生成，覆盖旧文章（含末尾斜杠）与图片的 HTTP 308；更新迁移映射后重新生成并提交，单元测试会检查规则是否齐全。使用静态配置保证 Git 部署在构建前读取完整路由。Node 版本限定在已验证的 22 系列。
 
 当前图片与视频产物超过 Hobby 的 CLI 源文件上传额度，正式发布使用现有 Git 连接进行远端构建，不删减媒体。先提交并推送迁移分支，再通过 Vercel 创建指定提交的生产部署，设置 `autoAssignCustomDomains: false` 暂缓域名分配。验证新部署后使用 CLI 切换：
 
