@@ -50,7 +50,7 @@ for (const item of items) {
  .archive-year li:last-child .archive-marker::before {bottom:50%;}
  .archive-marker .toc-badge {position:relative;background:var(--primary);}
  .archive-content {display:flex;align-items:baseline;justify-content:space-between;gap:.5rem 1.25rem;min-width:0;}
- .archive-title {font-size:var(--type-body);font-weight:700;overflow-wrap:anywhere;line-height:1.6;}
+ .archive-title {font-size:calc(var(--type-body) - 2px);font-weight:700;overflow-wrap:anywhere;line-height:1.6;}
  .archive-subject {font-size:var(--type-small);color:var(--content-meta);overflow-wrap:anywhere;line-height:1.5;flex-shrink:0;max-width:35%;text-align:right;}
  .archive-post:hover .archive-title,.archive-post:focus-visible .archive-title {color:var(--primary);}
  @media(max-width:767px) {
