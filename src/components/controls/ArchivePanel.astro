@@ -25,11 +25,12 @@ for (const item of items) {
      const date = getArchiveDate(item);
      const course = item.kind === "post" && item.post.data.type === "course" ? courses.find(c => c.id === item.post.data.course?.id) : undefined;
      const names = itemTopics(item).flatMap(id => topics.find(t => t.id === id)?.name ?? []);
-     const subject = course?.title ?? [item.kind === "post" ? noteTypeLabels[item.post.data.type] : "项目", ...names].join(" · ");
+     const labels = course ? [course.title] : [item.kind === "post" ? noteTypeLabels[item.post.data.type] : "项目", ...names];
+     const subject = labels.map(label => `#${label}`).join(" ");
      return <li><a href={item.url} class="toc-item sidebar-nav-item archive-post">
       {date ? <time class="archive-date" datetime={date} aria-label={date}>{date.slice(5)}</time> : <span class="archive-date">未记录</span>}
       <span class="archive-marker" aria-hidden="true"><span class="toc-badge toc-badge-dot"/></span>
-      <span class="archive-content"><span class="archive-title">{data.title}</span><span class="archive-subject">{subject}</span></span>
+      <span class="archive-content"><span class="archive-title" title={data.title}>{data.title}</span><span class="archive-subject" title={subject}>{subject}</span></span>
      </a></li>;
     })}
    </ol>
@@ -49,13 +50,14 @@ for (const item of items) {
  .archive-year li:first-child .archive-marker::before {top:50%;}
  .archive-year li:last-child .archive-marker::before {bottom:50%;}
  .archive-marker .toc-badge {position:relative;background:var(--primary);}
- .archive-content {display:flex;align-items:baseline;justify-content:space-between;gap:.5rem 1.25rem;min-width:0;}
- .archive-title {font-size:calc(var(--type-body) - 2px);font-weight:700;overflow-wrap:anywhere;line-height:1.6;}
- .archive-subject {font-size:var(--type-small);color:var(--content-meta);overflow-wrap:anywhere;line-height:1.5;flex-shrink:0;max-width:35%;text-align:right;}
+ .archive-content {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,30%);align-items:center;gap:.5rem 1.25rem;min-width:0;}
+ .archive-title,.archive-subject {display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+ .archive-title {font-size:var(--type-small);font-weight:700;line-height:1.6;}
+ .archive-subject {font-size:var(--type-small);color:var(--content-meta);line-height:1.5;text-align:right;}
  .archive-post:hover .archive-title,.archive-post:focus-visible .archive-title {color:var(--primary);}
  @media(max-width:767px) {
   .archive-post {grid-template-columns:2.75rem .75rem minmax(0,1fr);gap:.45rem;}
-  .archive-content {display:grid;gap:.25rem;}
-  .archive-subject {max-width:none;text-align:left;}
+  .archive-content {grid-template-columns:minmax(0,1fr);gap:.25rem;}
+  .archive-subject {text-align:left;}
  }
 </style>
