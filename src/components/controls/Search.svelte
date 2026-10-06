@@ -14,13 +14,15 @@ let keywordMobile = "";
 let result: SearchResult[] = [];
 let isSearching = false;
 let initialized = false;
+let searchFromDesktop = true;
 let debounceTimer: NodeJS.Timeout;
 let searchRequestId = 0;
 
 // --- UI Logic ---
 // pagefind.js 是按需加载的（见 Navbar.astro），搜索 UI 一被碰到就触发。
 // 幂等，重复调用只会拿到同一个 promise。
-const requestPagefind = (): void => {
+const requestPagefind = (isDesktop = false): void => {
+	searchFromDesktop = isDesktop;
 	window.__loadPagefind?.();
 };
 
@@ -32,8 +34,6 @@ const togglePanel = () => {
 };
 
 const handleDesktopFocus = (event: FocusEvent): void => {
-	requestPagefind();
-
 	const input = event.currentTarget;
 	if (
 		input instanceof HTMLElement &&
@@ -41,6 +41,7 @@ const handleDesktopFocus = (event: FocusEvent): void => {
 	)
 		return;
 
+	requestPagefind(true);
 	search(keywordDesktop, true);
 };
 
@@ -125,8 +126,6 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 onMount(() => {
 	const initializePagefind = () => {
 		initialized = true;
-		if (keywordDesktop) search(keywordDesktop, true);
-		if (keywordMobile) search(keywordMobile, false);
 	};
 
 	if (import.meta.env.DEV) {
@@ -158,11 +157,8 @@ onMount(() => {
 });
 
 // --- Reactive Statements ---
-$: if (initialized && (keywordDesktop || keywordDesktop === "")) {
-	search(keywordDesktop, true);
-}
-$: if (initialized && (keywordMobile || keywordMobile === "")) {
-	search(keywordMobile, false);
+$: if (initialized) {
+	search(searchFromDesktop ? keywordDesktop : keywordMobile, searchFromDesktop);
 }
 </script>
 
@@ -200,7 +196,7 @@ top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2"
         <Icon icon="material-symbols:search"
               class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
         <input aria-label="快速搜索" placeholder={i18n(I18nKey.search)} bind:value={keywordMobile}
-               on:focus={requestPagefind}
+               on:focus={() => requestPagefind()}
                class="pl-10 absolute inset-0 text-sm bg-transparent outline-0
                focus:w-60 text-black/50 dark:text-white/50"
         >

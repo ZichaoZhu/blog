@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 test('music stays one paused-by-default instance across ten navigations',async({page})=>{
  await page.route('**/*.mp4',r=>r.abort());await page.goto('/');
  await expect(page.locator('audio')).toHaveCount(1);expect(await page.locator('audio').evaluate((a:HTMLAudioElement)=>a.paused)).toBe(true);
- expect(await page.locator('audio').evaluate((a:HTMLAudioElement)=>a.volume)).toBeCloseTo(.25);
+ await expect.poll(()=>page.locator('audio').evaluate((a:HTMLAudioElement)=>a.volume)).toBeCloseTo(.25);
  await page.locator('#left-sidebar .btn-play').click();await expect.poll(()=>page.locator('audio').evaluate((a:HTMLAudioElement)=>a.paused)).toBe(false);
  await expect.poll(()=>page.locator('audio').evaluate((a:HTMLAudioElement)=>a.currentTime)).toBeGreaterThan(0);
  const started=await page.locator('audio').evaluate((a:HTMLAudioElement)=>{(window as unknown as {__testAudio:HTMLAudioElement}).__testAudio=a;return a.currentTime;});

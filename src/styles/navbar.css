@@ -311,12 +311,12 @@ body.wallpaper-transparent #navbar-wrapper #navbar[data-full-width="true"] > div
 
 /* ============================================
  * Keep navigation labels on one line; compact spacing leaves room for controls.
- * 小于1400px时隐藏导航栏菜单图标
+ * 小于1440px时隐藏导航栏菜单图标
  * ============================================ */
 .navbar-links > .dropdown-container {flex-shrink:0;}
 .navbar-links > .dropdown-container > a {white-space:nowrap;padding-inline:.375rem;}
 .navbar-links .navbar-icon {margin-right:0;flex-shrink:0;}
-@media (max-width: 1399px) {
+@media (max-width: 1439px) {
     .navbar-icon {
         display: none !important;
     }

@@ -17,6 +17,7 @@ test('archive entry, pagination, year selection and article links survive soft n
  await expect(page.locator('main .archive-post')).toHaveCount(12);
  await expect(page.locator('#topic-nav-sidebar [aria-current="page"]')).toContainText('2025');
  await expect(page.locator('html')).not.toHaveClass(/is-page-transitioning/);
+ await page.waitForFunction(()=>window.swup?.visit?.done===true);
  const destination=await page.locator('main .archive-post').first().getAttribute('href');
  await page.locator('main .archive-post').first().focus();await page.keyboard.press('Enter');
  await expect(page).toHaveURL(destination!);

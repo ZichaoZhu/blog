@@ -1,6 +1,28 @@
 import {readCurrentManifest} from '../../scripts/verify-site';import {isPublicNote} from '../../src/utils/note-model';import {readFile} from 'node:fs/promises';
 import {test,expect} from '@playwright/test';import queries from '../fixtures/search-queries.json' with {type:'json'};
 const current=await readCurrentManifest('src/content/posts');const publicNotes=current.records.filter(r=>isPublicNote({entryId:r.sourcePath,data:r,hasBody:r.hasBody}));
+test('navbar search preserves the first query while Pagefind loads in either layout',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('firefly-effects','off'));
+ for(const width of [1024,1440]){
+  let release!:()=>void;const gate=new Promise<void>(r=>release=r);
+  let intercepted!:()=>void;const held=new Promise<void>(r=>intercepted=r);
+  await page.route('**/pagefind/pagefind.js',async route=>{if(route.request().method()==='HEAD'){intercepted();await gate;}await route.continue();});
+  await page.setViewportSize({width,height:900});await page.goto('/');
+  await page.waitForFunction(()=>!document.querySelector('#search-switch')?.closest('astro-island')?.hasAttribute('ssr'));
+  if(width<1280)await page.locator('#search-switch').click();
+  const input=page.locator(width<1280?'#search-bar-inside input':'#search-input-desktop');
+  await input.fill('pandas');await held;release();
+  await expect(page.locator('#search-panel a[href="/notes/machine-learning-lec2/"]')).toBeVisible();
+  await input.fill('');await expect(page.locator('#search-panel a[href^="/notes/"]')).toHaveCount(0);
+  await page.keyboard.press('Escape');await page.unroute('**/pagefind/pagefind.js');
+  if(width===1440){
+   await input.fill('pandas');await expect(page.locator('#search-panel a[href="/notes/machine-learning-lec2/"]')).toBeVisible();await page.keyboard.press('Escape');
+   await page.setViewportSize({width:1024,height:900});await page.locator('#search-switch').click();
+   await page.locator('#search-bar-inside input').fill('Bellman');await expect(page.locator('#search-panel a[href*="reinforcement-learning"]').first()).toBeVisible();await page.keyboard.press('Escape');
+   await page.setViewportSize({width:1440,height:900});await input.focus();await expect(page.locator('#search-panel a[href="/notes/machine-learning-lec2/"]')).toBeVisible();await page.keyboard.press('Escape');
+  }
+ }
+});
 test('twenty real multilingual queries find unique public articles',async({page})=>{
  await page.goto('/search/');await expect(page.getByLabel('关键词')).toBeVisible();
  for(const q of queries){await page.getByLabel('关键词').fill(q.query);await page.getByRole('button',{name:'搜索',exact:true}).click();await expect(page.getByRole('status')).toContainText(/找到|没有匹配/);if(!q.target||publicNotes.some(n=>n.slug===q.target))await expect(page.locator('[data-search-result]')).not.toHaveCount(0);}
