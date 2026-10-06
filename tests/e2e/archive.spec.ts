@@ -65,14 +65,18 @@ test('archive navigation labels stay on one line without colliding with the bran
    const brand=nav.querySelector('a[href="/"]')!.getBoundingClientRect();
    const controls=nav.querySelector('#search-bar')!.closest('.col-start-3')!.getBoundingClientRect();
    const links=[...nav.querySelectorAll('[data-dropdown]>a')].filter(a=>a.getBoundingClientRect().width>0);
-   return {visible:links.length,safe:links.every(a=>{
+   const measured=links.map(a=>{
     const bounds=a.getBoundingClientRect();
     const label=[...a.querySelector('div')!.childNodes].find(node=>node.nodeType===Node.TEXT_NODE&&node.textContent!.trim());
     const range=document.createRange();range.selectNodeContents(label!);
-    return range.getClientRects().length===1&&bounds.left>=brand.right&&bounds.right<=controls.left;
-   })};
+    const rects=[...range.getClientRects()].filter(rect=>rect.width>0&&rect.height>0);
+    const height=Math.max(...rects.map(rect=>rect.bottom))-Math.min(...rects.map(rect=>rect.top));
+    const lineHeight=parseFloat(getComputedStyle(a.querySelector('div')!).lineHeight);
+    return {label:label!.textContent!.trim(),height,lineHeight,left:bounds.left,right:bounds.right,brandRight:brand.right,controlsLeft:controls.left,safe:height<=lineHeight+1&&bounds.left>=brand.right&&bounds.right<=controls.left};
+   });
+   return {visible:links.length,safe:measured.every(link=>link.safe),measured};
   });
-  expect(result.safe,String(width)).toBe(true);
+  expect(result.safe,`${width} ${JSON.stringify(result.measured)}`).toBe(true);
   if(!result.visible)await expect(page.locator('#nav-menu-switch')).toBeVisible();
  }
 });
