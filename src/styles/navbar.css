@@ -310,16 +310,16 @@ body.wallpaper-transparent #navbar-wrapper #navbar[data-full-width="true"] > div
 }
 
 /* ============================================
- * Keep navigation labels on one line; compact spacing leaves room for controls.
- * 小于1440px时隐藏导航栏菜单图标
+ * Keep icons and labels visible; compact spacing leaves room for controls.
  * ============================================ */
 .navbar-links > .dropdown-container {flex-shrink:0;}
 .navbar-links > .dropdown-container > a {white-space:nowrap;padding-inline:.375rem;}
 .navbar-links .navbar-icon {margin-right:0;flex-shrink:0;}
-@media (max-width: 1439px) {
-    .navbar-icon {
-        display: none !important;
-    }
+@media (min-width: 1024px) and (max-width: 1439px) {
+    .navbar-links > .dropdown-container {margin-inline:0;}
+    .navbar-links > .dropdown-container > a {padding-inline:.25rem;}
+    .navbar-links > .dropdown-container > a > div {gap:.25rem;}
+    #navbar .navbar-brand {padding-inline:.5rem;}
 }
 
 /* semi 滚动后加回投影 */

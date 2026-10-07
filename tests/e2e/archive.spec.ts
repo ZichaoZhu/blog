@@ -77,6 +77,9 @@ test('desktop navigation stays visible without collisions, including while searc
    return {visible:links.length,safe:measured.every(link=>link.safe),measured};
   });
   expect(result.visible,`Desktop links must be visible at ${width}px`).toBe(6);
+  const icons=page.locator('#navbar .navbar-links a .navbar-icon');
+  await expect(icons).toHaveCount(6);
+  for(const icon of await icons.all())await expect(icon,`Navigation icons must be visible at ${width}px`).toBeVisible();
   expect(result.safe,`${width} ${JSON.stringify(result.measured)}`).toBe(true);
   await expect(page.locator('#nav-menu-switch')).toBeHidden();
  };
