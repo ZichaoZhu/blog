@@ -1,8 +1,38 @@
 # Astro / Firefly 正式发布记录
 
-发布日期：2026-10-06（Asia/Shanghai）。
+首次发布日期：2026-10-06；最近更新：2026-10-07（Asia/Shanghai）。
 
-## 发布版本
+## 最新发布：桌面导航修复（2026-10-07）
+
+| 项目 | 值 |
+| --- | --- |
+| 正式地址 | https://blog.blessingworld.cn |
+| 运行代码提交 | `6705a238f114167a3d5f81e8f9516355747cf5a6` |
+| 测试提交 | `7b4d9476e79d249eec108dca811bddf7d392c8d2`，仅调整三个浏览器测试的等待条件，运行代码相同 |
+| 正式部署 ID | `dpl_5CR1LXW3sivG6xuDhTKizgSba8Tk` |
+| 正式部署地址 | https://blog-rhpr8bxsb-zichaozhus-projects.vercel.app |
+| 上一版 Astro 部署 ID | `dpl_GgML7Lb9BBV3xhnLrcqTYmamyK9P` |
+
+原导航仅在 1440px 起显示，导致常见桌面窗口也被收进菜单。现在 1024px 起直接显示首页、Courses、Papers、Research、Projects 和归档；1024–1279px 使用原有搜索图标与搜索面板，1280px 起显示固定宽度搜索框。窄桌面收紧品牌和菜单间距，菜单图标在 1440px 起显示，兼容 Linux 的较宽系统字体。原按钮交互、字号、配色和动态效果保持原有配置。
+
+同时修复首次搜索：Pagefind 初始化时只执行当前输入框的查询，避免另一个空输入取消首次桌面查询；清空查询和切换窗口布局也有回归覆盖。测试等待当前导航结束，并兼容普通整页跳转；音乐测试等待播放器初始化完成。
+
+验证记录：
+
+- 本地 50 项单元测试、69 项完整浏览器测试通过；构建、Astro check、TypeScript 和站点验证通过，Biome 无错误，保留模板已有的 5 warnings / 35 infos。
+- [最终 Linux CI（测试提交 `7b4d947`）](https://github.com/ZichaoZhu/blog/actions/runs/37572023879)全部通过，包含 50 项单元测试、69 项浏览器测试、3 项隔离真实写作回归，以及 Pagefind 和开发模式的公开性更新验证。
+- 生产暂存与正式域名均验证 1024、1100、1279、1280、1360、1399、1400、1440、1920px 九种桌面宽度：六个入口可见、单行显示，与品牌和控件不重叠；搜索聚焦布局、首次搜索、鼠标和键盘导航均通过。
+- 正式域名 7 个代表页面的共享导航通过；1024px / DPR 2 且禁用 JavaScript 的直接入口可用，390px 手机菜单可进入课程和论文页面，无整页横向溢出，浏览器无脚本错误。
+- 正式域名 8 个页面的 canonical、索引设置、72 篇公开索引、RSS、Atom、robots、sitemap、旧页面与图片抽查、MP4 Range 和真实文章图片均通过。路由配置未改变，首次发布时完成的全部 642 项旧地址验证记录保留于下文。
+- 正式域名已切换到上述部署，DNS 与项目设置保持原有配置；临时访问凭据已撤销，项目自动化绕过凭据为 0；原 main 的 703 项文件状态及源笔记的 167 项校验值保持不变。
+
+如需回到这次修复前的 Astro 部署：
+
+```bash
+pnpm dlx vercel@62.2.0 rollback dpl_GgML7Lb9BBV3xhnLrcqTYmamyK9P --yes --scope zichaozhus-projects
+```
+
+## 首次发布版本（2026-10-06）
 
 | 项目 | 值 |
 | --- | --- |

@@ -42,6 +42,12 @@ RESTORE
 
 生产构建先暂存验收，再切换域名；全部 642 个旧页面与图片地址在正式域名完成 HTTP 308 验证。原部署、项目设置、robots、sitemap 的发布前快照保存于本机 `/tmp/goongmly-release-before-20261006/`，该临时目录不作为长期恢复的唯一依据。正式版本、验证与回退命令见 [DEPLOYMENT.md](DEPLOYMENT.md)。DNS 未改变。
 
+2026-10-07 已发布桌面导航与首次搜索修复，当前正式部署为 `dpl_5CR1LXW3sivG6xuDhTKizgSba8Tk`，运行代码提交为 `6705a238f114167a3d5f81e8f9516355747cf5a6`。若只需退回修复前的 Astro 版本，使用以下命令；下文恢复 Next.js 的路径继续保留：
+
+```bash
+pnpm dlx vercel@62.2.0 rollback dpl_GgML7Lb9BBV3xhnLrcqTYmamyK9P --yes --scope zichaozhus-projects
+```
+
 ## 如需线上回退
 
 1. 在同一 Vercel 项目执行下方命令，恢复保留的完整旧部署与旧规则；若旧部署已被删除，使用上述恢复副本生成旧产物。
