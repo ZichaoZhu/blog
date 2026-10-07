@@ -2,7 +2,34 @@
 
 首次发布日期：2026-10-06；最近更新：2026-10-07（Asia/Shanghai）。
 
-## 最新发布：桌面导航修复（2026-10-07）
+## 最新发布：导航图标修复（2026-10-07）
+
+| 项目 | 值 |
+| --- | --- |
+| 正式地址 | https://blog.blessingworld.cn |
+| 运行代码提交 | `30241dbf3eb0daff6859d510522e2fc8cea0a93b` |
+| 正式部署 ID | `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa` |
+| 正式部署地址 | https://blog-6c2j99z26-zichaozhus-projects.vercel.app |
+| 上一版 Astro 部署 ID | `dpl_5CR1LXW3sivG6xuDhTKizgSba8Tk` |
+
+修复上一版在 1440px 以下隐藏菜单图标的问题。首页、Courses、Papers、Research、Projects、归档的图标与文字现在从 1024px 起一起显示；窄桌面只收紧菜单与品牌间距。布局为导航内容保留所需宽度，站点名称仅在空间不足时显示省略号，避免挤压导航和右侧控件。沿用已有图标、按钮交互、字号与搜索布局，无新增依赖。
+
+验证记录：
+
+- 增强现有导航回归，检查六个图标可见，同时保留单行、与品牌和控件不重叠、搜索聚焦后的布局检查；修复前在 1024px 因图标隐藏而失败，修复后九种桌面宽度均通过。
+- 本地 50 项单元测试、69 项完整浏览器测试通过；构建、Astro check、TypeScript 和站点验证通过，Biome 无错误，保留模板已有的 5 warnings / 35 infos。
+- [本次 Linux CI](https://github.com/ZichaoZhu/blog/actions/runs/37574777478)的单元测试、69 项浏览器测试、静态检查与构建通过。
+- 生产暂存与正式域名均验证 1024、1100、1279、1280、1360、1399、1400、1440、1920px 九种桌面宽度，六个图标可见且导航不重叠；7 个代表页面的共享导航、首次搜索、鼠标与键盘跳转均通过。
+- 1024px / DPR 2 且禁用 JavaScript 的直接入口可用；390px 手机菜单与搜索可用，无整页横向溢出，浏览器无脚本错误。
+- 正式域名已切换到上述部署；临时验收凭据已撤销，项目自动化绕过凭据为 0。DNS 与项目配置保持原有设置，原 main 工作区未修改。
+
+如需回到图标修复前的 Astro 部署：
+
+```bash
+pnpm dlx vercel@62.2.0 rollback dpl_5CR1LXW3sivG6xuDhTKizgSba8Tk --yes --scope zichaozhus-projects
+```
+
+## 上一发布：桌面导航修复（2026-10-07）
 
 | 项目 | 值 |
 | --- | --- |
