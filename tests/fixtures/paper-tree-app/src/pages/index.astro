@@ -1,0 +1,9 @@
+---
+export const prerender = false;
+import Harness from '../components/Harness.svelte';
+import '../../../../../src/styles/main.css';
+import '../../../../../src/styles/variables.styl';
+const editable=Astro.url.searchParams.get('mode')==='editor';
+const count=Number(Astro.url.searchParams.get('count')??0);
+---
+<!doctype html><html lang="zh-CN" style="--hue:250"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Isolated paper tree acceptance harness</title></head><body><main style="max-width:1200px;margin:auto;padding:12px;min-width:0"><Harness editable={editable} count={count} client:load/><div id="method">正文锚点</div></main></body></html>

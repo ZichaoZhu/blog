@@ -21,6 +21,16 @@ export interface TreeData {
 	direction: 1;
 }
 
+export type TreeCommand =
+	| { type: "addChild" | "addSibling" | "remove" | "clone"; nodeId: string }
+	| { type: "move"; nodeId: string; parentId: string; index: number }
+	| {
+			type: "edit";
+			nodeId: string;
+			patch: Partial<Pick<TreeNode, "topic" | "note" | "hyperLink">>;
+	  }
+	| { type: "undo" | "redo" };
+
 export interface DraftTree {
 	schemaVersion: 1;
 	paperId: string;

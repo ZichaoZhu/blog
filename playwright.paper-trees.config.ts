@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'./tests/e2e',timeout:45000,workers:1,fullyParallel:false,reporter:'list',outputDir:'test-results/paper-trees',webServer:{command:'pnpm exec astro dev --root tests/fixtures/paper-tree-app --host 127.0.0.1 --port 4322',env:{ASTRO_DEV_BACKGROUND:'1'},url:'http://127.0.0.1:4322',reuseExistingServer:!process.env.CI},projects:[{name:'canvas',testMatch:'paper-tree-canvas.spec.ts',use:{baseURL:'http://127.0.0.1:4322',viewport:{width:1440,height:900},trace:'retain-on-failure'}}]});
