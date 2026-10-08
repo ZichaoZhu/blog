@@ -1,4 +1,5 @@
 import {rehypeLegacyAnchors} from "./src/plugins/rehype-legacy-anchors.ts";
+import {paperTreesIntegration} from "./src/features/paper-trees/public-build";
 import { remarkTyporaCompat, rehypeMathCompat, remarkSourceLinks } from "./src/plugins/remark-typora-compat";
 import { remarkLocalImages } from "./src/plugins/remark-local-images";
 import { resolve } from "node:path";
@@ -240,6 +241,7 @@ export default defineConfig({
 			},
 		}),
 		svelte(),
+		paperTreesIntegration(),
 
 		mdx(),
 	],

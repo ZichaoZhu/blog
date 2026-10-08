@@ -94,3 +94,7 @@ package/
 
 /test-results/
 /playwright-report/
+.paper-trees/
+studio/.generated/
+.env.*
+!.env.example

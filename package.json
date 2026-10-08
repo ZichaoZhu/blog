@@ -28,7 +28,8 @@
     "test:e2e": "playwright test",
     "verify:site": "node --import tsx scripts/verify-site.ts",
     "audit:migration": "node --import tsx scripts/verify-site.ts --audit-migration",
-    "test:authoring": "node --import tsx scripts/test-authoring.ts"
+    "test:authoring": "node --import tsx scripts/test-authoring.ts",
+    "test:paper-trees": "node --import tsx scripts/test-paper-trees.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

@@ -47,6 +47,15 @@ export interface PublicSnapshot {
 	tree: TreeData;
 }
 
+export interface ReleaseManifest {
+	schemaVersion: 1;
+	releaseId: string;
+	parentReleaseId: string | null;
+	codeSha: string;
+	createdAt: string;
+	entries: Record<string, string>;
+}
+
 export class TreeValidationError extends Error {
 	readonly code: string;
 	readonly nodeId?: string;

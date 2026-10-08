@@ -16,7 +16,7 @@
 	let ready = $state(false);
 	let error = $state("");
 	let selected = $state<TreeNode | null>(null);
-	let currentTree = structuredClone(tree);
+	let currentTree = clean(tree);
 	let disposed = false;
 
 	function clean(data: TreeData): TreeData {

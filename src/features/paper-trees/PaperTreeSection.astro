@@ -1,0 +1,13 @@
+---
+import type {PublicSnapshot} from './model';
+import PaperTreeCanvas from './PaperTreeCanvas.svelte';
+import PaperTreeOutline from './PaperTreeOutline.astro';
+import './paper-tree.css';
+interface Props {snapshot:PublicSnapshot;anchor:string}
+const {snapshot,anchor}=Astro.props;
+---
+<section class="paper-tree-section my-6" aria-label="论文解析树" data-paper-tree-snapshot={snapshot.snapshotId}>
+ <h2 id={anchor} class="font-bold mb-3">论文解析树</h2>
+ <PaperTreeCanvas tree={snapshot.tree} editable={false} client:visible/>
+ <details class="paper-tree-outline-panel" open><summary class="btn-plain knowledge-action" data-pagefind-ignore>文字大纲</summary><PaperTreeOutline nodes={[snapshot.tree.nodeData]} root={true}/></details>
+</section>

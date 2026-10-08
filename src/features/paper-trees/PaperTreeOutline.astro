@@ -1,0 +1,14 @@
+---
+import type {TreeNode} from './model';
+import {renderNodeMarkdown} from './render';
+interface Props {nodes:TreeNode[];root?:boolean}
+const {nodes,root=false}=Astro.props;
+---
+<ol class="paper-tree-outline" aria-label={root?'论文解析树文字大纲':undefined}>
+ {nodes.map(node=><li><div class="paper-tree-richtext" set:html={renderNodeMarkdown(node.topic)}/>{node.note&&<div class="paper-tree-richtext paper-tree-outline-note" set:html={renderNodeMarkdown(node.note)}/>} {node.hyperLink&&<a href={node.hyperLink} class="btn-plain knowledge-action" rel="noopener noreferrer" data-pagefind-ignore>打开节点链接</a>}{node.children?.length&&<Astro.self nodes={node.children}/>}</li>)}
+</ol>
+<style>
+.paper-tree-outline{list-style:decimal;margin:.5rem 0;padding-left:1.5rem;font-size:var(--type-body);}
+.paper-tree-outline li{margin:.7rem 0;overflow-wrap:anywhere;}
+.paper-tree-outline-note{color:var(--content-meta);font-size:var(--type-small);}
+</style>
