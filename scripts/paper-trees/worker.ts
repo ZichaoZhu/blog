@@ -8,6 +8,7 @@ import { GitHubTreeStore } from "../../studio/src/server/github-store";
 import { buildPaperCatalog, readNoteRecords } from "./catalog";
 import { type PublishDependencies, runPublish } from "./publish";
 import { reconcileRelease } from "./reconcile";
+import { restoreCodeDeployment } from "./restore-code-deployment";
 import { VercelProvider } from "./vercel";
 
 function required(name: string): string {
@@ -37,7 +38,21 @@ export async function workerDependencies(): Promise<PublishDependencies> {
 	const token = required("GH_DATA_TOKEN");
 	const store = new GitHubTreeStore({ dataRepo, dataBranch }, fetch, token);
 	const projectId = required("VERCEL_PROJECT_ID");
+	const studioProjectId = process.env.VERCEL_STUDIO_PROJECT_ID;
+	const studioProvider = studioProjectId
+		? new VercelProvider({
+				role: "studio",
+				root: join(root, "studio"),
+				projectId: studioProjectId,
+				teamId: required("VERCEL_ORG_ID"),
+				token: required("VERCEL_TOKEN"),
+				bypass: required("VERCEL_STUDIO_AUTOMATION_BYPASS_SECRET"),
+				origin: "https://studio.blessingworld.cn",
+			})
+		: undefined;
 	return {
+		studioProjectId,
+		studioProvider,
 		store,
 		catalog,
 		sourceSha,
@@ -86,10 +101,17 @@ if (
 	let dependencies: PublishDependencies | undefined;
 	try {
 		const [command, jobId, dataSha] = process.argv.slice(2);
-		if (!["publish", "reconcile"].includes(command))
+		if (!["publish", "reconcile", "restore-code-deployment"].includes(command))
 			throw new ApiError(400, "INVALID_WORKER_COMMAND");
 		dependencies = await workerDependencies();
-		if (command === "publish") await runPublish(jobId, dataSha, dependencies);
+		if (command === "restore-code-deployment")
+			await restoreCodeDeployment(
+				jobId,
+				dataSha === "--full-site",
+				dependencies,
+			);
+		else if (command === "publish")
+			await runPublish(jobId, dataSha, dependencies);
 		else {
 			const result = await reconcileRelease(jobId, dependencies);
 			console.info(`Job ${result.jobId}: ${result.state}`);

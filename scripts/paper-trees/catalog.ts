@@ -81,6 +81,19 @@ if (
 	const output = join(process.cwd(), "studio/.generated");
 	await mkdir(output, { recursive: true });
 	await writeFile(join(output, "papers.json"), JSON.stringify(catalog));
+	const releaseId = process.env.PAPER_TREE_RELEASE_ID ?? null;
+	const jobId = process.env.PAPER_TREE_JOB_ID ?? null;
+	if (
+		[releaseId, jobId].some(
+			(id) => id !== null && !/^[a-f\d-]{36}$/.test(id),
+		) ||
+		(releaseId === null) !== (jobId === null)
+	)
+		throw new Error("Invalid Studio version binding");
+	await writeFile(
+		join(output, "version.json"),
+		JSON.stringify({ schemaVersion: 1, codeSha, releaseId, jobId }),
+	);
 	console.info(
 		`Prepared server-only catalog: ${catalog.papers.length} papers, source ${codeSha}`,
 	);

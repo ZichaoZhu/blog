@@ -1,6 +1,7 @@
 import type { ReleaseJob } from "../../studio/src/server/release";
 import {
 	assertDeployment,
+	type DeploymentRecord,
 	type PublishDependencies,
 	readLive,
 	recordSuccess,
@@ -21,7 +22,24 @@ export async function reconcileRelease(
 		assertDeployment(formal, job, deps.projectId);
 		if (formal.id !== candidate.id) return job;
 		await deps.provider.verifyFormal(formal, job);
-		return await recordSuccess(jobId, deps, formal);
+		let formalStudio: DeploymentRecord | undefined;
+		if (job.mode === "code") {
+			if (
+				!job.studioDeploymentId ||
+				!deps.studioProvider ||
+				!deps.studioProjectId
+			)
+				return job;
+			const studioCandidate = await deps.studioProvider.getDeployment(
+				job.studioDeploymentId,
+			);
+			assertDeployment(studioCandidate, job, deps.studioProjectId);
+			formalStudio = await deps.studioProvider.getFormalDeployment();
+			assertDeployment(formalStudio, job, deps.studioProjectId);
+			if (formalStudio.id !== studioCandidate.id) return job;
+			await deps.studioProvider.verifyFormal(formalStudio, job);
+		}
+		return await recordSuccess(jobId, deps, formal, formalStudio);
 	} catch {
 		return job;
 	}

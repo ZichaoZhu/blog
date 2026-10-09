@@ -36,6 +36,8 @@ export interface DeploymentProvider {
 	verifyFormal(deployment: DeploymentRecord, job: ReleaseJob): Promise<void>;
 }
 export interface PublishDependencies {
+	studioProvider?: DeploymentProvider;
+	studioProjectId?: string;
 	store: GitHubTreeStore;
 	catalog: PaperCatalog;
 	notes: readonly NoteRecord[];
@@ -115,9 +117,16 @@ export async function recordSuccess(
 	jobId: string,
 	deps: PublishDependencies,
 	deployment: DeploymentRecord,
+	studioDeployment?: DeploymentRecord,
 ): Promise<ReleaseJob> {
 	return updateJob(jobId, deps, (job, control) => {
 		assertDeployment(deployment, job, deps.projectId);
+		if (job.mode === "code") {
+			if (!studioDeployment || !deps.studioProjectId)
+				throw new ApiError(503, "STUDIO_DEPLOYMENT_REQUIRED");
+			assertDeployment(studioDeployment, job, deps.studioProjectId);
+			control.activeStudioDeploymentId = studioDeployment.id;
+		}
 		job.state = "published";
 		delete job.error;
 		control.activeReleaseId = job.releaseId;
@@ -150,34 +159,67 @@ export async function runPublish(
 		throw new ApiError(409, "PINNED_JOB_MISMATCH");
 	let promotionStarted = false;
 	try {
+		if (frozen.mode !== "code" && live.control.activeCodeSha !== frozen.codeSha)
+			throw new ApiError(409, "SOURCE_VERSION_MISMATCH");
+		if (
+			frozen.mode === "code" &&
+			(!deps.studioProvider || !deps.studioProjectId)
+		)
+			throw new ApiError(503, "STUDIO_DEPLOYMENT_REQUIRED");
 		await deps.provider.checkProtection();
+		if (frozen.mode === "code") await deps.studioProvider?.checkProtection();
 		await prepareRelease(frozen, dataSha, deps.outDir, deps);
 		await updateJob(jobId, deps, (job) => {
 			job.state = "building";
 			delete job.error;
 		});
 		await deps.provider.build(frozen, deps.outDir);
+		if (frozen.mode === "code")
+			await deps.studioProvider?.build(frozen, deps.outDir);
 		await updateJob(jobId, deps, (job) => {
 			job.state = "validating";
 		});
 		await deps.provider.validateBuild(frozen, deps.outDir);
+		if (frozen.mode === "code")
+			await deps.studioProvider?.validateBuild(frozen, deps.outDir);
 		await updateJob(jobId, deps, (job) => {
 			job.state = "deploying";
 		});
 		const deployment = await deps.provider.upload(frozen);
 		assertDeployment(deployment, frozen, deps.projectId);
 		await deps.provider.verifyCandidate(deployment, frozen, deps.outDir);
+		let studioDeployment: DeploymentRecord | undefined;
+		if (frozen.mode === "code" && deps.studioProvider && deps.studioProjectId) {
+			studioDeployment = await deps.studioProvider.upload(frozen);
+			assertDeployment(studioDeployment, frozen, deps.studioProjectId);
+			await deps.studioProvider.verifyCandidate(
+				studioDeployment,
+				frozen,
+				deps.outDir,
+			);
+		}
 		await updateJob(jobId, deps, (job) => {
 			job.deploymentId = deployment.id;
+			if (studioDeployment) job.studioDeploymentId = studioDeployment.id;
 		});
 		promotionStarted = true;
 		await deps.provider.promote(deployment);
+		if (studioDeployment && deps.studioProvider)
+			await deps.studioProvider.promote(studioDeployment);
 		const formal = await deps.provider.getFormalDeployment();
 		assertDeployment(formal, frozen, deps.projectId);
 		if (formal.id !== deployment.id)
 			throw new ApiError(502, "FORMAL_DEPLOYMENT_MISMATCH");
 		await deps.provider.verifyFormal(formal, frozen);
-		await recordSuccess(jobId, deps, formal);
+		let formalStudio: DeploymentRecord | undefined;
+		if (studioDeployment && deps.studioProvider && deps.studioProjectId) {
+			formalStudio = await deps.studioProvider.getFormalDeployment();
+			assertDeployment(formalStudio, frozen, deps.studioProjectId);
+			if (formalStudio.id !== studioDeployment.id)
+				throw new ApiError(502, "STUDIO_FORMAL_MISMATCH");
+			await deps.studioProvider.verifyFormal(formalStudio, frozen);
+		}
+		await recordSuccess(jobId, deps, formal, formalStudio);
 	} catch (error) {
 		const code = error instanceof ApiError ? error.code : "PUBLICATION_FAILED";
 		try {

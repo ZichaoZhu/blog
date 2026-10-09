@@ -356,11 +356,19 @@ export class PaperTreeReleases {
 			new Date().toISOString(),
 		);
 	}
+	/** Operator-only entry: never exposed by the Studio API. */
+	async requestCodeRelease(): Promise<ReleaseJob> {
+		const head=await this.store.getHead();
+		const control=await this.readControl(head.sha);
+		if(control.activeJobId)throw new ApiError(409,"RELEASE_BUSY",{jobId:control.activeJobId});
+		const baseline=control.activeReleaseId?await this.manifest(control.activeReleaseId,head.sha):null;
+		return this.enqueue(head,control,Object.fromEntries(this.publicEntries(baseline?.entries??{})),"code",{},new Date().toISOString());
+	}
 	private async enqueue(
 		head: GitHead,
 		control: ReleaseControl,
 		entries: Record<string, string>,
-		mode: "tree" | "rollback",
+		mode: ReleaseJob["mode"],
 		files: Record<string, string>,
 		createdAt: string,
 	): Promise<ReleaseJob> {

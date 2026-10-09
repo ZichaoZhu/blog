@@ -8,6 +8,13 @@ import {randomUUID} from 'node:crypto';
 import type {ReleaseJob} from '../../studio/src/server/release';
 const job:ReleaseJob={jobId:randomUUID(),releaseId:randomUUID(),codeSha:'c'.repeat(40),createdAt:'2026-10-08T00:00:00.000Z',state:'queued',mode:'tree'};
 const record={id:'dpl_candidate',url:'https://candidate.vercel.app',projectId:'prj_blog',codeSha:job.codeSha,releaseId:job.releaseId,jobId:job.jobId,readyState:'READY'};
+test('Studio candidate and formal verification bind the same code, release and job without exposing a paper catalog',async()=>{
+ let version={schemaVersion:1,codeSha:job.codeSha,releaseId:job.releaseId,jobId:job.jobId};
+ const fetchImpl:typeof fetch=async(input,init)=>{const url=String(input);if(url.includes('candidate.vercel.app')&&!new Headers(init?.headers).has('x-vercel-protection-bypass'))return new Response('',{status:401});return Response.json(version,{headers:{'cache-control':'private, no-store'}});};
+ const provider=new VercelProvider({role:'studio',root:'/unused',projectId:'prj_blog',teamId:'team_test',token:'private-token',bypass:'private-bypass',origin:'https://studio.blessingworld.cn'},fetchImpl,async()=>({stdout:''}));
+ await provider.verifyCandidate(record,job,'/unused');await provider.verifyFormal(record,job);
+ version={...version,codeSha:'f'.repeat(40)};await assert.rejects(provider.verifyFormal(record,job));
+});
 test('native provider rejects preview-only protection, anonymous JSON, stale receipt and foreign deployment URLs',async()=>{
  const inputDir=await mkdtemp(join(tmpdir(),'vercel-provider-'));await writeFile(join(inputDir,'release.json'),JSON.stringify({schemaVersion:1,releaseId:job.releaseId,codeSha:job.codeSha,createdAt:job.createdAt,parentReleaseId:null,entries:{}}));
  try {

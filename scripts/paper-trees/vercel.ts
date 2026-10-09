@@ -10,6 +10,7 @@ import type { DeploymentProvider, DeploymentRecord } from "./publish";
 
 const execute = promisify(execFile);
 export interface VercelConfig {
+	role?: "blog" | "studio";
 	root: string;
 	projectId: string;
 	teamId: string;
@@ -120,9 +121,11 @@ export class VercelProvider implements DeploymentProvider {
 		)
 			throw new ApiError(503, "DEPLOYMENT_PROTECTION_REQUIRED");
 	}
-	async build(_job: ReleaseJob, inputDir: string): Promise<void> {
+	async build(job: ReleaseJob, inputDir: string): Promise<void> {
 		await this.cli(["pull", "--yes", "--environment=production"]);
 		await this.cli(["build", "--prod"], {
+			PAPER_TREE_RELEASE_ID: job.releaseId,
+			PAPER_TREE_JOB_ID: job.jobId,
 			PAPER_TREES_ENABLED: "true",
 			PAPER_TREE_INPUT_DIR: inputDir,
 			PUBLIC_SITE_MODE: "production",
@@ -130,6 +133,19 @@ export class VercelProvider implements DeploymentProvider {
 		});
 	}
 	async validateBuild(job: ReleaseJob, inputDir: string): Promise<void> {
+		if (this.config.role === "studio") {
+			try {
+				await this.command("pnpm", ["check"], {
+					cwd: this.config.root,
+					env: { ...process.env },
+					maxBuffer: 8 * 1024 * 1024,
+					timeout: 5 * 60 * 1000,
+				});
+			} catch {
+				throw new ApiError(502, "STUDIO_VALIDATION_FAILED");
+			}
+			return;
+		}
 		const input = await readPublicTreeInput(inputDir, true, "production");
 		if (!input) throw new ApiError(502, "BUILD_INPUT_MISSING");
 		const receipt = JSON.parse(
@@ -222,6 +238,18 @@ export class VercelProvider implements DeploymentProvider {
 		if (!input || typeof input !== "object" || Array.isArray(input))
 			throw new ApiError(502, "RECEIPT_MISMATCH");
 		const receipt = input as Record<string, unknown>;
+		if (this.config.role === "studio") {
+			if (
+				Object.keys(receipt).sort().join() !==
+					"codeSha,jobId,releaseId,schemaVersion" ||
+				receipt.schemaVersion !== 1 ||
+				receipt.codeSha !== job.codeSha ||
+				receipt.releaseId !== job.releaseId ||
+				receipt.jobId !== job.jobId
+			)
+				throw new ApiError(502, "STUDIO_RECEIPT_MISMATCH");
+			return;
+		}
 		if (
 			!receipt ||
 			Object.keys(receipt).sort().join() !==
@@ -239,15 +267,22 @@ export class VercelProvider implements DeploymentProvider {
 		inputDir: string,
 	): Promise<void> {
 		const origin = this.candidateOrigin(deployment);
-		const input = await readPublicTreeInput(inputDir, true, "production");
-		if (!input) throw new ApiError(502, "BUILD_INPUT_MISSING");
-		const paths = [
-			"/",
-			"/paper-trees/release.json",
-			...input.snapshots.map(
-				(s) => `/paper-trees/snapshots/${s.snapshotId}.json`,
-			),
-		];
+		const input =
+			this.config.role === "studio"
+				? null
+				: await readPublicTreeInput(inputDir, true, "production");
+		if (this.config.role !== "studio" && !input)
+			throw new ApiError(502, "BUILD_INPUT_MISSING");
+		const paths =
+			this.config.role === "studio"
+				? ["/studio/paper-trees/", "/version.json"]
+				: [
+						"/",
+						"/paper-trees/release.json",
+						...(input?.snapshots ?? []).map(
+							(s) => `/paper-trees/snapshots/${s.snapshotId}.json`,
+						),
+					];
 		for (const path of paths) {
 			const anonymous = await this.request(`${origin}${path}`);
 			if (![401, 403].includes(anonymous.status))
@@ -257,11 +292,11 @@ export class VercelProvider implements DeploymentProvider {
 				"x-vercel-protection-bypass": this.config.bypass,
 			});
 			if (!allowed.ok) throw new ApiError(502, "CANDIDATE_QA_FAILED");
-			if (path === "/paper-trees/release.json")
+			if (path === "/paper-trees/release.json" || path === "/version.json")
 				this.receipt(await allowed.json(), job);
 			else if (path.startsWith("/paper-trees/snapshots/")) {
 				const actual = await allowed.json();
-				const expected = input.snapshots.find((s) =>
+				const expected = input?.snapshots.find((s) =>
 					path.endsWith(`${s.snapshotId}.json`),
 				);
 				if (JSON.stringify(actual) !== JSON.stringify(expected))
@@ -288,7 +323,7 @@ export class VercelProvider implements DeploymentProvider {
 		job: ReleaseJob,
 	): Promise<void> {
 		const response = await this.request(
-			`${this.config.origin}/paper-trees/release.json?verify=${randomUUID()}`,
+			`${this.config.origin}${this.config.role === "studio" ? "/version.json" : "/paper-trees/release.json"}?verify=${randomUUID()}`,
 			{ "cache-control": "no-cache" },
 		);
 		if (

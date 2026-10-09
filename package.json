@@ -32,6 +32,7 @@
     "test:paper-trees": "node --import tsx scripts/test-paper-trees.ts",
     "prepare:studio": "node --import tsx scripts/paper-trees/catalog.ts",
     "publish:paper-trees": "node --import tsx scripts/paper-trees/worker.ts publish",
+    "publish:code": "node --import tsx scripts/paper-trees/create-code-job.ts",
     "reconcile:paper-trees": "node --import tsx scripts/paper-trees/worker.ts reconcile",
     "dev:studio": "pnpm prepare:studio && pnpm --dir studio dev",
     "check:studio": "pnpm prepare:studio && pnpm --dir studio check",
