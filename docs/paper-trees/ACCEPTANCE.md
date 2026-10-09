@@ -4,7 +4,7 @@
 
 ## 当前状态
 
-功能代码及本地合成数据验收已完成。私人数据仓库、Actions 模板及 Studio 项目已经初始化，GitHub App 已创建；App 安装、Studio DNS、Actions 发布凭据及首次线上发布尚待配置和验收。云端候选排障见下方记录；模拟 API 测试不能代替真实 OAuth 或云端推广结果。原正式站点尚未切换到论文树版本。
+功能代码及本地合成数据验收已完成。私人数据仓库、Actions 模板、Studio 和 GitHub App 安装已配置；本人已授权并完成 Studio 加密服务端凭据写入，私人 Actions secrets 名称已齐。当前前置配置还差 Studio DNS；真实 OAuth、Actions token 的运行有效性、首次发布及回退尚待验收。云端候选排障见下方记录；模拟 API 测试不能代替真实 OAuth 或云端推广结果。原正式站点尚未切换到论文树版本。
 
 ## 本地检查
 
@@ -113,7 +113,7 @@ Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 byt
 - 博客及 Studio 项目 Ignored Build Step 均已设置为 `exit 0`；博客 Git 生产分支仍为 `main`。推送 `2fed587` 后实际 Git 候选为 CANCELED；Native prebuilt 已独立上传，正式域名没有切换。
 - Studio 子域名已关联项目并通过域名所有权核验，但 DNS 尚未配置。Vercel 实际推荐 CNAME：`studio` → `a0f5e2e31eb50535.vercel-dns-017.com`。该值来自本次项目 API，而不是通用示例。
 - 正式博客 alias 重新核对仍为 `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa`，源码 `30241dbf3eb0daff6859d510522e2fc8cea0a93b`。当前部署没有论文树功能。
-- GitHub App `goongmly-paper-trees` / `5247370` 已由本人创建，数字所有者 ID 与预定账号一致；尚无 installation，等待安装到单一私人仓库。Studio 的七个基础服务器变量及两个项目的 Automation Bypass 已配置；私人 Actions 仍缺 VERCEL_TOKEN。实际 OAuth、草稿读写和图发布没有执行，不能标为通过。
+- GitHub App `goongmly-paper-trees` / `5247370` 已安装，installation `169528325`、所有者数字 ID `167670554`；selected 范围内仅有 PRIVATE 的 `ZichaoZhu/paper-analysis-data`，Contents / Actions write、Metadata read。本人明确授权后，五项 App 凭据已写入 `blog-studio` Production 加密服务端变量，连同七项基础变量共 12 项。私人 Actions 三项 secrets 名称已齐，VERCEL_TOKEN 的运行有效性尚待实际 worker 核验。实际本人 OAuth、草稿读写和图发布没有执行，不能标为通过。
 
 ## 云端排障与修正（2026-10-09，正式未切换）
 
@@ -126,7 +126,7 @@ Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 byt
 - 新修正本地单元套件 105/105、TypeScript、Studio 15 文件检查与 lint（0 errors）通过；完整论文树浏览器 26/26、500 篇实际构建与隐私扫描、生产打包运行 2/2 通过。新版实际 Studio 候选继续验证，尚未作为正式部署上线。
 - `9724b94` 的博客候选 `dpl_DuSdVPyQQsA9wAjqXEanDznDzP4N` 通过，Studio 候选 `dpl_9cJjFoeT6eTaGd7KxkVEgrHj2893` 仍被工作区 500 拦下。云端日志及隔离函数测试共同复现 `Cannot find module 'dayjs'`：sanitize-html 的间接依赖 launder 被打包后仍调用外部 dayjs，文件追踪未带入它。此前测试从源码目录找到了依赖，存在漏检；现在测试只运行实际函数文件，并使用实体安装而非源码 node_modules 链接。仅将已有 dayjs 加入生产打包后，同一隔离函数测试由工作区 500 变为 200，版本回执检查仍通过；未变更依赖版本或清理规则。
 - [Linux CI `9724b94`](https://github.com/ZichaoZhu/blog/actions/runs/37899650479) 全部成功，但该次运行早于上述测试隔离修正，不能证明漏依赖已经修好。
-- 隔离修正后的本地检查：单元 105/105、TypeScript、修改脚本的 Biome（0 errors / warnings）、隔离函数 2/2、浏览器 26/26、500 篇真实构建及隐私扫描均通过。最新云端候选仍需在提交后重新构建核验。
+- 隔离修正后的本地检查：单元 105/105、TypeScript、修改脚本的 Biome（0 errors / warnings）、隔离函数 2/2、浏览器 26/26、500 篇真实构建及隐私扫描均通过；随后对已提交版本进行了以下云端核验。
 
 ### 最新双项目候选通过（`1c46c55`）
 
@@ -139,9 +139,17 @@ Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 byt
 
 两份无缓存回执匹配 code SHA、release `04decde1-b3ca-4eae-a642-2b42f21eccf7` 及 job `67a3fe55-802e-4562-b5f2-c00c0d15fc29`。这些是临时空图清单的验收标识，未登记私人发布作业、未更新成功指针、未推广候选。正式博客仍为 `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa` / `30241db`；最新 Git 自动构建候选也为 CANCELED。
 
-Studio 尚缺 App 安装和服务器凭据；带 bypass 的 `/api/session`、`/api/papers`、`/api/draft` 实测均返回无缓存的 `503 STUDIO_NOT_CONFIGURED`，没有返回私人清单或草稿。工作区 200 仅证明生产 SSR 可运行，不代表 GitHub 登录及编辑已经可用。[Linux CI `1c46c55`](https://github.com/ZichaoZhu/blog/actions/runs/37901201663) 正在执行，其最终结果另行记录。
+首次双候选验收时 Studio 尚缺 App 安装和服务器凭据；带 bypass 的 `/api/session`、`/api/papers`、`/api/draft` 实测均返回无缓存的 `503 STUDIO_NOT_CONFIGURED`，没有返回私人清单或草稿。该次工作区 200 仅证明生产 SSR 可运行。[Linux CI `1c46c55`](https://github.com/ZichaoZhu/blog/actions/runs/37901201663) 已全部成功，包括原站点、写作及新版隔离论文树验收。
 
-剩余协作事项：本人将 App 安装到唯一的 `ZichaoZhu/paper-analysis-data`；明确授权 App 凭据写入 `blog-studio` Production 加密服务器变量或本人自行配置；添加 Studio CNAME；在私人 Actions 设置长期有效、限所需 team 的 `VERCEL_TOKEN`。完成后仍需执行本人登录、草稿重读、首次协调发布和故障 / 回退验收，Task 11 尚未完成。
+### App 配置后候选验收
+
+本人确认授权后完成上述 App 变量配置，重新 pull / build / check / upload Studio，未修改产品代码或推广候选。新候选 [工作区](https://blog-studio-gt2x4hfbr-zichaozhus-projects.vercel.app/studio/paper-trees/) 为 `dpl_RK7mmhVhdF5c8UxLM2SWxbQxPePX`，源码及回执仍绑定上述 `1c46c55` 临时验收清单，与博客候选一致。
+
+候选访问保护及工作区 / 版本回执检查通过。带项目 bypass 但未登录的 `/api/session` 返回无缓存的 200、`authenticated:false`；`/api/papers`、`/api/draft`、`/api/jobs`、`/api/history` 返回无缓存的 401 UNAUTHENTICATED。`/api/auth/login` 返回 302 到 GitHub 正确 client ID，callback 为 `https://studio.blessingworld.cn/api/auth/callback`，state cookie 含 Secure / HttpOnly。没有伪造作者 session 或代替本人执行 OAuth；真实私人数据读写仍待验收。
+
+当前前置配置仅剩 Studio CNAME。Vercel 检测 `misconfigured:true` / `cnames:[]`，公共 Google DNS 返回 NXDOMAIN，阿里云两台权威服务器 `dns13.hichina.com`、`dns14.hichina.com` 均未返回 studio CNAME，不能只按公共缓存延迟处理。DNS 就绪后才登记首次协调 code 作业，避免博客先切换而 Studio 正式回执无法访问。私人 control 当前 activeJobId / activeReleaseId 均为 null，正式博客基线未变。
+
+剩余验收：DNS、本人登录及退出后草稿重读、首次协调发布、候选失败隔离及故障 / 回退闭环；Task 11 尚未完成。
 
 此次新增适配修正在独立审查范围之后，以失败复现、完整受影响检查和实际云端候选作为验证；没有声称完成第二次审查。
 

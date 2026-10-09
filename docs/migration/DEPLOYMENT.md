@@ -1,12 +1,14 @@
 # Astro / Firefly 正式发布记录
 
-首次发布日期：2026-10-06；最近更新：2026-10-07（Asia/Shanghai）。
+首次发布日期：2026-10-06；最近更新：2026-10-09（Asia/Shanghai）。
 
 ## 论文解析树：上线前准备（2026-10-09）
 
-论文树功能代码在 `feat/astro-firefly` 完成本地验收；私人数据仓库与 Studio 项目已经初始化，GitHub App 已创建。App 安装、Studio DNS、Actions 发布凭据及真实作者验收尚未完成，因此当前正式部署仍为下方导航修复版本。配置顺序见 [SETUP](../paper-trees/SETUP.md)，候选排障、合成数据检查与待验证项见 [ACCEPTANCE](../paper-trees/ACCEPTANCE.md)。两个项目 Ignored Build Step 已设为 `exit 0`，避免旧 main 的自动 Git 构建绕开协调发布；Git 生产分支仍为 `main`。后续应用更新应通过 `publish:code` 协调博客与 Studio，图回退通过历史成功清单；本文此前的裸 Vercel 回退命令保留为历史记录。
+论文树功能代码在 `feat/astro-firefly` 完成本地及 Linux CI 验收；私人数据仓库、Studio 项目与 GitHub App 安装已配置。本人授权后，App 凭据已写入 Studio Production 加密服务端变量，私人 Actions secrets 名称已齐。当前还缺 Studio DNS；真实作者登录、token 运行有效性、首次发布及回退尚待验收，因此当前正式部署仍为下方导航修复版本。配置顺序见 [SETUP](../paper-trees/SETUP.md)，候选排障、合成数据检查与待验证项见 [ACCEPTANCE](../paper-trees/ACCEPTANCE.md)。两个项目 Ignored Build Step 已设为 `exit 0`，避免旧 main 的自动 Git 构建绕开协调发布；Git 生产分支仍为 `main`。后续应用更新应通过 `publish:code` 协调博客与 Studio，图回退通过历史成功清单；本文此前的裸 Vercel 回退命令保留为历史记录。
 
 `1c46c55` 的博客与 Studio 受保护候选已通过首页 / 工作区及匹配回执核验，匿名 JSON 请求 401，bypass 请求 200；Studio 的运行依赖缺失已修复。候选尚未推广，正式博客仍为 `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa`。真实登录和私人数据 API 尚待配置验收，不能把候选工作区可响应等同于功能上线。
+
+App 配置后重建的 Studio 候选 `dpl_RK7mmhVhdF5c8UxLM2SWxbQxPePX` 已通过匿名会话、私人 API 拒绝访问、正确 GitHub 登录跳转和安全 state cookie 检查。阿里云两台权威 DNS 仍无 studio CNAME，因此没有登记首次 code 作业，也没有切换正式域名。
 
 ## 最新发布：导航图标修复（2026-10-07）
 

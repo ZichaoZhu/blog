@@ -71,6 +71,17 @@ gh repo create ZichaoZhu/paper-analysis-data --private --description 'Private pa
 
 Studio 开启 Include source files outside Root Directory。其 `vercel.json` 已指定从父目录安装 workspace、构建 Studio。Native worker 自动维护忽略目录 `.vercel/repo.json` 中的 Studio 映射，并在仓库根目录显式选择项目；博客根目录与 Studio 子目录分别保存预构建产物。不要直接在 `studio` 内执行裸 `vercel deploy`，远端 Root Directory 会被重复拼成 `studio/studio`。DNS 按 Vercel 实际提供的记录添加 Studio 子域名；不要替换博客现有 DNS。两者的 `*.vercel.app` production 候选也需保护，只保护 preview 不满足要求。分别创建项目级 Automation Bypass secret，供私人 worker 检查受保护候选。
 
+本次项目在阿里云 **blessingworld.cn** 的解析记录如下（2026-10-09 Vercel 项目推荐值）：
+
+| 字段 | 值 |
+| --- | --- |
+| 主机记录 | `studio` |
+| 记录类型 | `CNAME` |
+| 记录值 | `a0f5e2e31eb50535.vercel-dns-017.com` |
+| 解析线路 / TTL | 默认线路 / 默认 TTL |
+
+添加的是 `studio.blessingworld.cn`，主机记录不填写 `studio.blog`。可先查询阿里云权威 DNS 是否出现 CNAME，再核对公共解析和 Vercel 域名配置；只有权威记录已有而公共解析仍旧时，才按缓存传播等待。首次协调发布前须保证 Studio 正式域名可解析，以便核验两项目回执。
+
 生产 SSR 对已有 `sanitize-html` 和其间接依赖 `dayjs` 显式打包：前者的 CommonJS / ESM 边界不兼容平台加载器，后者会被打包后的动态 require 漏出依赖追踪。完整验收使用临时目录内的实体 workspace 安装，并把最终函数单独复制到另一个目录、清空 `NODE_PATH` / `NODE_OPTIONS` 后运行；源码目录中的依赖不能作为运行兜底。开发模式保留默认依赖处理。
 
 Studio runtime / production 设置以下服务端变量：
