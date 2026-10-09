@@ -2,15 +2,22 @@
 
 首次发布日期：2026-10-06；最近更新：2026-10-09（Asia/Shanghai）。
 
-## 论文解析树：上线前准备（2026-10-09）
+## 最新发布：论文解析树空清单 bootstrap（2026-10-09）
 
-论文树功能代码在 `feat/astro-firefly` 完成本地及 Linux CI 验收；私人数据仓库、Studio 项目与 GitHub App 安装已配置。本人授权后，App 凭据已写入 Studio Production 加密服务端变量，私人 Actions secrets 名称已齐。当前还缺 Studio DNS；真实作者登录、token 运行有效性、首次发布及回退尚待验收，因此当前正式部署仍为下方导航修复版本。配置顺序见 [SETUP](../paper-trees/SETUP.md)，候选排障、合成数据检查与待验证项见 [ACCEPTANCE](../paper-trees/ACCEPTANCE.md)。两个项目 Ignored Build Step 已设为 `exit 0`，避免旧 main 的自动 Git 构建绕开协调发布；Git 生产分支仍为 `main`。后续应用更新应通过 `publish:code` 协调博客与 Studio，图回退通过历史成功清单；本文此前的裸 Vercel 回退命令保留为历史记录。
+论文树功能代码在 `feat/astro-firefly` 完成本地及 Linux CI 验收，DNS / HTTPS 和受限凭据配置完成后，首次私人 Actions 协调发布成功。正式图集合当前为空；本人 OAuth、草稿重读、真实论文手动发布及故障 / 回退仍待验收。配置顺序见 [SETUP](../paper-trees/SETUP.md)，检查结果见 [ACCEPTANCE](../paper-trees/ACCEPTANCE.md)。两项目 Ignored Build Step=`exit 0`，Git 生产分支仍为 `main`；后续应用更新通过 `publish:code` 协调博客与 Studio，图回退通过历史成功清单，不绕开私人控制指针。
 
-`1c46c55` 的博客与 Studio 受保护候选已通过首页 / 工作区及匹配回执核验，匿名 JSON 请求 401，bypass 请求 200；Studio 的运行依赖缺失已修复。候选尚未推广，正式博客仍为 `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa`。真实登录和私人数据 API 尚待配置验收，不能把候选工作区可响应等同于功能上线。
+| 字段 | 实际值 |
+| --- | --- |
+| 源码 | `8b17cc424c3ea6d9e48c31cb9a59cfa45b86019f` |
+| Job / Release | `4a22ffac-fffc-456d-8102-f8e66ba6430c` / `13153742-63aa-4cc7-b693-a95b793962e3` |
+| 正式博客 | `dpl_HeFp4UpB8HSfYm1PGzjwSpNWcCLj` |
+| 正式 Studio | `dpl_8BZFWDvaqeDhtQvhT2papP6pWpAy` |
+| 工作流 | [私人 Actions 37914900927](https://github.com/ZichaoZhu/paper-analysis-data/actions/runs/37914900927)，SUCCESS |
+| 作者入口 | [论文解析树工作区](https://studio.blessingworld.cn/studio/paper-trees/) |
 
-App 配置后重建的 Studio 候选 `dpl_RK7mmhVhdF5c8UxLM2SWxbQxPePX` 已通过匿名会话、私人 API 拒绝访问、正确 GitHub 登录跳转和安全 state cookie 检查。阿里云两台权威 DNS 仍无 studio CNAME，因此没有登记首次 code 作业，也没有切换正式域名。
+发布后精确 alias、无缓存回执和私人成功指针一致，发布锁已释放。首页、课程、论文、归档、代表正文均正常；Studio 匿名私人 API 被拒绝，桌面及手机登录入口无脚本错误或页面溢出。公开文章编辑入口仍待本人登录验收后开启。此前候选排障及旧部署 ID 保留在 ACCEPTANCE 与下方历史记录，旧的裸 Vercel 回退命令仅为功能上线前记录。
 
-## 最新发布：导航图标修复（2026-10-07）
+## 历史发布：导航图标修复（2026-10-07）
 
 | 项目 | 值 |
 | --- | --- |

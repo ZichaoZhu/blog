@@ -4,7 +4,7 @@
 
 ## 当前状态
 
-功能代码及本地合成数据验收已完成。私人数据仓库、Actions 模板、Studio 和 GitHub App 安装已配置；本人已授权并完成 Studio 加密服务端凭据写入，私人 Actions secrets 名称已齐。当前前置配置还差 Studio DNS；真实 OAuth、Actions token 的运行有效性、首次发布及回退尚待验收。云端候选排障见下方记录；模拟 API 测试不能代替真实 OAuth 或云端推广结果。原正式站点尚未切换到论文树版本。
+功能代码已通过首次私人 Actions 协调发布，正式博客与 Studio 现绑定同一版本；首个成功图清单为空，尚未公开任何论文树。DNS、HTTPS、App 安装、Studio 加密凭据及 Actions token 的实际发布路径已验证。真实作者 OAuth、私人草稿重读、论文树手动发布及故障 / 回退闭环仍待验收，Task 11 尚未完成；模拟 API 测试不能代替这些真实检查。
 
 ## 本地检查
 
@@ -51,12 +51,12 @@
 
 Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 bytes**；`PaperTreeStudio` entry **508,259 bytes / gzip 165,760 bytes**（包含 Markdown / KaTeX 等）。gzip 使用本地 Python 标准库重新压缩；图形模块按需载入，公开页面保留静态大纲。
 
-## 上线前尚待真实验证
+## 尚待真实验收
 
 - GitHub 数字 ID 限制、首次登录、保存后重新登录读取、另一账户及匿名拒绝。
-- 两个 Vercel 项目的 Node 22、候选访问保护、自动化绕过、域名及实际构建环境。
+- 两个项目的实际构建、候选访问保护、自动化绕过及正式域名已通过首个 code 作业；后续真实论文树的图形 / 大纲版本仍待核验。
 - 私人 Actions 固定数据 / 代码提交、500 快照的真实网络路径；已单独通过真实私人仓库的 partial Git 按需读取，但不等同于 500 快照云端验收。
-- 空清单 bootstrap、真实论文首次手动发布、正式域名部署 ID 与新鲜回执一致。
+- 空清单 bootstrap 及正式部署 ID / 新鲜回执已通过；真实论文首次手动发布待执行。
 - 候选安全失败、失败图不带入下一次发布、历史回退不修改私人草稿、普通代码发布保留图。
 
 独立代码审查、处理记录和真实部署结果将在相应步骤完成后追加，不能提前标为通过。
@@ -106,16 +106,16 @@ Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 byt
 - Final: Ruling: Current workflow supports the existing public source repository; document additional read-only credentials if source becomes private — data-repository GITHUB_TOKEN cannot read a different private source repo — changing source visibility without those credentials will fail closed.
 - Ruling: Keep graph rollback scoped to the complete successful release as designed, label all-site scope, paper count and removal consequences in the author UI — release history maps all papers and per-paper rollback would change the accepted model — choosing an old release may remove newer public graphs, with explicit confirmation; private drafts and article bodies stay intact.
 
-## 云端初始化进度（尚未发布功能）
+## 云端初始化与配置
 
 - 私人数据仓库：`ZichaoZhu/paper-analysis-data`，GitHub 确认为 PRIVATE；初始提交 `dfac5d5`，包含空控制基线与已启用的 `publish.yml`。五个非敏感 Actions variables 已设置。
 - Studio：`blog-studio` / `prj_wIgiZ1TmUmzMBn0rbE5hw3NXxc5N`，Root=`studio`、Node 22.x、共享根外源码开启、保护=`all_except_custom_domains`。
 - 博客及 Studio 项目 Ignored Build Step 均已设置为 `exit 0`；博客 Git 生产分支仍为 `main`。推送 `2fed587` 后实际 Git 候选为 CANCELED；Native prebuilt 已独立上传，正式域名没有切换。
-- Studio 子域名已关联项目并通过域名所有权核验，但 DNS 尚未配置。Vercel 实际推荐 CNAME：`studio` → `a0f5e2e31eb50535.vercel-dns-017.com`。该值来自本次项目 API，而不是通用示例。
-- 正式博客 alias 重新核对仍为 `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa`，源码 `30241dbf3eb0daff6859d510522e2fc8cea0a93b`。当前部署没有论文树功能。
-- GitHub App `goongmly-paper-trees` / `5247370` 已安装，installation `169528325`、所有者数字 ID `167670554`；selected 范围内仅有 PRIVATE 的 `ZichaoZhu/paper-analysis-data`，Contents / Actions write、Metadata read。本人明确授权后，五项 App 凭据已写入 `blog-studio` Production 加密服务端变量，连同七项基础变量共 12 项。私人 Actions 三项 secrets 名称已齐，VERCEL_TOKEN 的运行有效性尚待实际 worker 核验。实际本人 OAuth、草稿读写和图发布没有执行，不能标为通过。
+- Studio CNAME 已由本人添加，权威 / 公共 DNS 及 Vercel `misconfigured:false` 均通过：`studio` → `a0f5e2e31eb50535.vercel-dns-017.com`。初次 DNS 验证后证书尚未出现，按[官方签发 API](https://vercel.com/docs/rest-api/certs/issue-a-new-cert)请求托管证书成功，`cert_FiJZ42xSL0AvXYkr6UpSBVX5`、autoRenew=true；HTTPS 连通后才登记首次 code 作业。
+- 首次功能上线前基线为 `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa` / `30241dbf3eb0daff6859d510522e2fc8cea0a93b`，保留为历史记录。当前正式部署见下方首次协调发布表。
+- GitHub App `goongmly-paper-trees` / `5247370` 已安装，installation `169528325`、所有者数字 ID `167670554`；selected 范围内仅有 PRIVATE 的 `ZichaoZhu/paper-analysis-data`，Contents / Actions write、Metadata read。本人明确授权后，五项 App 凭据已写入 `blog-studio` Production 加密服务端变量，连同七项基础变量共 12 项，已只读核对均为 encrypted。私人 Actions 三项 secrets 已配置，VERCEL_TOKEN 已通过真实 build / upload / promote 路径。实际本人 OAuth、草稿读写和图发布没有执行，不能标为通过。
 
-## 云端排障与修正（2026-10-09，正式未切换）
+## 云端排障与修正（2026-10-09，首次发布前）
 
 - [Linux CI `2fed587`](https://github.com/ZichaoZhu/blog/actions/runs/37895769881) 全部成功，包含原站点、写作和论文树回归。这一结果早于下述 Native 兼容修正，不能用它代替新修正的验证。
 - 私人仓库真实 partial Git 测试固定 `dfac5d56ea35d47a95221b32fbb29f15cec06e3f`；初始缺少 3 个 blob，显式批量获取后可读 control，Git 配置未保存 token。
@@ -147,9 +147,26 @@ Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 byt
 
 候选访问保护及工作区 / 版本回执检查通过。带项目 bypass 但未登录的 `/api/session` 返回无缓存的 200、`authenticated:false`；`/api/papers`、`/api/draft`、`/api/jobs`、`/api/history` 返回无缓存的 401 UNAUTHENTICATED。`/api/auth/login` 返回 302 到 GitHub 正确 client ID，callback 为 `https://studio.blessingworld.cn/api/auth/callback`，state cookie 含 Secure / HttpOnly。没有伪造作者 session 或代替本人执行 OAuth；真实私人数据读写仍待验收。
 
-当前前置配置仅剩 Studio CNAME。Vercel 检测 `misconfigured:true` / `cnames:[]`，公共 Google DNS 返回 NXDOMAIN，阿里云两台权威服务器 `dns13.hichina.com`、`dns14.hichina.com` 均未返回 studio CNAME，不能只按公共缓存延迟处理。DNS 就绪后才登记首次协调 code 作业，避免博客先切换而 Studio 正式回执无法访问。私人 control 当前 activeJobId / activeReleaseId 均为 null，正式博客基线未变。
+该轮验收时仅剩 Studio CNAME：Vercel `misconfigured:true` / `cnames:[]`、Google DNS NXDOMAIN，阿里云两台权威服务器均未返回 CNAME；因此未登记首次作业。本人后来添加解析并完成 HTTPS，才执行下方协调发布。配置后 macOS 候选的公开静态文件也已用实际 client secret、PEM 原文 / 转义形式、session / bypass / CLI token 作为字节标记扫描通过，凭据不输出；这不声称读取了 Actions 的远程文件系统。
 
-剩余验收：DNS、本人登录及退出后草稿重读、首次协调发布、候选失败隔离及故障 / 回退闭环；Task 11 尚未完成。
+### 首次正式协调发布通过
+
+| 字段 | 实际值 |
+| --- | --- |
+| 源码 | `8b17cc424c3ea6d9e48c31cb9a59cfa45b86019f` |
+| Job | `4a22ffac-fffc-456d-8102-f8e66ba6430c`，published |
+| Release | `13153742-63aa-4cc7-b693-a95b793962e3`，entries 为空 |
+| 私人 Actions | [37914900927](https://github.com/ZichaoZhu/paper-analysis-data/actions/runs/37914900927)，SUCCESS，5m38s |
+| 正式博客 | `dpl_HeFp4UpB8HSfYm1PGzjwSpNWcCLj`，`https://blog.blessingworld.cn` |
+| 正式 Studio | `dpl_8BZFWDvaqeDhtQvhT2papP6pWpAy`，[工作区](https://studio.blessingworld.cn/studio/paper-trees/) |
+
+从干净的独立检出，以仅限数据仓库的短时 App installation token 登记 / dispatch；私人 Actions 使用自身 GITHUB_TOKEN 和已配置的 VERCEL_TOKEN，固定源码 / 数据提交，构建、验证、上传两份受保护候选后推广。临时复制 LFS 资源后索引误报 1,347 项修改，先按规范化过滤重新建索引并严格断言 cached diff 为空、完整 status 为空，未放宽产品的脏源码拒绝规则。首次准备失败未登记作业，修正后仅登记上述一个作业。
+
+发布后独立核验：私人 control 的 activeJobId 为 null，成功 release / code / 两份部署 ID 与 job 一致；两正式 alias 精确匹配。博客无缓存回执的 code / release / publishedAt 与作业匹配，Studio 无缓存回执的 code / release / job 匹配；空图集合从私人不可变 manifest 核对，公开回执不增加 job 或 entries 字段。首页、课程、论文、归档和 InfiniDepth 正文均 200。正式 Studio 工作区 / 匿名 session 200，papers / draft / jobs / history 401。
+
+独立匿名 Chromium 在 1440px / 390px 均确认 GitHub 登录入口可见、无私人论文 selector / options、无脚本错误及整页横向溢出，截图已目视核验。真实本人 OAuth 由作者完成，未伪造 session；公开文章的编辑链接仍待登录验收后启用。
+
+剩余验收：本人登录及退出后草稿重读、真实论文首次手动发布、候选失败隔离、图回退及代码发布保留图；Task 11 尚未完成。
 
 此次新增适配修正在独立审查范围之后，以失败复现、完整受影响检查和实际云端候选作为验证；没有声称完成第二次审查。
 
