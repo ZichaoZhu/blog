@@ -4,7 +4,7 @@
 
 ## 当前状态
 
-代码及本地合成数据验收已完成。真实 GitHub App、私人数据仓库、Actions、Studio 域名及首次线上发布尚待配置和验收；本记录中的模拟 API 测试不能代替真实 OAuth 或云端推广结果。原正式站点尚未切换到论文树版本。
+代码及本地合成数据验收已完成。私人数据仓库、Actions 模板及 Studio 项目已经初始化；GitHub App、Studio DNS、完整运行凭据及首次线上发布尚待配置和验收；本记录中的模拟 API 测试不能代替真实 OAuth 或云端推广结果。原正式站点尚未切换到论文树版本。
 
 ## 本地检查
 
@@ -105,3 +105,12 @@ Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 byt
 - Final: Ruling: Keep Git production branch main and require project-level Ignored Build Step exit 0 before coordinated production enabling — old main code must not auto-deploy around the private lock; official Vercel docs confirm exit 0 skips remote builds — actual worker prebuilt and auto-deploy guard behavior must be verified before switching; not claimed verified.
 - Final: Ruling: Current workflow supports the existing public source repository; document additional read-only credentials if source becomes private — data-repository GITHUB_TOKEN cannot read a different private source repo — changing source visibility without those credentials will fail closed.
 - Ruling: Keep graph rollback scoped to the complete successful release as designed, label all-site scope, paper count and removal consequences in the author UI — release history maps all papers and per-paper rollback would change the accepted model — choosing an old release may remove newer public graphs, with explicit confirmation; private drafts and article bodies stay intact.
+
+## 云端初始化进度（尚未发布功能）
+
+- 私人数据仓库：`ZichaoZhu/paper-analysis-data`，GitHub 确认为 PRIVATE；初始提交 `dfac5d5`，包含空控制基线与已启用的 `publish.yml`。五个非敏感 Actions variables 已设置。
+- Studio：`blog-studio` / `prj_wIgiZ1TmUmzMBn0rbE5hw3NXxc5N`，Root=`studio`、Node 22.x、共享根外源码开启、保护=`all_except_custom_domains`。
+- 博客及 Studio 项目 Ignored Build Step 均已设置为 `exit 0`；博客 Git 生产分支仍为 `main`。实际 remote Git 取消与 worker prebuilt 路径尚待验收。
+- Studio 子域名已关联项目并通过域名所有权核验，但 DNS 尚未配置。Vercel 实际推荐 CNAME：`studio` → `a0f5e2e31eb50535.vercel-dns-017.com`。该值来自本次项目 API，而不是通用示例。
+- 正式博客 alias 重新核对仍为 `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa`，源码 `30241dbf3eb0daff6859d510522e2fc8cea0a93b`。当前部署没有论文树功能。
+- GitHub App 注册准备页与仅监听本机的回调已备好，等待本人创建、安装到单一私人仓库。实际 OAuth、读写和图发布没有执行，不能标为通过。
