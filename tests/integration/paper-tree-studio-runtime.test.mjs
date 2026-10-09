@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { cp, mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import test from "node:test";
+import test, { after } from "node:test";
 import { pathToFileURL } from "node:url";
 
 const output =
@@ -10,8 +11,12 @@ const functionDir = join(output, "functions/_render.func");
 const config = JSON.parse(
 	await readFile(join(functionDir, ".vc-config.json"), "utf8"),
 );
+// Match the deployed file set; never resolve missing packages from the source checkout.
+const isolated = await mkdtemp(join(tmpdir(), "paper-tree-studio-runtime-"));
+after(() => rm(isolated, { recursive: true, force: true }));
+await cp(functionDir, isolated, { recursive: true, dereference: true });
 const { default: app } = await import(
-	pathToFileURL(join(functionDir, config.handler)).href
+	pathToFileURL(join(isolated, config.handler)).href
 );
 
 test("built Studio renders the workspace when CommonJS cannot require ES modules", async () => {

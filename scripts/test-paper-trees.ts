@@ -8,11 +8,10 @@ import {
 	readdir,
 	readFile,
 	rm,
-	symlink,
 	writeFile,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join, relative, resolve } from "node:path";
+import { join, relative } from "node:path";
 import matter from "gray-matter";
 import {
 	type ReleaseManifest,
@@ -52,10 +51,21 @@ try {
 			);
 		},
 	});
-	await symlink(
-		resolve(source, "node_modules"),
-		join(dest, "node_modules"),
-		"dir",
+	// Physical workspace dependencies let the adapter trace exactly what it deploys.
+	const install = spawnSync(
+		"pnpm",
+		["install", "--frozen-lockfile", "--offline"],
+		{
+			cwd: dest,
+			env: { ...process.env, CI: "true" },
+			encoding: "utf8",
+			maxBuffer: 16 * 1024 * 1024,
+		},
+	);
+	assert.equal(
+		install.status,
+		0,
+		`Isolated dependency install failed: ${((install.stdout ?? "") + (install.stderr ?? "")).slice(-6000)}`,
 	);
 	const input = join(dest, ".paper-trees/public-input");
 	await mkdir(join(input, "snapshots"), { recursive: true });
@@ -232,11 +242,6 @@ try {
 	assert.equal(scaleHtml.includes("ScaleNodeSentinel498"), false);
 	assert.ok(Buffer.byteLength(html) < 512 * 1024);
 	// Build a real SSR Studio with a synthetic private catalog, then scan only its client output.
-	await symlink(
-		resolve(source, "studio/node_modules"),
-		join(dest, "studio/node_modules"),
-		"dir",
-	);
 	await mkdir(join(dest, "studio/.generated"), { recursive: true });
 	const studioCatalog = await buildPaperCatalog(
 		join(dest, "src/content/posts"),
@@ -289,6 +294,8 @@ try {
 			cwd: source,
 			env: {
 				...env,
+				NODE_PATH: "",
+				NODE_OPTIONS: "",
 				PAPER_TREE_STUDIO_OUTPUT_DIR: join(dest, "studio/.vercel/output"),
 			},
 			stdio: "inherit",

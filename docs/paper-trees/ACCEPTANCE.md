@@ -4,7 +4,7 @@
 
 ## 当前状态
 
-代码及本地合成数据验收已完成。私人数据仓库、Actions 模板及 Studio 项目已经初始化；GitHub App、Studio DNS、完整运行凭据及首次线上发布尚待配置和验收；本记录中的模拟 API 测试不能代替真实 OAuth 或云端推广结果。原正式站点尚未切换到论文树版本。
+功能代码及本地合成数据验收已完成。私人数据仓库、Actions 模板及 Studio 项目已经初始化，GitHub App 已创建；App 安装、Studio DNS、Actions 发布凭据及首次线上发布尚待配置和验收。云端候选排障见下方记录；模拟 API 测试不能代替真实 OAuth 或云端推广结果。原正式站点尚未切换到论文树版本。
 
 ## 本地检查
 
@@ -12,7 +12,7 @@
 
 | 检查 | 结果 |
 | --- | --- |
-| `pnpm test` | 102/102，通过模型、鉴权、CAS、版本绑定、发布、故障恢复、回退、Git 读取及缓存检查 |
+| `pnpm test` | 105/105，通过模型、鉴权、CAS、版本绑定、发布、故障恢复、回退、Git 读取、缓存及 Native CLI 检查 |
 | `pnpm type-check` | 通过 |
 | `pnpm lint:check` | 0 错误；模板既有 5 warnings / 36 infos |
 | `pnpm check` | 331 文件，0 errors / warnings / hints |
@@ -124,9 +124,14 @@ Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 byt
 - 本机直接请求候选域名超时，现有代理可达；这是本机验收网络条件。实际 JSON 匿名请求为 401，带项目 bypass 后博客首页和发布回执为 200，原始博客候选 `dpl_6mVMSMLXVTHF4CuPrdS7zDUMTWjt` 通过该检查。
 - 原始 Studio 候选 `dpl_AcQDvTtuUECo6z4pgCoYfFmic3H3` 匿名请求为 401，但绕过后工作区为 500，验证正确阻止其发布。运行日志确定为 sanitize-html CommonJS 加载 htmlparser2 12 ESM 时 ERR_REQUIRE_ESM。现仅在生产构建用 `ssr.noExternal` 转换已有 sanitize-html，开发模式保持原有依赖加载方式，保留版本和清理规则。真实打包 handler 在 Node 禁止 require ESM 时先复现 500，修正后工作区和无缓存版本回执 2/2 通过；该检查已加入 `test:paper-trees`。
 - 新修正本地单元套件 105/105、TypeScript、Studio 15 文件检查与 lint（0 errors）通过；完整论文树浏览器 26/26、500 篇实际构建与隐私扫描、生产打包运行 2/2 通过。新版实际 Studio 候选继续验证，尚未作为正式部署上线。
+- `9724b94` 的博客候选 `dpl_DuSdVPyQQsA9wAjqXEanDznDzP4N` 通过，Studio 候选 `dpl_9cJjFoeT6eTaGd7KxkVEgrHj2893` 仍被工作区 500 拦下。云端日志及隔离函数测试共同复现 `Cannot find module 'dayjs'`：sanitize-html 的间接依赖 launder 被打包后仍调用外部 dayjs，文件追踪未带入它。此前测试从源码目录找到了依赖，存在漏检；现在测试只运行实际函数文件，并使用实体安装而非源码 node_modules 链接。仅将已有 dayjs 加入生产打包后，同一隔离函数测试由工作区 500 变为 200，版本回执检查仍通过；未变更依赖版本或清理规则。
+- [Linux CI `9724b94`](https://github.com/ZichaoZhu/blog/actions/runs/37899650479) 全部成功，但该次运行早于上述测试隔离修正，不能证明漏依赖已经修好。
+- 隔离修正后的本地检查：单元 105/105、TypeScript、修改脚本的 Biome（0 errors / warnings）、隔离函数 2/2、浏览器 26/26、500 篇真实构建及隐私扫描均通过。最新云端候选仍需在提交后重新构建核验。
 
 此次新增适配修正在独立审查范围之后，以失败复现、完整受影响检查和实际云端候选作为验证；没有声称完成第二次审查。
 
 - Ruling: Extend Task 11 actual-cloud acceptance with two narrowly scoped Native CLI compatibility corrections after the completed independent review — CLI 62.2.0 build tolerates per-directory linking but deploy applies remote rootDirectory twice; its agent success output is JSON with several alias/guidance URLs, unlike plain stdout — use official repository mapping plus explicit project selection and authoritative JSON deployment ID; require RED→GREEN regression and actual protected-candidate verification before promotion. These adapter corrections are outside the reviewed range and receive no second reviewer, so cloud proof and full affected checks are mandatory.
 
 - Ruling: Transform the existing sanitize-html dependency in the Studio SSR bundle, retaining its installed version and sanitization rules — actual Vercel error ERR_REQUIRE_ESM is sanitize-html CommonJS requiring htmlparser2 12 ESM; built-function test with Node --no-experimental-require-module reproduced workspace 500 while version endpoint remained 200 — Vite ssr.noExternal is the minimal adapter configuration; a native built-handler runtime regression is added to the full paper-tree gate. Cloud verification is still required because the local flag approximates the platform loader.
+
+- Ruling: Bundle the existing dayjs dependency in production and run emitted Studio functions outside the source tree with physical workspace dependencies — actual Vercel and isolated runtime both fail on launder's untraced dynamic dayjs require, while source-directory resolution masked it — retains installed versions and sanitization behavior; the full gate adds an offline install and real-cloud verification remains required before promotion.

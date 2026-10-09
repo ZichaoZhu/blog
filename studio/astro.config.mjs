@@ -10,5 +10,5 @@ export default defineConfig({
   adapter: vercel({ includeFiles: ['.generated/papers.json'] }),
   integrations: [svelte(), icon({ include: { 'material-symbols': ['*'] } })],
   devToolbar: { enabled: false },
-  vite: { plugins: [tailwind()], ssr: { noExternal: process.env.NODE_ENV === 'production' ? ['sanitize-html'] : [] }, server: { fs: { allow: [fileURLToPath(new URL('..', import.meta.url))] } }, resolve: { dedupe: ['svelte'] } },
+  vite: { plugins: [tailwind()], ssr: { noExternal: process.env.NODE_ENV === 'production' ? ['sanitize-html', 'dayjs'] : [] }, server: { fs: { allow: [fileURLToPath(new URL('..', import.meta.url))] } }, resolve: { dedupe: ['svelte'] } },
 });
