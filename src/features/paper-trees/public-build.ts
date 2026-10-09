@@ -70,7 +70,7 @@ function readRelease(input: unknown): ReleaseManifest {
 		entries,
 	};
 }
-function readSnapshot(input: unknown): PublicSnapshot {
+export function readSnapshot(input: unknown): PublicSnapshot {
 	const raw = record(input);
 	keys(raw, ["schemaVersion", "snapshotId", "paperId", "publishedAt", "tree"]);
 	const tree = record(raw.tree);
@@ -107,7 +107,7 @@ function readSnapshot(input: unknown): PublicSnapshot {
 		String(raw.publishedAt),
 	);
 }
-function validateInput(input: unknown): PublicTreeInput {
+export function validateInput(input: unknown): PublicTreeInput {
 	const raw = record(input);
 	keys(raw, ["release", "snapshots"]);
 	if (!Array.isArray(raw.snapshots))

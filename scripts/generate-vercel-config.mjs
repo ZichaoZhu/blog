@@ -9,6 +9,18 @@ const config = {
 	buildCommand:
 		'if [ "$VERCEL_ENV" = "production" ]; then PUBLIC_SITE_MODE=production PUBLIC_SITE_ORIGIN=https://blog.blessingworld.cn pnpm build; else PUBLIC_SITE_MODE=preview PUBLIC_SITE_ORIGIN=http://127.0.0.1:4321 pnpm build; fi',
 	trailingSlash: true,
+	headers: [
+		{
+			source: "/paper-trees/release.json",
+			headers: [{ key: "Cache-Control", value: "no-store" }],
+		},
+		{
+			source: "/paper-trees/snapshots/:snapshot.json",
+			headers: [
+				{ key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+			],
+		},
+	],
 	redirects: [
 		...Object.entries(legacy.paths).flatMap(([path, destination]) =>
 			[...new Set([path, path.endsWith("/") ? path : `${path}/`])].map(

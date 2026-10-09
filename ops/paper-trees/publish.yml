@@ -1,0 +1,80 @@
+# Install ONLY in the separate private data repository as .github/workflows/publish.yml.
+name: Publish paper trees
+run-name: paper-tree:${{ inputs.job_id }}
+on:
+  workflow_dispatch:
+    inputs:
+      job_id: {required: true, type: string}
+      data_sha: {required: true, type: string}
+      code_sha: {required: true, type: string}
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: paper-tree-production
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      # Validate trusted private state BEFORE executing any code from the source checkout.
+      - name: Verify immutable job and allowed source branch
+        id: verify
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DATA_REPO: ${{ github.repository }}
+          SOURCE_REPO: ${{ vars.BLOG_SOURCE_REPO }}
+          SOURCE_BRANCH: ${{ vars.BLOG_SOURCE_BRANCH }}
+          JOB_ID: ${{ inputs.job_id }}
+          DATA_SHA: ${{ inputs.data_sha }}
+          CODE_SHA: ${{ inputs.code_sha }}
+        shell: python
+        run: |
+          import os, re, json, base64, urllib.request
+          e = os.environ
+          def require(ok):
+              if not ok: raise SystemExit('INVALID_PUBLICATION_INPUT')
+          require(re.fullmatch(r'[a-f0-9-]{36}', e['JOB_ID']) is not None)
+          require(all(re.fullmatch(r'[a-f0-9]{40}', e[k]) for k in ['DATA_SHA','CODE_SHA']))
+          require(re.fullmatch(r'[\w.-]+/[\w.-]+', e['SOURCE_REPO']) is not None)
+          require(re.fullmatch(r'[\w/-]+', e['SOURCE_BRANCH']) is not None and '..' not in e['SOURCE_BRANCH'])
+          def get(path, private=True):
+              headers = {'Accept':'application/vnd.github+json'}
+              if private: headers['Authorization']='Bearer '+e['GH_TOKEN']
+              try:
+                  with urllib.request.urlopen(urllib.request.Request('https://api.github.com/repos/'+path, headers=headers), timeout=20) as r: return json.load(r)
+              except Exception: raise SystemExit('PUBLICATION_INPUT_UNAVAILABLE')
+          def file(path, ref):
+              return json.loads(base64.b64decode(get(e['DATA_REPO']+'/contents/'+path+'?ref='+ref)['content']))
+          job = file('jobs/'+e['JOB_ID']+'.json', e['DATA_SHA'])
+          control = file('control.json', e['DATA_SHA'])
+          require(job['jobId']==e['JOB_ID'] and job['codeSha']==e['CODE_SHA'] and job['state']=='queued' and control['activeJobId']==e['JOB_ID'])
+          compare = get(e['SOURCE_REPO']+'/compare/'+e['CODE_SHA']+'...'+e['SOURCE_BRANCH'], False)
+          require(compare['status'] in ['ahead','identical'])
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ vars.BLOG_SOURCE_REPO }}
+          ref: ${{ inputs.code_sha }}
+          lfs: true
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22.23.0'
+      - uses: pnpm/action-setup@v6
+        with:
+          version: '11.22.0'
+          run_install: false
+      - run: pnpm install --frozen-lockfile
+      - name: Build, validate, upload protected candidate, then promote
+        env:
+          GH_DATA_TOKEN: ${{ github.token }}
+          PAPER_TREE_DATA_REPO: ${{ github.repository }}
+          PAPER_TREE_DATA_BRANCH: ${{ github.ref_name }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          JOB_ID: ${{ inputs.job_id }}
+          DATA_SHA: ${{ inputs.data_sha }}
+        run: node --import tsx scripts/paper-trees/worker.ts publish "$JOB_ID" "$DATA_SHA"

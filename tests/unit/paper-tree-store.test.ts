@@ -6,6 +6,10 @@ import { signSession } from '../../studio/src/server/auth';
 import { createPaperTree } from '../../src/features/paper-trees/template';
 import { authorConfig as config, catalog, FakeGitHub, paper } from '../fixtures/paper-tree-studio';
 const session={userId:config.ownerUserId,expiresAt:Math.floor(Date.now()/1000)+7200,csrfToken:'a'.repeat(48)};
+test('private workflow uses its short-lived repository token without OAuth or App credentials',async()=>{
+ const github=new FakeGitHub();const store=new GitHubTreeStore({dataRepo:config.dataRepo,dataBranch:config.dataBranch},github.fetch,'workflow-token');
+ await store.getHead();assert.equal(github.requests.some(r=>r.url.includes('/access_tokens')),false);
+});
 function req(path:string,method='GET',body?:unknown,authenticated=true){return new Request(config.origin+path,{method,headers:{...(authenticated?{cookie:`__Host-paper-tree-session=${signSession(session,config.sessionSecret)}`} :{}),origin:config.origin,'X-CSRF-Token':session.csrfToken,'content-type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});}
 test('private store creates, updates and rejects stale versions with non-force atomic commits',async()=>{
  const github=new FakeGitHub();const store=new GitHubTreeStore(config,github.fetch);const draft=createPaperTree(paper.id,'empty');

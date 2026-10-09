@@ -76,10 +76,12 @@ async function boundedJson(response: Response): Promise<GitResponse> {
 export class GitHubTreeStore {
 	private cachedToken: { value: string; expiresAt: number } | null = null;
 	constructor(
-		private config: AuthorConfig,
+		private config: Pick<AuthorConfig,"dataRepo"|"dataBranch"> & Partial<Pick<AuthorConfig,"appId"|"privateKey"|"installationId">>,
 		private fetchImpl: typeof fetch = fetch,
+		private workflowToken?: string,
 	) {}
 	private async installationToken(): Promise<string> {
+		if (this.workflowToken) return this.workflowToken;
 		if (this.cachedToken && this.cachedToken.expiresAt > Date.now() + 60000)
 			return this.cachedToken.value;
 		const now = Math.floor(Date.now() / 1000);
@@ -91,6 +93,7 @@ export class GitHubTreeStore {
 		).toString("base64url");
 		let jwt: string;
 		try {
+			if (!this.config.privateKey) throw new Error("Missing App key");
 			jwt = `${header}.${payload}.${sign("RSA-SHA256", Buffer.from(`${header}.${payload}`), this.config.privateKey).toString("base64url")}`;
 		} catch {
 			throw new ApiError(503, "APP_CREDENTIALS_INVALID");

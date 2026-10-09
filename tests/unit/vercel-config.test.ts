@@ -20,3 +20,9 @@ test('Git deployments include every legacy article and image redirect',async()=>
   assert.deepEqual(redirects.get(source),{source,destination:image.original,permanent:true},path);
  }
 });
+test('paper tree receipts are never cached and immutable snapshots have explicit cache headers',async()=>{
+ const config=JSON.parse(await readFile('vercel.json','utf8'));
+ const headers=new Map((config.headers??[]).map(rule=>[rule.source,rule.headers]));
+ assert.deepEqual(headers.get('/paper-trees/release.json'),[{key:'Cache-Control',value:'no-store'}]);
+ assert.deepEqual(headers.get('/paper-trees/snapshots/:snapshot.json'),[{key:'Cache-Control',value:'public, max-age=31536000, immutable'}]);
+});
