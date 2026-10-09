@@ -6,6 +6,8 @@
 
 论文树功能代码在 `feat/astro-firefly` 完成本地验收；私人数据仓库与 Studio 项目已经初始化，GitHub App 已创建。App 安装、Studio DNS、Actions 发布凭据及真实作者验收尚未完成，因此当前正式部署仍为下方导航修复版本。配置顺序见 [SETUP](../paper-trees/SETUP.md)，候选排障、合成数据检查与待验证项见 [ACCEPTANCE](../paper-trees/ACCEPTANCE.md)。两个项目 Ignored Build Step 已设为 `exit 0`，避免旧 main 的自动 Git 构建绕开协调发布；Git 生产分支仍为 `main`。后续应用更新应通过 `publish:code` 协调博客与 Studio，图回退通过历史成功清单；本文此前的裸 Vercel 回退命令保留为历史记录。
 
+`1c46c55` 的博客与 Studio 受保护候选已通过首页 / 工作区及匹配回执核验，匿名 JSON 请求 401，bypass 请求 200；Studio 的运行依赖缺失已修复。候选尚未推广，正式博客仍为 `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa`。真实登录和私人数据 API 尚待配置验收，不能把候选工作区可响应等同于功能上线。
+
 ## 最新发布：导航图标修复（2026-10-07）
 
 | 项目 | 值 |

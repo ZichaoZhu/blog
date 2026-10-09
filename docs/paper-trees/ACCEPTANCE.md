@@ -128,6 +128,21 @@ Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 byt
 - [Linux CI `9724b94`](https://github.com/ZichaoZhu/blog/actions/runs/37899650479) 全部成功，但该次运行早于上述测试隔离修正，不能证明漏依赖已经修好。
 - 隔离修正后的本地检查：单元 105/105、TypeScript、修改脚本的 Biome（0 errors / warnings）、隔离函数 2/2、浏览器 26/26、500 篇真实构建及隐私扫描均通过。最新云端候选仍需在提交后重新构建核验。
 
+### 最新双项目候选通过（`1c46c55`）
+
+从已提交并推送的 `1c46c5565fb399bebffb93da2888641ad36961a5` 独立检出，校验并复制 1,347 个受 Git LFS 管理的资源，再进行实体离线安装、Native build、产物验证及上传。两项目设置、输出和 metadata 均一致，博客项目缓存未被 Studio 构建覆盖。
+
+| 项目 | 受保护候选 | 实际请求结果 |
+| --- | --- | --- |
+| 博客 | [候选首页](https://blog-54txwdlvd-zichaozhus-projects.vercel.app)，`dpl_FV5NZYBe9JFLUcADmnirvfZEmfYM` | 首页和 `/paper-trees/release.json`：匿名 JSON 请求 401，项目 bypass 请求 200 |
+| Studio | [候选工作区](https://blog-studio-ftjrgsiyw-zichaozhus-projects.vercel.app/studio/paper-trees/)，`dpl_3yd7pbDykt4c9RWtrXF2oy36C2So` | 工作区和 `/version.json`：匿名 JSON 请求 401，项目 bypass 请求 200 |
+
+两份无缓存回执匹配 code SHA、release `04decde1-b3ca-4eae-a642-2b42f21eccf7` 及 job `67a3fe55-802e-4562-b5f2-c00c0d15fc29`。这些是临时空图清单的验收标识，未登记私人发布作业、未更新成功指针、未推广候选。正式博客仍为 `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa` / `30241db`；最新 Git 自动构建候选也为 CANCELED。
+
+Studio 尚缺 App 安装和服务器凭据；带 bypass 的 `/api/session`、`/api/papers`、`/api/draft` 实测均返回无缓存的 `503 STUDIO_NOT_CONFIGURED`，没有返回私人清单或草稿。工作区 200 仅证明生产 SSR 可运行，不代表 GitHub 登录及编辑已经可用。[Linux CI `1c46c55`](https://github.com/ZichaoZhu/blog/actions/runs/37901201663) 正在执行，其最终结果另行记录。
+
+剩余协作事项：本人将 App 安装到唯一的 `ZichaoZhu/paper-analysis-data`；明确授权 App 凭据写入 `blog-studio` Production 加密服务器变量或本人自行配置；添加 Studio CNAME；在私人 Actions 设置长期有效、限所需 team 的 `VERCEL_TOKEN`。完成后仍需执行本人登录、草稿重读、首次协调发布和故障 / 回退验收，Task 11 尚未完成。
+
 此次新增适配修正在独立审查范围之后，以失败复现、完整受影响检查和实际云端候选作为验证；没有声称完成第二次审查。
 
 - Ruling: Extend Task 11 actual-cloud acceptance with two narrowly scoped Native CLI compatibility corrections after the completed independent review — CLI 62.2.0 build tolerates per-directory linking but deploy applies remote rootDirectory twice; its agent success output is JSON with several alias/guidance URLs, unlike plain stdout — use official repository mapping plus explicit project selection and authoritative JSON deployment ID; require RED→GREEN regression and actual protected-candidate verification before promotion. These adapter corrections are outside the reviewed range and receive no second reviewer, so cloud proof and full affected checks are mandatory.
