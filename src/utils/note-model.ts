@@ -41,6 +41,7 @@ export interface NoteData {
 		arxivUrl?: string;
 		doiUrl?: string;
 		codeUrl?: string;
+		analysisUrl?: string;
 	};
 	tags?: string[];
 	category?: string | null;

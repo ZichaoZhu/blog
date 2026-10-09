@@ -83,6 +83,7 @@ const sources = paper
 			["arXiv", paper.arxivUrl],
 			["DOI", paper.doiUrl],
 			["代码", paper.codeUrl],
+			["查看论文解析树", paper.analysisUrl],
 		].filter((s): s is [string, string] => !!s[1])
 	: [];
 const published = entry.data.visibility === "published";

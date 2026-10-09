@@ -61,7 +61,16 @@ course: { id: operating-systems, order: 14 }
 
 2026-10-06 更新课程笔记：编译原理修订 Lec5、Lec10，并补入 Lec11、Lec12、Lec14、Lec15；Deep Learning for Computer Vision 导入 Lec2–Lec16；Machine Learning 导入 Lec1–Lec8。缺失讲次不补写、不重新编号。新增 27 篇没有真实发布日期，进入“日期未记录”归档，仍可通过课程、主题和全文搜索发现。编译原理复用已有图片，DL4CV 仅复制正文引用的 60 张图片；ML 的本地课件／详细笔记入口没有公开导入，正文保留。原有 zhuzichao 作者字段统一改为 Goongmly，历史迁移快照和旧作者地址的兼容映射保留。
 
-论文可添加 `paper: { title, authors, year, venue, paperUrl, arxivUrl, doiUrl, codeUrl }`；只填已核实信息。研究日志、想法和实验使用各自类型；项目尚无公开条目，保留真实空状态。
+论文可添加 `paper: { title, authors, year, venue, paperUrl, arxivUrl, doiUrl, codeUrl, analysisUrl }`；只填已核实信息。研究日志、想法和实验使用各自类型；项目尚无公开条目，保留真实空状态。
+
+论文解析树在钉钉、Xmind 等外部工具中维护。在文章 YAML Front Matter 的现有 `paper` 对象中添加可选字段即可：
+
+```yaml
+paper:
+  analysisUrl: "" # 之后填写解析树的 HTTP/HTTPS 分享链接
+```
+
+填写后，文章“论文资料”区显示“查看论文解析树 ↗”，复用现有按钮交互并在新标签页打开；省略字段、空字符串或 YAML 空值均隐藏该按钮。已有论文资料字段继续保留在同一个 `paper` 对象中。外部链接的查看与编辑权限在对应平台设置。
 
 文章标题和简介下方的元信息按固定顺序展示，顺序不受 YAML 字段书写位置影响：第一行是作者、发布日期、更新日期、记录类型；第二行是课程及讲次、主题、标签；第三行是正文计算的字数、预计阅读时长。未填写的可选字段省略，未知发布日期显示“日期未记录”；ID、slug、visibility 等管理字段不展示。课程、主题和标签可以点击，论文专属资料继续放在独立资料区。
 

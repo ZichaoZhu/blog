@@ -98,6 +98,11 @@ export const noteDataSchema: z.ZodType<PostData> = z
 				arxivUrl: z.url().optional(),
 				doiUrl: z.url().optional(),
 				codeUrl: z.url().optional(),
+				analysisUrl: z
+					.url({ protocol: /^https?$/ })
+					.or(z.literal(""))
+					.nullish()
+					.transform((value) => value || undefined),
 			})
 			.optional(),
 		image: z.string().default(""),

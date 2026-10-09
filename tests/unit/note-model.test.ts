@@ -11,6 +11,12 @@ test('unknown dates remain unknown while impossible days are rejected',()=>{
  assert.throws(()=>noteDataSchema.parse({...data,date:'2026-02-30'}));
  assert.equal(noteDataSchema.parse({...data,date:'2024-02-29'}).date,'2024-02-29');
 });
+test('paper analysis links preserve web URLs, allow empty placeholders and reject unsafe schemes',()=>{
+ const parse=(analysisUrl:unknown)=>noteDataSchema.parse({...makeNote({type:'paper'}).data,paper:{analysisUrl}}).paper?.analysisUrl;
+ for(const url of ['https://alidocs.dingtalk.com/i/nodes/example','https://xmind.ai/example','http://example.com/tree']) assert.equal(parse(url),url);
+ for(const empty of [undefined,null,'']) assert.equal(parse(empty),undefined);
+ for(const invalid of ['javascript:alert(1)','data:text/html,test','file:///tmp/tree.html','/relative-tree','not a URL']) assert.throws(()=>parse(invalid));
+});
 test('calendar dates never cross days and unknown dates sort last',()=>{
  const known=makeNote({id:'dated',slug:'dated',date:'2026-10-03'}), unknown=makeNote({id:'unknown',slug:'unknown'});
  assert.equal(formatDateToYYYYMMDD(noteDataSchema.parse(known.data).published),'2026-10-03');
