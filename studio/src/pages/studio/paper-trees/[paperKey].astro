@@ -1,0 +1,7 @@
+---
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import PaperTreeStudio from '../../../components/PaperTreeStudio.svelte';
+const paperKey=Astro.params.paperKey;
+if(!paperKey||!/^[a-f\d]{64}$/.test(paperKey))return new Response('Not found',{status:404});
+---
+<StudioLayout title="编辑解析树"><PaperTreeStudio paperKey={paperKey} client:load/></StudioLayout>

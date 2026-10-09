@@ -1,4 +1,5 @@
 ---
 import StudioLayout from '../../../layouts/StudioLayout.astro';
+import PaperTreeStudio from '../../../components/PaperTreeStudio.svelte';
 ---
-<StudioLayout title="论文解析树"><section class="card-base p-6"><h1>论文解析树工作区</h1><p>保存私人草稿，确认后手动发布。</p><a class="btn-regular knowledge-action" href="/api/auth/login">使用 GitHub 登录</a></section></StudioLayout>
+<StudioLayout title="论文解析树"><PaperTreeStudio client:load/></StudioLayout>
