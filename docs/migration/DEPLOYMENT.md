@@ -2,6 +2,10 @@
 
 首次发布日期：2026-10-06；最近更新：2026-10-07（Asia/Shanghai）。
 
+## 论文解析树：上线前准备（2026-10-09）
+
+论文树功能代码在 `feat/astro-firefly` 完成本地验收；真实 GitHub App、私人数据仓库和 Studio 尚未接入，因此当前正式部署仍为下方导航修复版本。配置顺序见 [SETUP](../paper-trees/SETUP.md)，合成数据检查与待验证项见 [ACCEPTANCE](../paper-trees/ACCEPTANCE.md)。后续应用更新应通过 `publish:code` 协调博客与 Studio，图回退通过历史成功清单；本文此前的裸 Vercel 回退命令保留为历史记录。
+
 ## 最新发布：导航图标修复（2026-10-07）
 
 | 项目 | 值 |

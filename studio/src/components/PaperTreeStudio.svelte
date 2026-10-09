@@ -34,6 +34,7 @@
   try{if(!canvas||!selectedId)throw new Error('请先选择节点。');await canvas.command({type:'edit',nodeId:selectedId,patch:{topic:title,note,hyperLink:link}});pending=false;fields();error='';return true;}catch(reason){showError(reason);return false;}
  }
  async function selectNode(id:string){if(!await applyNode())return;selectedId=id;fields();}
+ async function preparePreview(){if(!draft||!await applyNode())return;return validateDraft(draft,draft.paperId);}
  async function replace(value:DraftTree|null,saved:boolean){
   draft=value?validateDraft(value,value.paperId):null;selectedId=draft?.tree.nodeData.id??'';pending=false;
   revision=saved?0:revision+1;savedRevision=saved?0:savedRevision;
@@ -96,7 +97,7 @@
   {#if !draft}<div class="studio-actions"><button class="btn-regular knowledge-action" onclick={()=>create('template')}>从论文解析模板创建</button><button class="btn-plain knowledge-action" onclick={()=>create('empty')}>创建空树</button></div>
   {:else}
    <div class="studio-actions"><button class="btn-regular knowledge-action" disabled={saving||publishingRequest} onclick={()=>save()}>保存私人草稿</button><button class="btn-plain knowledge-action" onclick={exportBackup}>导出备份</button><button class="btn-plain knowledge-action" onclick={()=>loadDraft(true)}>重新加载草稿</button><label class="btn-plain knowledge-action studio-import">导入 JSON<input type="file" accept=".json,application/json" aria-label="导入解析树 JSON" onchange={importFile}/></label></div>
-   <p role="status" aria-label="草稿保存状态" aria-live="polite">{saving?'保存中…':message||(dirty?'有未保存修改':'已保存私人草稿')}{conflict?' 请先导出备份，再手动重新加载。':''}</p>
+   <p role="status" aria-label="草稿保存状态" aria-live="polite">{saving?'保存中…':dirty?'有未保存修改':message||'已保存私人草稿'}{conflict?' 请先导出备份，再手动重新加载。':''}</p>
    <div class="studio-editor-grid">
     <nav class="studio-outline" aria-label="编辑解析树大纲"><ol>{#each nodes as entry (entry.node.id)}<li><button data-outline-node class:active={entry.node.id===selectedId} class="toc-item sidebar-nav-item" style={`--node-depth:${Math.min(entry.depth,8)}`} onclick={()=>selectNode(entry.node.id)}><span class="toc-label">{entry.node.topic}</span></button></li>{/each}</ol></nav>
     <div class="studio-canvas"><PaperTreeCanvas tree={draft.tree} editable={true} bind:this={canvas} onchange={change} onselect={id=>void selectNode(id)}/></div>
@@ -106,7 +107,7 @@
      <div class="studio-actions"><button class="btn-plain knowledge-action" onclick={()=>execute({type:'undo'})}>撤销修改</button><button class="btn-plain knowledge-action" onclick={()=>execute({type:'redo'})}>重做修改</button></div>
     </div>
    </div>
-   <PaperTreePublication {paper} {draft} save={()=>save(true)} onfreeze={value=>publishingRequest=value} disabled={saving}/>
+   <PaperTreePublication {paper} {preparePreview} save={()=>save(true)} onfreeze={value=>publishingRequest=value} disabled={saving}/>
   {/if}
  {/if}
 </section>

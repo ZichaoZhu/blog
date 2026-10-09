@@ -436,8 +436,14 @@ export class PaperTreeReleases {
 				const latest = await this.store.getHead();
 				const current = await this.readControl(latest.sha);
 				if (current.activeJobId !== job.jobId) return this.getJob(job.jobId);
+				const currentJob = validateJob((await this.store.getFile(`jobs/${job.jobId}.json`, latest.sha))?.value);
+				if (currentJob.jobId !== job.jobId) throw new ApiError(502, "INVALID_RELEASE_DATA");
+				// An accepted worker may have progressed while dispatch timed out.
+				if (currentJob.state !== "queued" || currentJob.deploymentId || currentJob.studioDeploymentId)
+					return currentJob;
+				const annotated = { ...currentJob, ...updated };
 				await this.store.commitFiles(latest, {
-					[`jobs/${job.jobId}.json`]: JSON.stringify(updated),
+					[`jobs/${job.jobId}.json`]: JSON.stringify(annotated),
 					...(!uncertain
 						? {
 								"control.json": JSON.stringify({
@@ -447,7 +453,7 @@ export class PaperTreeReleases {
 							}
 						: {}),
 				});
-				return updated;
+				return annotated;
 			} catch {
 				return {
 					...job,

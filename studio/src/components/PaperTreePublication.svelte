@@ -7,8 +7,8 @@
  import type {ReleaseJob,JobState} from '../server/release';
  import {getActiveJob,getJob,getHistory,requestPublish,requestRollback} from '../client/api';
  import {renderNodeMarkdown} from '../../../src/features/paper-trees/render';
- interface Props {paper:PaperRef;draft:DraftTree;save:()=>Promise<Versioned<DraftTree>|undefined>;onfreeze:(value:boolean)=>void;disabled:boolean}
- let {paper,draft,save,onfreeze,disabled}:Props=$props();
+ interface Props {paper:PaperRef;preparePreview:()=>Promise<DraftTree|undefined>;save:()=>Promise<Versioned<DraftTree>|undefined>;onfreeze:(value:boolean)=>void;disabled:boolean}
+ let {paper,preparePreview,save,onfreeze,disabled}:Props=$props();
  let job=$state<ReleaseJob|null>(null),locked=$state(false),requesting=$state(false),error=$state('');
  let history=$state<ReleaseManifest[]>([]),cursor=$state<string|null>(null),initializing=$state(true),historyLoading=$state(false);
  let preview=$state<TreeData|null>(null),dialog=$state<HTMLDialogElement>();
@@ -24,7 +24,7 @@
   try{if(job)job=await getJob(job.jobId);if(!alive)return;error='';if(job&&['published','failed'].includes(job.state)){const active=await getActiveJob();if(!alive)return;locked=!!active;if(active)job=active;else await loadHistory();}}catch(reason){if(alive)failure(reason);}finally{schedule();}
  }
  async function restore(){try{const current=await getActiveJob();if(!alive)return;job=current;locked=!!current;await loadHistory();}catch(reason){if(alive)failure(reason);}finally{if(alive){initializing=false;schedule();}}}
- function openPreview(){try{const projected=toPublicSnapshot(draft,crypto.randomUUID(),new Date().toISOString());dialog?.showModal();preview=projected.tree;error='';}catch(reason){failure(reason);}}
+ async function openPreview(){try{const current=await preparePreview();if(!alive||!current)return;const projected=toPublicSnapshot(current,crypto.randomUUID(),new Date().toISOString());preview=projected.tree;dialog?.showModal();error='';}catch(reason){if(alive)failure(reason);}}
  async function publish(){
   if(requesting||locked||disabled||initializing)return;
   if(!confirm('所有节点标题、说明和链接都会公开。发布当前保存的解析树吗？后续编辑会保留为新的私人草稿。'))return;
@@ -35,7 +35,7 @@
  }
  async function rollback(releaseId:string){
   if(requesting||locked||initializing)return;
-  if(!confirm('仅回退解析树的公开版本，当前私人草稿不会改变。确定回退吗？'))return;
+  if(!confirm('这会回退所有论文的公开解析树清单，不只当前论文。此版本之后新增的公开树也会移除。文章正文与当前私人草稿不会改变。确定回退全站解析树吗？'))return;
   requesting=true;error='';
   try{job=await requestRollback(releaseId);if(!alive)return;locked=!!await getActiveJob();schedule();}catch(reason){if(alive)failure(reason);}finally{if(alive)requesting=false;}
  }
@@ -48,7 +48,7 @@
  <div class="publication-actions"><button class="btn-plain knowledge-action" onclick={openPreview}>预览公开版</button><button class="btn-regular knowledge-action" disabled={requesting||locked||disabled||initializing||paper.visibility!=='published'} onclick={publish}>手动发布解析树</button></div>
  {#if paper.visibility!=='published'}<p class="publication-caption">文章尚未公开，解析树只能保存为私人草稿。</p>{/if}
  <p role="status" aria-label="发布状态" aria-live="polite">{requesting?'正在提交发布请求…':job?labels[job.state]:initializing?'正在读取发布状态…':'暂无活动发布'}{job?.error?`：${job.error.message}`:''}{locked&&job?.state==='failed'?' 发布结果正在核对，暂不能再次发布。':''}</p>
- <h2>成功版本历史</h2><ul>{#each history as release,index (release.releaseId)}<li class="publication-history"><span>{date(release.createdAt)}{index===0?' · 当前公开版':''}</span>{#if index>0}<button class="btn-plain knowledge-action" disabled={locked||requesting} onclick={()=>rollback(release.releaseId)}>回退到 {date(release.createdAt)}</button>{/if}</li>{/each}</ul>
+ <h2>全站解析树成功版本历史</h2><p class="publication-caption">每个版本记录所有论文的公开解析树，回退会恢复整份清单，不只当前论文。</p><ul>{#each history as release,index (release.releaseId)}<li class="publication-history"><span>{date(release.createdAt)} · {Object.keys(release.entries).length} 篇论文{index===0?' · 当前公开版':''}</span>{#if index>0}<button class="btn-plain knowledge-action" disabled={locked||requesting} onclick={()=>rollback(release.releaseId)}>回退到 {date(release.createdAt)}（全站解析树）</button>{/if}</li>{/each}</ul>
  {#if !history.length&&!historyLoading}<p class="publication-caption">尚无成功发布的解析树版本。</p>{/if}
  {#if cursor}<button class="btn-plain knowledge-action" disabled={historyLoading} onclick={()=>loadHistory(true)}>更多成功版本</button>{/if}
 </section>

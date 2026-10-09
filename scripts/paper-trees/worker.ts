@@ -17,6 +17,23 @@ function required(name: string): string {
 	if (!value) throw new ApiError(503, "WORKER_CONFIG_MISSING");
 	return value;
 }
+/** A catalog must describe the exact committed files that Actions will build. */
+export function readCleanSourceSha(root: string): string {
+	const options = {
+		cwd: root,
+		encoding: "utf8" as const,
+		stdio: "pipe" as const,
+	};
+	if (
+		execFileSync(
+			"git",
+			["status", "--porcelain=v1", "--untracked-files=all"],
+			options,
+		).trim()
+	)
+		throw new ApiError(409, "SOURCE_WORKTREE_DIRTY");
+	return execFileSync("git", ["rev-parse", "HEAD"], options).trim();
+}
 export async function workerDependencies(): Promise<PublishDependencies> {
 	const root = process.cwd();
 	const dataRepo = required("PAPER_TREE_DATA_REPO");
@@ -27,11 +44,7 @@ export async function workerDependencies(): Promise<PublishDependencies> {
 		dataBranch.includes("..")
 	)
 		throw new ApiError(503, "WORKER_CONFIG_INVALID");
-	const sourceSha = async () =>
-		execFileSync("git", ["rev-parse", "HEAD"], {
-			cwd: root,
-			encoding: "utf8",
-		}).trim();
+	const sourceSha = async () => readCleanSourceSha(root);
 	const catalog = await buildPaperCatalog(
 		join(root, "src/content/posts"),
 		await sourceSha(),

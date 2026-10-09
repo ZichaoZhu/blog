@@ -138,7 +138,7 @@ pnpm reconcile:paper-trees <job-id>
 
 这会核对候选 metadata、正式 alias 的精确部署 ID 和新鲜回执；code job 必须同时核对博客及 Studio。不能证明成功则继续持锁，不将失败清单并入下一次发布。恢复所用 checkout 与环境应与该作业对应。
 
-日常图回退在 Studio 历史成功版本中选择，生成新 rollback 作业，保持当前应用代码和私人草稿。普通应用更新一律执行 `publish:code`，从上次成功清单继承全部仍公开的树。
+日常图回退在 Studio 全站解析树历史成功版本中选择，生成新 rollback 作业，恢复所有论文的整份成功清单，不只当前论文；新于所选版本的公开树可能移除，界面确认会明确提醒。当前应用代码和私人草稿保留。普通应用更新一律执行 `publish:code`，从上次成功清单继承全部仍公开的树。
 
 紧急全站回退仅接受已有成功 **code job**，需同时存在两份 archived deployment：
 

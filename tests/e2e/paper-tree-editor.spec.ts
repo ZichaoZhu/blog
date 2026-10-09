@@ -42,6 +42,11 @@ test('empty trees support explicit add, clone, delete, move, undo and redo at mo
  await page.getByRole('button',{name:'Second',exact:true}).click();await page.getByLabel('新的父节点').selectOption({label:'First'});await page.getByRole('button',{name:'移动到该父节点',exact:true}).click();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(391);await page.getByRole('button',{name:'切换亮暗主题'}).click();await expect(page.locator('html')).toHaveClass(/dark/);
 });
+test('typing after a successful save immediately reports unsaved content without applying the node',async({page})=>{
+ const state=await mock(page);state.seed(createPaperTree(paper.id,'empty'));await page.goto(path);await expect(page.locator('.paper-tree-canvas[data-ready=true]')).toBeVisible();
+ await page.getByRole('button',{name:'保存私人草稿',exact:true}).click();await expect(page.getByRole('status',{name:'草稿保存状态'})).toContainText('已保存');
+ const before=JSON.stringify(state.draft);await page.getByLabel('节点说明',{exact:true}).fill('Only in side editor');await expect(page.getByRole('status',{name:'草稿保存状态'})).toContainText('未保存');expect(JSON.stringify(state.draft)).toBe(before);
+});
 test('a delayed save keeps later edits dirty, provider failure and conflicts preserve the working tree',async({page})=>{
  const state=await mock(page);state.seed(createPaperTree(paper.id,'empty'));await page.goto(path);await expect(page.locator('.paper-tree-canvas[data-ready=true]')).toBeVisible();
  await page.getByLabel('节点标题',{exact:true}).fill('Frozen Save');await page.getByRole('button',{name:'应用节点修改',exact:true}).click();state.pause();await page.getByRole('button',{name:'保存私人草稿',exact:true}).click();await expect(page.getByRole('status',{name:'草稿保存状态'})).toContainText('保存中');

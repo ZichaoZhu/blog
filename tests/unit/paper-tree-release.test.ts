@@ -5,11 +5,26 @@ import {PaperTreeReleases,type ReleaseControl,type ReleaseJob} from '../../studi
 import {GitHubTreeStore} from '../../studio/src/server/github-store';
 import {handleApi} from '../../studio/src/server/api';
 import {signSession} from '../../studio/src/server/auth';
+import {ApiError} from '../../studio/src/server/auth';
 import {createPaperTree} from '../../src/features/paper-trees/template';
 import {type ReleaseManifest,toPublicSnapshot} from '../../src/features/paper-trees/model';
 import {authorConfig as config,catalog,FakeGitHub,paper} from '../fixtures/paper-tree-studio';
 const priorId='8112b964-7c1b-4476-94d4-42a0417cc858';
 const prior:ReleaseManifest={schemaVersion:1,releaseId:priorId,parentReleaseId:null,codeSha:catalog.codeSha,createdAt:'2026-10-08T01:00:00.000Z',entries:{}};
+test('delayed dispatch errors preserve newer worker progress, deployment IDs and the active lock',async()=>{
+ for(const code of ['DISPATCH_UNCERTAIN','DISPATCH_REJECTED'])for(const state of ['building','validating','deploying'] as const){
+  const {github,store,releases}=setup();const saved=await store.saveDraft(paper,createPaperTree(paper.id,'empty'),null);
+  store.dispatchPublish=async(jobId)=>{
+   const head=await store.getHead();const current=(await store.getFile<ReleaseJob>(`jobs/${jobId}.json`,head.sha))!.value;
+   await store.commitFiles(head,{[`jobs/${jobId}.json`]:JSON.stringify({...current,state,deploymentId:'dpl_blogCandidate',studioDeploymentId:'dpl_studioCandidate'})});
+   throw new ApiError(502,code);
+  };
+  const job=await releases.requestPublish(paper.paperKey,saved.blobSha);
+  assert.equal(job.state,state);assert.equal(job.deploymentId,'dpl_blogCandidate');assert.equal(job.studioDeploymentId,'dpl_studioCandidate');
+  assert.equal(JSON.parse(github.files().get('control.json')!).activeJobId,job.jobId);
+  assert.deepEqual((await releases.getJob(job.jobId)),job);
+ }
+});
 function setup(){
  const github=new FakeGitHub();const control:ReleaseControl={schemaVersion:1,activeReleaseId:priorId,activeCodeSha:catalog.codeSha,activeDeploymentId:'dpl_previous',activeStudioDeploymentId:'dpl_studio',activeJobId:null,baselineDeploymentId:'dpl_baseline'};
  github.files().set('control.json',JSON.stringify(control));github.files().set(`releases/${priorId}.json`,JSON.stringify(prior));
