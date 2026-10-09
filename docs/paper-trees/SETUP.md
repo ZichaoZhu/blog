@@ -2,6 +2,8 @@
 
 对应 [设计](../superpowers/specs/2026-10-08-paper-analysis-tree-design.md)。本功能由静态博客、独立 SSR Studio 和单独的私人 GitHub 数据仓库组成；无需数据库。当前本地检查见 [ACCEPTANCE.md](ACCEPTANCE.md)。
 
+2026-10-09 已改用外部工具维护解析树，网站填写 `paper.analysisUrl`，见 [写作说明](../../README.md#写作)。本文保留旧站内编辑方案的配置与恢复记录；首次作者登录和图发布验收已停止推进。现有博客与 Studio 仍通过第 6、7 节的协调流程发布，云资源尚未退役。
+
 ## 1. 核对账号与发布基线
 
 使用现有登录核对：

@@ -2,7 +2,27 @@
 
 首次发布日期：2026-10-06；最近更新：2026-10-09（Asia/Shanghai）。
 
-## 最新发布：论文解析树空清单 bootstrap（2026-10-09）
+## 最新发布：论文解析树外链接口（2026-10-09）
+
+作者选择在钉钉 / Xmind 等外部工具中维护解析树，网站提供可选查看入口。论文 Front Matter 增加 `paper.analysisUrl`：只接受 HTTP/HTTPS，省略、空字符串或 YAML 空值均隐藏按钮；填写后在“论文资料”中显示“查看论文解析树 ↗”，复用现有交互并在新标签页打开。用法见 [README](../../README.md#写作)。本次没有录入真实分享链接。
+
+| 字段 | 实际值 |
+| --- | --- |
+| 源码 | `321964e887ef64a6b9ee44719e65fdb0db505ee3` |
+| Job / Release | `5fdec2f8-b3c7-4a62-a400-2b8c36a6e641` / `dd0c0e52-423b-40dc-8054-9e02c660089f` |
+| 正式博客 | `dpl_14gWkSHyyBBFF7YtrFnWRAe475ao`，[blog.blessingworld.cn](https://blog.blessingworld.cn) |
+| 匹配 Studio | `dpl_4DNGoAgZU2Tp3czvNtq8T89xDYzh` |
+| 发布工作流 | [私人 Actions 37927471983](https://github.com/ZichaoZhu/paper-analysis-data/actions/runs/37927471983)，SUCCESS，5m36s |
+| 完整 CI | [37927368909](https://github.com/ZichaoZhu/blog/actions/runs/37927368909)，SUCCESS，全部检查通过 |
+| 上一成功版本 | code `8b17cc4` / release `13153742-63aa-4cc7-b693-a95b793962e3`，两份部署见下方 bootstrap 记录 |
+
+上线前 106 项单元测试、TypeScript、Astro check、静态构建及 verify-site 通过；独立副本在 1440px / 390px 验证有效链接显示、空链接隐藏、原有按钮样式与新标签页行为。上线后精确 alias、两份无缓存回执与私人成功指针均匹配，发布锁释放，公开图集合与上版一致（当前为空）。首页、课程、论文、归档及 InfiniDepth 正文返回 200；正式文章在桌面与手机均可读、空链接隐藏、无脚本错误或页面横向溢出。
+
+同一提交的 Linux CI 全部通过，包含单元测试、静态与类型检查、博客 / Studio 构建、常规浏览器回归、隔离写作回归、论文树专项浏览器与 500 篇规模 / 隐私检查。
+
+旧站内编辑方案的真实作者验收已停止推进，现有 Studio 与协调发布设施仍保留；本次按现有 `publish:code` 流程更新匹配版本。后续退役需另行调整发布方式与项目设置，不能只停用当前工作流。
+
+## 历史发布：论文解析树空清单 bootstrap（2026-10-09）
 
 论文树功能代码在 `feat/astro-firefly` 完成本地及 Linux CI 验收，DNS / HTTPS 和受限凭据配置完成后，首次私人 Actions 协调发布成功。正式图集合当前为空；本人 OAuth、草稿重读、真实论文手动发布及故障 / 回退仍待验收。配置顺序见 [SETUP](../paper-trees/SETUP.md)，检查结果见 [ACCEPTANCE](../paper-trees/ACCEPTANCE.md)。两项目 Ignored Build Step=`exit 0`，Git 生产分支仍为 `main`；后续应用更新通过 `publish:code` 协调博客与 Studio，图回退通过历史成功清单，不绕开私人控制指针。
 
