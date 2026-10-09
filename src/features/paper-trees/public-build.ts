@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AstroIntegration } from "astro";
@@ -235,17 +235,70 @@ export function studioEditorUrl(
 	const paperKey = createHash("sha256").update(paperId).digest("hex");
 	return new URL(`/studio/paper-trees/${paperKey}/`, url).href;
 }
+let cachedPublic:
+	| { key: string; input: Promise<PublicTreeInput | null> }
+	| undefined;
+let cachedAssociation:
+	| {
+			input: PublicTreeInput;
+			visibility: string;
+			trees: Map<string, PublicSnapshot>;
+	  }
+	| undefined;
 export async function getPublishedTree(
 	paperId: string,
 	notes: readonly NoteRecord[],
 ): Promise<PublicSnapshot | undefined> {
-	const input = await readPublicTreeInput(
-		process.env.PAPER_TREE_INPUT_DIR,
-		process.env.PAPER_TREES_ENABLED === "true" ||
-			process.env.PAPER_TREES_ENABLED === "1",
-		process.env.PUBLIC_SITE_MODE === "production" ? "production" : "preview",
+	if (!["true", "1"].includes(process.env.PAPER_TREES_ENABLED ?? ""))
+		return undefined;
+	const dir = resolve(
+		process.env.PAPER_TREE_INPUT_DIR ?? ".paper-trees/public-input",
 	);
-	return input ? loadPublicTrees(input, notes).get(paperId) : undefined;
+	const releaseStat = await stat(join(dir, "release.json"));
+	let listKey = "";
+	try {
+		const list = await stat(join(dir, "snapshot-ids.json"));
+		listKey = `${list.mtimeMs}:${list.size}`;
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+	}
+	const key = `${dir}:${releaseStat.mtimeMs}:${releaseStat.size}:${listKey}`;
+	if (cachedPublic?.key !== key)
+		cachedPublic = {
+			key,
+			input: readPublicTreeInput(
+				dir,
+				true,
+				process.env.PUBLIC_SITE_MODE === "production"
+					? "production"
+					: "preview",
+			),
+		};
+	let input: PublicTreeInput | null;
+	try {
+		input = await cachedPublic.input;
+	} catch (error) {
+		cachedPublic = undefined;
+		throw error;
+	}
+	if (!input) return undefined;
+	// Immutable snapshot IDs allow one parse per release. Recheck authored visibility on every call.
+	const visibility = JSON.stringify(
+		notes
+			.filter((note) => note.data.type === "paper" && isPublicNote(note))
+			.map((note) => note.data.id)
+			.sort(),
+	);
+	if (
+		cachedAssociation?.input !== input ||
+		cachedAssociation.visibility !== visibility
+	)
+		cachedAssociation = {
+			input,
+			visibility,
+			trees: loadPublicTrees(input, notes),
+		};
+	return cachedAssociation.trees.get(paperId);
 }
 export function paperTreesIntegration(): AstroIntegration {
 	let root = process.cwd();

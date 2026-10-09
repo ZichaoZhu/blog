@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import {
 	cp,
 	mkdir,
@@ -18,6 +19,8 @@ import {
 	toPublicSnapshot,
 } from "../src/features/paper-trees/model";
 import { createPaperTree } from "../src/features/paper-trees/template";
+import { buildPaperCatalog } from "./paper-trees/catalog";
+import { assertPublicArtifacts } from "./paper-trees/verify-output";
 
 const source = process.cwd();
 const dest = await mkdtemp(join(tmpdir(), "firefly-paper-trees-"));
@@ -29,6 +32,7 @@ const excluded = new Set([
 	".paper-trees",
 	".vercel",
 	".astro",
+	".generated",
 	"dist",
 	"test-results",
 	"playwright-report",
@@ -95,6 +99,15 @@ try {
 			title: "Paper without tree",
 		},
 	];
+	for (let i = 0; i < 499; i++)
+		fixtures.push({
+			id: `scale-paper-${i}`,
+			type: "paper",
+			visibility: "published",
+			title: `Scale Paper ${i}`,
+			snapshotId: randomUUID(),
+			note: `ScaleNodeSentinel${i}`,
+		});
 	const release: ReleaseManifest = {
 		schemaVersion: 1,
 		releaseId: "945c8e01-c1cd-4e07-812b-2e411da177e8",
@@ -113,19 +126,27 @@ try {
 				type: fixture.type,
 				contentKind: "note",
 				visibility: fixture.visibility,
-				date: "2026-10-08",
+				date: fixture.id.startsWith("scale-paper-")
+					? "2026-10-07"
+					: "2026-10-08",
 				author: "Goongmly",
 				topics: ["robotics"],
 				description: "A synthetic paper used only in an isolated test copy.",
 			}),
 		);
 		if (!fixture.snapshotId) continue;
-		const draft = createPaperTree(fixture.id, "template");
-		assert.ok(draft.tree.nodeData.children);
-		draft.tree.nodeData.children[0].note = fixture.note;
-		const deep = draft.tree.nodeData.children[2].children?.[1].children?.[0];
-		assert.ok(deep);
-		deep.note = "DeepPublicNodeSentinel";
+		const scale = fixture.id.startsWith("scale-paper-");
+		const draft = createPaperTree(fixture.id, scale ? "empty" : "template");
+		if (scale) {
+			draft.tree.nodeData.topic = fixture.title;
+			draft.tree.nodeData.note = fixture.note;
+		} else {
+			assert.ok(draft.tree.nodeData.children);
+			draft.tree.nodeData.children[0].note = fixture.note;
+			const deep = draft.tree.nodeData.children[2].children?.[1].children?.[0];
+			assert.ok(deep);
+			deep.note = "DeepPublicNodeSentinel";
+		}
 		const snapshot = toPublicSnapshot(
 			draft,
 			fixture.snapshotId,
@@ -174,27 +195,13 @@ try {
 		throw new Error(
 			`Isolated tree build failed:\n${((build.stdout ?? "") + (build.stderr ?? "")).slice(-12000)}`,
 		);
-	async function scan(dir: string): Promise<void> {
-		for (const item of await readdir(dir, { withFileTypes: true })) {
-			const path = join(dir, item.name);
-			if (item.isDirectory()) await scan(path);
-			else {
-				const bytes = await readFile(path);
-				for (const secret of [
-					"PrivateTreeDraftSentinel",
-					"UnlistedTreeSentinel",
-					"FailedTreeSentinel",
-					"NonPaperTreeSentinel",
-				])
-					assert.equal(
-						bytes.includes(Buffer.from(secret)),
-						false,
-						`Private tree text in ${relative(dest, path)}`,
-					);
-			}
-		}
-	}
-	await scan(join(dest, "dist"));
+	await assertPublicArtifacts(join(dest, "dist"), [
+		"PrivateTreeDraftSentinel",
+		"UnlistedTreeSentinel",
+		"FailedTreeSentinel",
+		"NonPaperTreeSentinel",
+		"PrivateStudioCatalogSentinel",
+	]);
 	const html = await readFile(
 		join(dest, "dist/notes/tree-fixture/index.html"),
 		"utf8",
@@ -207,9 +214,94 @@ try {
 			'data-paper-tree-snapshot="c8e2da5d-545e-4ed1-944c-9d54e91b8488"',
 		),
 	);
-	assert.deepEqual(await readdir(join(dest, "dist/paper-trees/snapshots")), [
-		"c8e2da5d-545e-4ed1-944c-9d54e91b8488.json",
-	]);
+	assert.equal(
+		(await readdir(join(dest, "dist/paper-trees/snapshots"))).length,
+		500,
+	);
+	for (let i = 0; i < 499; i++)
+		assert.equal(
+			html.includes(`ScaleNodeSentinel${i}`),
+			false,
+			"Article serialized another paper's tree",
+		);
+	const scaleHtml = await readFile(
+		join(dest, "dist/notes/scale-paper-0/index.html"),
+		"utf8",
+	);
+	assert.ok(scaleHtml.includes("ScaleNodeSentinel0"));
+	assert.equal(scaleHtml.includes("ScaleNodeSentinel498"), false);
+	assert.ok(Buffer.byteLength(html) < 512 * 1024);
+	// Build a real SSR Studio with a synthetic private catalog, then scan only its client output.
+	await symlink(
+		resolve(source, "studio/node_modules"),
+		join(dest, "studio/node_modules"),
+		"dir",
+	);
+	await mkdir(join(dest, "studio/.generated"), { recursive: true });
+	const studioCatalog = await buildPaperCatalog(
+		join(dest, "src/content/posts"),
+		release.codeSha,
+	);
+	studioCatalog.papers.push({
+		id: "studio-private",
+		paperKey: "f".repeat(64),
+		slug: "studio-private",
+		title: "PrivateStudioCatalogSentinel",
+		visibility: "draft",
+		contentKind: "note",
+		hasBody: true,
+	});
+	await writeFile(
+		join(dest, "studio/.generated/papers.json"),
+		JSON.stringify(studioCatalog),
+	);
+	await writeFile(
+		join(dest, "studio/.generated/version.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			codeSha: release.codeSha,
+			releaseId: null,
+			jobId: null,
+		}),
+	);
+	const studioBuild = spawnSync("pnpm", ["--dir", "studio", "build"], {
+		cwd: dest,
+		env,
+		encoding: "utf8",
+		maxBuffer: 16 * 1024 * 1024,
+	});
+	await writeFile(
+		join(dest, "studio-build.log"),
+		(studioBuild.stdout ?? "") + (studioBuild.stderr ?? ""),
+	);
+	if (studioBuild.status !== 0)
+		throw new Error(
+			`Isolated Studio build failed: ${((studioBuild.stdout ?? "") + (studioBuild.stderr ?? "")).slice(-6000)}`,
+		);
+	const studioStatic = join(dest, "studio/.vercel/output/static");
+	await assertPublicArtifacts(studioStatic, ["PrivateStudioCatalogSentinel"]);
+	const integration = spawnSync(
+		"node",
+		[
+			"--import",
+			"tsx",
+			"--test",
+			"tests/integration/paper-tree-output.test.ts",
+		],
+		{
+			cwd: source,
+			env: {
+				...env,
+				PAPER_TREE_OUTPUT_DIR: join(dest, "dist"),
+				PAPER_TREE_STUDIO_STATIC_DIR: studioStatic,
+			},
+			stdio: "inherit",
+		},
+	);
+	assert.equal(integration.status, 0);
+	console.info(
+		`500 public graph pages verified; fixture HTML ${Buffer.byteLength(html)} bytes; public nodes occur only in their own article.`,
+	);
 	const args = process.argv.slice(2).filter((arg) => arg !== "--");
 	const tests = spawnSync(
 		"pnpm",

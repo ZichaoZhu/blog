@@ -31,9 +31,12 @@ jobs:
       - run: pnpm lint:check
       - run: pnpm check
       - run: pnpm type-check
+      - run: pnpm check:studio
+      - run: pnpm build:studio
       - run: pnpm build
       - run: pnpm verify:site
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e
       - run: pnpm test:authoring
+      - run: pnpm test:paper-trees
       - run: git diff --check

@@ -1,4 +1,9 @@
 import {test,expect} from '@playwright/test';
+test('failed graphical modules retain the full readable public outline',async({page})=>{
+ await page.route('**/_astro/*.js',route=>route.abort());
+ await page.goto('/notes/tree-fixture/');await expect(page.getByRole('list',{name:'论文解析树文字大纲'})).toContainText('DeepPublicNodeSentinel');
+ await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(391);
+});
 
 test('paper outline, canvas and snapshot use one release and both article TOCs reach its unique anchor',async({page})=>{
 	await page.goto('/notes/tree-fixture/');

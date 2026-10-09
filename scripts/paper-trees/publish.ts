@@ -36,6 +36,8 @@ export interface DeploymentProvider {
 	verifyFormal(deployment: DeploymentRecord, job: ReleaseJob): Promise<void>;
 }
 export interface PublishDependencies {
+	publicReader?: import("./prepare").PreparationDependencies["publicReader"];
+	cleanup?(): Promise<void>;
 	studioProvider?: DeploymentProvider;
 	studioProjectId?: string;
 	store: GitHubTreeStore;

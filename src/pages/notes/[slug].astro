@@ -10,9 +10,13 @@ import KnowledgeContext from "../../components/knowledge/KnowledgeContext.astro"
 import { siteConfig } from "../../config";
 import { siteContext } from "../../config/siteContext";
 import { courses } from "../../data/catalog";
-import MainGridLayout from "../../layouts/MainGridLayout.astro";
 import PaperTreeSection from "../../features/paper-trees/PaperTreeSection.astro";
-import {getPublishedTree,treeHeading,studioEditorUrl} from "../../features/paper-trees/public-build";
+import {
+	getPublishedTree,
+	studioEditorUrl,
+	treeHeading,
+} from "../../features/paper-trees/public-build";
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
 import {
 	asNoteRecord,
 	getRoutablePosts,
@@ -30,8 +34,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(entry);
 const allRecords = (await getSortedPosts()).map(asNoteRecord);
-const records = allRecords
-	.filter((n) => n.data.type === "course");
+const records = allRecords.filter((n) => n.data.type === "course");
 const neighbors = getCourseNeighbors(records, entry.data.slug);
 const course =
 	entry.data.type === "course" && entry.data.course
@@ -59,10 +62,21 @@ const sidebarContext = getSidebarContext(
 	},
 );
 const paper = entry.data.paper;
-const snapshot = entry.data.type === "paper" ? await getPublishedTree(entry.data.id,allRecords) : undefined;
+const snapshot =
+	entry.data.type === "paper"
+		? await getPublishedTree(entry.data.id, allRecords)
+		: undefined;
 const analysisHeading = snapshot ? treeHeading(headings) : undefined;
-const articleHeadings = analysisHeading ? [analysisHeading,...headings] : headings;
-const editorUrl = entry.data.type === "paper" ? studioEditorUrl(import.meta.env.PUBLIC_PAPER_TREE_STUDIO_ORIGIN,entry.data.id) : null;
+const articleHeadings = analysisHeading
+	? [analysisHeading, ...headings]
+	: headings;
+const editorUrl =
+	entry.data.type === "paper"
+		? studioEditorUrl(
+				import.meta.env.PUBLIC_PAPER_TREE_STUDIO_ORIGIN,
+				entry.data.id,
+			)
+		: null;
 const sources = paper
 	? [
 			["论文", paper.paperUrl],

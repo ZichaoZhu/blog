@@ -18,6 +18,9 @@ import {
 import type { PaperCatalog } from "./catalog";
 
 export interface PreparationDependencies {
+	publicReader?: Pick<GitHubTreeStore, "getFile"> & {
+		prefetch(paths: readonly string[], ref: string): Promise<void>;
+	};
 	store: Pick<GitHubTreeStore, "getFile">;
 	catalog: PaperCatalog;
 	notes: readonly NoteRecord[];
@@ -36,7 +39,7 @@ export async function prepareRelease(
 	)
 		throw new ApiError(409, "SOURCE_VERSION_MISMATCH");
 	const read = async (path: string): Promise<unknown> => {
-		const file = await deps.store.getFile(path, dataSha);
+		const file = await (deps.publicReader ?? deps.store).getFile(path, dataSha);
 		if (!file) throw new ApiError(502, "PINNED_INPUT_MISSING");
 		return file.value;
 	};
@@ -88,6 +91,10 @@ export async function prepareRelease(
 		historyId = historical.parentReleaseId;
 	}
 	const snapshots = [];
+	await deps.publicReader?.prefetch(
+		[...ids.keys()].map((id) => `snapshots/${id}.json`),
+		dataSha,
+	);
 	for (const [id, paperId] of ids) {
 		const snapshot = readSnapshot(await read(`snapshots/${id}.json`));
 		if (snapshot.snapshotId !== id || snapshot.paperId !== paperId)

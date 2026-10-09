@@ -58,6 +58,7 @@ if (
 		console.error(error instanceof ApiError ? error.code : "CODE_JOB_FAILED");
 		process.exitCode = 1;
 	} finally {
+		await deps?.cleanup?.();
 		if (deps) await rm(deps.outDir, { recursive: true, force: true });
 	}
 }

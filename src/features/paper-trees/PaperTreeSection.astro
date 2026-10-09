@@ -1,10 +1,14 @@
 ---
-import type {PublicSnapshot} from './model';
-import PaperTreeCanvas from './PaperTreeCanvas.svelte';
-import PaperTreeOutline from './PaperTreeOutline.astro';
-import './paper-tree.css';
-interface Props {snapshot:PublicSnapshot;anchor:string}
-const {snapshot,anchor}=Astro.props;
+import type { PublicSnapshot } from "./model";
+import PaperTreeCanvas from "./PaperTreeCanvas.svelte";
+import PaperTreeOutline from "./PaperTreeOutline.astro";
+import "./paper-tree.css";
+
+interface Props {
+	snapshot: PublicSnapshot;
+	anchor: string;
+}
+const { snapshot, anchor } = Astro.props;
 ---
 <section class="paper-tree-section my-6" aria-label="论文解析树" data-paper-tree-snapshot={snapshot.snapshotId}>
  <h2 id={anchor} class="font-bold mb-3">论文解析树</h2>

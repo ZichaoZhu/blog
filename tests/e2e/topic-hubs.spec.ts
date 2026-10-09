@@ -76,7 +76,8 @@ test('directory typography, theme surfaces and topic-card states form one system
  await page.mouse.down();await page.waitForTimeout(180);
  const active=await card.evaluate(el=>getComputedStyle(el).backgroundColor);
  expect(active).not.toBe(hover);
- await page.mouse.up();await card.focus();
+ // Release away from the anchor so measuring its pressed state does not navigate.
+ await page.mouse.move(0,0);await page.mouse.up();await page.keyboard.press('Tab');await card.focus();
  expect(await card.evaluate(el=>Number.parseFloat(getComputedStyle(el).outlineWidth))).toBeGreaterThan(0);
  await page.evaluate(()=>document.documentElement.classList.add('dark'));
  await expect.poll(()=>directory.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe('rgb(255, 255, 255)');

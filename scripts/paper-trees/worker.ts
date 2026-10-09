@@ -6,6 +6,7 @@ import { pathToFileURL } from "node:url";
 import { ApiError } from "../../studio/src/server/auth";
 import { GitHubTreeStore } from "../../studio/src/server/github-store";
 import { buildPaperCatalog, readNoteRecords } from "./catalog";
+import { PinnedGitReader } from "./git-reader";
 import { type PublishDependencies, runPublish } from "./publish";
 import { reconcileRelease } from "./reconcile";
 import { restoreCodeDeployment } from "./restore-code-deployment";
@@ -37,6 +38,10 @@ export async function workerDependencies(): Promise<PublishDependencies> {
 	);
 	const token = required("GH_DATA_TOKEN");
 	const store = new GitHubTreeStore({ dataRepo, dataBranch }, fetch, token);
+	const publicReader = new PinnedGitReader(
+		`https://github.com/${dataRepo}.git`,
+		token,
+	);
 	const projectId = required("VERCEL_PROJECT_ID");
 	const studioProjectId = process.env.VERCEL_STUDIO_PROJECT_ID;
 	const studioProvider = studioProjectId
@@ -51,6 +56,8 @@ export async function workerDependencies(): Promise<PublishDependencies> {
 			})
 		: undefined;
 	return {
+		publicReader,
+		cleanup: () => publicReader.dispose(),
 		studioProjectId,
 		studioProvider,
 		store,
@@ -120,6 +127,7 @@ if (
 		console.error(error instanceof ApiError ? error.code : "WORKER_FAILED");
 		process.exitCode = 1;
 	} finally {
+		await dependencies?.cleanup?.();
 		if (dependencies)
 			await rm(dependencies.outDir, { recursive: true, force: true });
 	}

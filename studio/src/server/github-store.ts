@@ -15,6 +15,9 @@ export interface GitHead {
 	sha: string;
 	treeSha: string;
 }
+interface InstallationToken {value:string;expiresAt:number}
+interface TokenSlot {token?:InstallationToken;pending?:Promise<InstallationToken>}
+const warmTokens=new WeakMap<typeof fetch,Map<string,TokenSlot>>();
 const shaPattern = /^[a-f\d]{40}$/;
 const uuidPattern =
 	"[a-f\\d]{8}-[a-f\\d]{4}-[a-f\\d]{4}-[a-f\\d]{4}-[a-f\\d]{12}";
@@ -74,7 +77,6 @@ async function boundedJson(response: Response): Promise<GitResponse> {
 	}
 }
 export class GitHubTreeStore {
-	private cachedToken: { value: string; expiresAt: number } | null = null;
 	constructor(
 		private config: Pick<AuthorConfig,"dataRepo"|"dataBranch"> & Partial<Pick<AuthorConfig,"appId"|"privateKey"|"installationId">>,
 		private fetchImpl: typeof fetch = fetch,
@@ -82,8 +84,17 @@ export class GitHubTreeStore {
 	) {}
 	private async installationToken(): Promise<string> {
 		if (this.workflowToken) return this.workflowToken;
-		if (this.cachedToken && this.cachedToken.expiresAt > Date.now() + 60000)
-			return this.cachedToken.value;
+		let cache=warmTokens.get(this.fetchImpl);
+		if(!cache){cache=new Map();warmTokens.set(this.fetchImpl,cache);}
+		const key=createHash("sha256").update(JSON.stringify([this.config.appId,this.config.installationId,this.config.dataRepo,this.config.privateKey])).digest("hex");
+		let slot=cache.get(key);
+		if(!slot){slot={};cache.set(key,slot);}
+		if(slot.token && slot.token.expiresAt>Date.now()+60000)return slot.token.value;
+		if(!slot.pending)slot.pending=this.mintInstallationToken();
+		try {slot.token=await slot.pending;return slot.token.value;}
+		finally {delete slot.pending;}
+	}
+	private async mintInstallationToken():Promise<InstallationToken> {
 		const now = Math.floor(Date.now() / 1000);
 		const header = Buffer.from(
 			JSON.stringify({ alg: "RS256", typ: "JWT" }),
@@ -114,11 +125,10 @@ export class GitHubTreeStore {
 		const expiresAt = Date.parse(token.expires_at ?? "");
 		if (typeof token.token !== "string" || !Number.isFinite(expiresAt))
 			throw new ApiError(502, "INVALID_GITHUB_RESPONSE");
-		this.cachedToken = {
+		return {
 			value: token.token,
 			expiresAt,
 		};
-		return token.token;
 	}
 	private headers(token: string): Record<string, string> {
 		return {

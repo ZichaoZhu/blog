@@ -6,6 +6,11 @@ import { signSession } from '../../studio/src/server/auth';
 import { createPaperTree } from '../../src/features/paper-trees/template';
 import { authorConfig as config, catalog, FakeGitHub, paper } from '../fixtures/paper-tree-studio';
 const session={userId:config.ownerUserId,expiresAt:Math.floor(Date.now()/1000)+7200,csrfToken:'a'.repeat(48)};
+test('warm server requests share one App token mint while separate providers and rotated keys stay isolated',async()=>{
+ const github=new FakeGitHub();await Promise.all([new GitHubTreeStore(config,github.fetch).getHead(),new GitHubTreeStore(config,github.fetch).getHead()]);
+ assert.equal(github.requests.filter(r=>r.url.includes('/access_tokens')).length,1);
+ const other=new FakeGitHub();await new GitHubTreeStore(config,other.fetch).getHead();assert.equal(other.requests.filter(r=>r.url.includes('/access_tokens')).length,1);
+});
 test('private workflow uses its short-lived repository token without OAuth or App credentials',async()=>{
  const github=new FakeGitHub();const store=new GitHubTreeStore({dataRepo:config.dataRepo,dataBranch:config.dataBranch},github.fetch,'workflow-token');
  await store.getHead();assert.equal(github.requests.some(r=>r.url.includes('/access_tokens')),false);

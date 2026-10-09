@@ -1,4 +1,10 @@
 import { test, expect } from "@playwright/test";
+test('tree keyboard navigation and editor undo shortcuts preserve focus and data',async({page})=>{
+ await page.goto('/?mode=editor');await expect(page.locator('.paper-tree-canvas[data-ready=true]')).toBeVisible();
+ const root=page.getByRole('treeitem',{name:'论文解析树',exact:true});await root.focus();await page.keyboard.press('ArrowDown');await expect(page.getByRole('treeitem',{name:'Abstract',exact:true})).toBeFocused();
+ await page.keyboard.press('Home');await expect(root).toBeFocused();await page.keyboard.press('End');await expect(root).not.toBeFocused();
+ await page.getByRole('button',{name:'修改测试说明'}).click();await expect(page.getByTestId('export-data')).toContainText('NEW_NOTE');await root.focus();await page.keyboard.press('Control+z');await expect(page.getByTestId('export-data')).not.toContainText('NEW_NOTE');await page.keyboard.press('Control+Shift+z');await expect(page.getByTestId('export-data')).toContainText('NEW_NOTE');
+});
 
 test("root folding and expander buttons work with the keyboard", async ({page})=>{
 	await page.goto("/?mode=viewer");
@@ -75,12 +81,19 @@ for (const width of [390,1440]) {
 			await expect(page.locator('.paper-tree-canvas[data-ready="true"]')).toBeVisible();
 			await expect(page.getByRole("treeitem")).toHaveCount(count);
 			const measurement = await page.evaluate(() => ({width:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,nodes:document.querySelectorAll('me-tpc').length,fractionHeight:document.querySelector('.mfrac')?.getBoundingClientRect().height??0}));
+			const operation=await page.evaluate(async()=>{const root=document.querySelector('me-tpc') as HTMLElement;const started=performance.now();root.click();root.click();await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return {foldExpandMs:performance.now()-started,heapBytes:(performance as Performance & {memory?:{usedJSHeapSize:number}}).memory?.usedJSHeapSize??null};});
 			expect(measurement.scrollWidth).toBeLessThanOrEqual(measurement.width+1);
 			expect(measurement.fractionHeight).toBeGreaterThan(18);
-			await info.attach("measurement",{body:JSON.stringify({count,width,loadMs:Date.now()-started,...measurement}),contentType:"application/json"});
+			await info.attach("measurement",{body:JSON.stringify({count,width,loadMs:Date.now()-started,...measurement,...operation}),contentType:"application/json"});
 		});
 	}
 }
+test('full screen exits cleanly and dark mode preserves keyboard interaction',async({page})=>{
+ await page.goto('/?mode=viewer');await expect(page.locator('.paper-tree-canvas[data-ready=true]')).toBeVisible();
+ await page.evaluate(()=>document.documentElement.classList.add('dark'));const root=page.getByRole('treeitem',{name:'论文解析树',exact:true});await root.focus();await page.keyboard.press('Enter');await expect(root).toHaveAttribute('aria-expanded','false');await page.keyboard.press('Enter');await expect(root).toHaveAttribute('aria-expanded','true');
+ await page.getByRole('button',{name:'全屏',exact:true}).click();await expect.poll(()=>page.evaluate(()=>!!document.fullscreenElement)).toBe(true);await page.evaluate(()=>document.exitFullscreen());await expect.poll(()=>page.evaluate(()=>!!document.fullscreenElement)).toBe(false);
+ await root.focus();await page.keyboard.press('ArrowDown');await expect(page.getByRole('treeitem',{name:'Abstract',exact:true})).toBeFocused();
+});
 
 test("unmounting an initialized or initializing canvas leaves one instance after remount",async({page})=>{
 	await page.goto("/?mode=viewer");
