@@ -1,9 +1,11 @@
 import type { PaperCatalog } from "../../../scripts/paper-trees/catalog";
+import type { ReleaseManifest } from "../../../src/features/paper-trees/model";
 import {
 	type DraftTree,
 	validateDraft,
 } from "../../../src/features/paper-trees/model";
 import type { Versioned } from "../server/github-store";
+import type { ReleaseJob } from "../server/release";
 
 export type ClientSession =
 	| { authenticated: false }
@@ -85,4 +87,26 @@ export async function saveDraft(
 		value: validateDraft(result.draft, draft.paperId),
 		blobSha: result.blobSha,
 	};
+}
+export async function getActiveJob(): Promise<ReleaseJob | null> {
+	return call("/api/jobs");
+}
+export async function getJob(jobId: string): Promise<ReleaseJob> {
+	return call(`/api/jobs?jobId=${encodeURIComponent(jobId)}`);
+}
+export async function getHistory(
+	cursor: string | null = null,
+): Promise<{ items: ReleaseManifest[]; cursor: string | null }> {
+	return call(
+		`/api/history${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`,
+	);
+}
+export async function requestPublish(
+	paperKey: string,
+	draftSha: string,
+): Promise<ReleaseJob> {
+	return call("/api/publish", "POST", { paperKey, draftSha });
+}
+export async function requestRollback(releaseId: string): Promise<ReleaseJob> {
+	return call("/api/rollback", "POST", { releaseId });
 }

@@ -10,6 +10,8 @@ async function mock(page:Page){
   const request=route.request();const url=new URL(request.url());const headers={'cache-control':'private, no-store'};
   if(url.pathname==='/api/session')return route.fulfill({json:{authenticated:true,csrfToken:'a'.repeat(48),expiresAt:Math.floor(Date.now()/1000)+7200},headers});
   if(url.pathname==='/api/papers')return route.fulfill({json:{codeSha:'c'.repeat(40),papers:[paper]},headers});
+  if(url.pathname==='/api/jobs')return route.fulfill({json:null,headers});
+  if(url.pathname==='/api/history')return route.fulfill({json:{items:[],cursor:null},headers});
   if(url.pathname==='/api/logout')return route.fulfill({json:{authenticated:false},headers});
   if(url.pathname==='/api/draft'){
    if(request.method()==='GET')return route.fulfill({json:{draft,blobSha},headers});
@@ -25,7 +27,7 @@ test('author creates a private template, edits nodes, saves with keyboard, reloa
  const state=await mock(page);await page.goto('/studio/paper-trees/');await page.getByRole('link',{name:paper.title}).click();await expect(page).toHaveURL(new RegExp(paper.paperKey));
  await page.getByRole('button',{name:'从论文解析模板创建',exact:true}).click();await expect(page.locator('.paper-tree-canvas[data-ready=true]')).toBeVisible();
  await page.getByRole('button',{name:'Abstract',exact:true}).click();await page.getByLabel('节点标题', {exact:true}).fill('My Abstract');await page.getByLabel('节点说明',{exact:true}).fill('Private note $\\frac{1}{2}$');await page.getByLabel('节点链接',{exact:true}).fill('https://example.com/paper');await page.getByRole('button',{name:'应用节点修改',exact:true}).click();
- await page.keyboard.press('ControlOrMeta+s');await expect(page.getByRole('status')).toContainText('已保存');expect(state.draft?.tree.nodeData.children?.[0].topic).toBe('My Abstract');
+ await page.keyboard.press('ControlOrMeta+s');await expect(page.getByRole('status',{name:'草稿保存状态'})).toContainText('已保存');expect(state.draft?.tree.nodeData.children?.[0].topic).toBe('My Abstract');
  await page.reload();await expect(page.getByRole('button',{name:'My Abstract',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'退出登录',exact:true}).click();await expect(page.locator('.paper-tree-canvas')).toHaveCount(0);await expect(page.getByText(paper.title,{exact:true})).toHaveCount(0);await expect(page.getByRole('link',{name:'使用 GitHub 登录'})).toBeVisible();
 });
@@ -42,8 +44,8 @@ test('empty trees support explicit add, clone, delete, move, undo and redo at mo
 });
 test('a delayed save keeps later edits dirty, provider failure and conflicts preserve the working tree',async({page})=>{
  const state=await mock(page);state.seed(createPaperTree(paper.id,'empty'));await page.goto(path);await expect(page.locator('.paper-tree-canvas[data-ready=true]')).toBeVisible();
- await page.getByLabel('节点标题',{exact:true}).fill('Frozen Save');await page.getByRole('button',{name:'应用节点修改',exact:true}).click();state.pause();await page.getByRole('button',{name:'保存私人草稿',exact:true}).click();await expect(page.getByRole('status')).toContainText('保存中');
- await page.getByLabel('节点标题',{exact:true}).fill('Newer Local');await page.getByRole('button',{name:'应用节点修改',exact:true}).click();state.resume();await expect(page.getByRole('status')).toContainText('未保存修改');await expect(page.getByLabel('节点标题',{exact:true})).toHaveValue('Newer Local');
+ await page.getByLabel('节点标题',{exact:true}).fill('Frozen Save');await page.getByRole('button',{name:'应用节点修改',exact:true}).click();state.pause();await page.getByRole('button',{name:'保存私人草稿',exact:true}).click();await expect(page.getByRole('status',{name:'草稿保存状态'})).toContainText('保存中');
+ await page.getByLabel('节点标题',{exact:true}).fill('Newer Local');await page.getByRole('button',{name:'应用节点修改',exact:true}).click();state.resume();await expect(page.getByRole('status',{name:'草稿保存状态'})).toContainText('未保存修改');await expect(page.getByLabel('节点标题',{exact:true})).toHaveValue('Newer Local');
  state.fail(500);await page.getByRole('button',{name:'保存私人草稿',exact:true}).click();await expect(page.getByRole('alert')).toContainText('保存失败');await expect(page.getByLabel('节点标题',{exact:true})).toHaveValue('Newer Local');
  state.fail(409);await page.getByRole('button',{name:'保存私人草稿',exact:true}).click();await expect(page.getByRole('alert')).toContainText('新版本');await expect(page.getByRole('button',{name:'重新加载草稿',exact:true})).toBeVisible();
 });
@@ -51,7 +53,7 @@ test('JSON import regenerates IDs and remains unsaved, export includes local edi
  await mock(page);await page.goto(path);await page.getByRole('button',{name:'创建空树',exact:true}).click();await expect(page.locator('.paper-tree-canvas[data-ready=true]')).toBeVisible();
  const imported=createPaperTree('different-paper','empty');imported.tree.nodeData.topic='Imported';const oldId=imported.tree.nodeData.id;
  page.once('dialog',dialog=>{expect(dialog.message()).toContain('导入');void dialog.accept();});await page.getByLabel('导入解析树 JSON').setInputFiles({name:'tree.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(imported))});
- await expect(page.getByRole('status')).toContainText('未保存');await page.getByLabel('节点说明',{exact:true}).fill('Unsaved Export Sentinel');
+ await expect(page.getByRole('status',{name:'草稿保存状态'})).toContainText('未保存');await page.getByLabel('节点说明',{exact:true}).fill('Unsaved Export Sentinel');
  const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'导出备份',exact:true}).click();const download=await downloadPromise;const data=JSON.parse(await readFile((await download.path())!,'utf8'));
  expect(data.paperId).toBe(paper.id);expect(data.tree.nodeData.id).not.toBe(oldId);expect(data.tree.nodeData.note).toBe('Unsaved Export Sentinel');expect(JSON.stringify(data)).not.toContain('csrfToken');
 });

@@ -16,12 +16,14 @@ import {
 } from "./auth";
 import { type AuthorConfig, readAuthorConfig } from "./config";
 import { GitHubTreeStore } from "./github-store";
+import { PaperTreeReleases } from "./release";
 
 export interface ApiDependencies {
 	fetchImpl?: typeof fetch;
 	now?: () => number;
 	catalog?: PaperCatalog;
 	store?: GitHubTreeStore;
+	releases?: PaperTreeReleases;
 }
 export function errorMessage(code: string): string {
 	const messages: Record<string, string> = {
@@ -34,6 +36,10 @@ export function errorMessage(code: string): string {
 		INVALID_TREE: "解析树内容未通过校验，请检查后重试。",
 		REQUEST_TOO_LARGE: "解析树文件超过大小限制。",
 		STUDIO_NOT_CONFIGURED: "作者服务尚未完成配置。",
+		SOURCE_VERSION_MISMATCH: "工作区版本与当前网站不同，请先同步网站与工作区。",
+		RELEASE_BUSY: "已有发布任务进行中，请等待当前任务完成。",
+		RELEASE_NOT_INITIALIZED: "发布服务尚未初始化。",
+		PAPER_NOT_PUBLIC: "请先将论文文章设为公开，再发布解析树。",
 	};
 	return messages[code] ?? "请求未完成，请稍后重试。";
 }
@@ -231,6 +237,58 @@ export async function handleApi(
 			]);
 		}
 		requireAuthor(request, config, request.method !== "GET");
+		if (
+			["/api/publish", "/api/jobs", "/api/history", "/api/rollback"].includes(
+				path,
+			)
+		) {
+			const method = ["/api/publish", "/api/rollback"].includes(path)
+				? "POST"
+				: "GET";
+			if (request.method !== method)
+				throw new ApiError(405, "METHOD_NOT_ALLOWED");
+			const catalog =
+				dependencies.catalog ?? (await import("./catalog")).paperCatalog;
+			const store =
+				dependencies.store ??
+				new GitHubTreeStore(config, dependencies.fetchImpl);
+			const releases =
+				dependencies.releases ?? new PaperTreeReleases(store, catalog);
+			if (path === "/api/jobs") {
+				const jobId = url.searchParams.get("jobId");
+				return privateResponse(
+					jobId ? await releases.getJob(jobId) : await releases.getActiveJob(),
+				);
+			}
+			if (path === "/api/history")
+				return privateResponse(
+					await releases.getHistory(url.searchParams.get("cursor") || null),
+				);
+			const body = await requestJson(request);
+			if (path === "/api/publish") {
+				if (
+					Object.keys(body).some(
+						(key) => !["paperKey", "draftSha"].includes(key),
+					) ||
+					typeof body.paperKey !== "string" ||
+					typeof body.draftSha !== "string"
+				)
+					throw new ApiError(400, "INVALID_REQUEST");
+				return privateResponse(
+					await releases.requestPublish(body.paperKey, body.draftSha),
+					202,
+				);
+			}
+			if (
+				Object.keys(body).some((key) => key !== "releaseId") ||
+				typeof body.releaseId !== "string"
+			)
+				throw new ApiError(400, "INVALID_REQUEST");
+			return privateResponse(
+				await releases.requestRollback(body.releaseId),
+				202,
+			);
+		}
 		if (path === "/api/papers" || path === "/api/draft") {
 			if (path === "/api/papers" && request.method !== "GET")
 				throw new ApiError(405, "METHOD_NOT_ALLOWED");
@@ -296,7 +354,13 @@ export async function handleApi(
 		const code =
 			error instanceof ApiError ? error.code : "STUDIO_REQUEST_FAILED";
 		return privateResponse(
-			{ error: code, message: errorMessage(code) },
+			{
+				error: code,
+				message: errorMessage(code),
+				...(error instanceof ApiError && error.details
+					? { jobId: error.details.jobId }
+					: {}),
+			},
 			error instanceof ApiError ? error.status : 502,
 		);
 	}

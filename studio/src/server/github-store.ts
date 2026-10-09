@@ -293,6 +293,11 @@ export class GitHubTreeStore {
 			throw error;
 		}
 		if (response.status >= 500) throw new ApiError(502, "DISPATCH_UNCERTAIN");
+		if (!response.ok)
+			throw new ApiError(
+				response.status === 429 ? 429 : 502,
+				"DISPATCH_REJECTED",
+			);
 		this.checkStatus(response);
 	}
 }
