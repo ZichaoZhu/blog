@@ -55,7 +55,7 @@ Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 byt
 
 - GitHub 数字 ID 限制、首次登录、保存后重新登录读取、另一账户及匿名拒绝。
 - 两个 Vercel 项目的 Node 22、候选访问保护、自动化绕过、域名及实际构建环境。
-- 私人 Actions 固定数据 / 代码提交、partial Git 读取、500 快照的真实网络路径。
+- 私人 Actions 固定数据 / 代码提交、500 快照的真实网络路径；已单独通过真实私人仓库的 partial Git 按需读取，但不等同于 500 快照云端验收。
 - 空清单 bootstrap、真实论文首次手动发布、正式域名部署 ID 与新鲜回执一致。
 - 候选安全失败、失败图不带入下一次发布、历史回退不修改私人草稿、普通代码发布保留图。
 
@@ -110,7 +110,23 @@ Studio 生产构建：共享 `MindElixir` chunk **91,242 bytes / gzip 28,709 byt
 
 - 私人数据仓库：`ZichaoZhu/paper-analysis-data`，GitHub 确认为 PRIVATE；初始提交 `dfac5d5`，包含空控制基线与已启用的 `publish.yml`。五个非敏感 Actions variables 已设置。
 - Studio：`blog-studio` / `prj_wIgiZ1TmUmzMBn0rbE5hw3NXxc5N`，Root=`studio`、Node 22.x、共享根外源码开启、保护=`all_except_custom_domains`。
-- 博客及 Studio 项目 Ignored Build Step 均已设置为 `exit 0`；博客 Git 生产分支仍为 `main`。实际 remote Git 取消与 worker prebuilt 路径尚待验收。
+- 博客及 Studio 项目 Ignored Build Step 均已设置为 `exit 0`；博客 Git 生产分支仍为 `main`。推送 `2fed587` 后实际 Git 候选为 CANCELED；Native prebuilt 已独立上传，正式域名没有切换。
 - Studio 子域名已关联项目并通过域名所有权核验，但 DNS 尚未配置。Vercel 实际推荐 CNAME：`studio` → `a0f5e2e31eb50535.vercel-dns-017.com`。该值来自本次项目 API，而不是通用示例。
 - 正式博客 alias 重新核对仍为 `dpl_BDZ4F34Sj2eoURGJex9JoCikZhEa`，源码 `30241dbf3eb0daff6859d510522e2fc8cea0a93b`。当前部署没有论文树功能。
-- GitHub App 注册准备页与仅监听本机的回调已备好，等待本人创建、安装到单一私人仓库。实际 OAuth、读写和图发布没有执行，不能标为通过。
+- GitHub App `goongmly-paper-trees` / `5247370` 已由本人创建，数字所有者 ID 与预定账号一致；尚无 installation，等待安装到单一私人仓库。Studio 的七个基础服务器变量及两个项目的 Automation Bypass 已配置；私人 Actions 仍缺 VERCEL_TOKEN。实际 OAuth、草稿读写和图发布没有执行，不能标为通过。
+
+## 云端排障与修正（2026-10-09，正式未切换）
+
+- [Linux CI `2fed587`](https://github.com/ZichaoZhu/blog/actions/runs/37895769881) 全部成功，包含原站点、写作和论文树回归。这一结果早于下述 Native 兼容修正，不能用它代替新修正的验证。
+- 私人仓库真实 partial Git 测试固定 `dfac5d56ea35d47a95221b32fbb29f15cec06e3f`；初始缺少 3 个 blob，显式批量获取后可读 control，Git 配置未保存 token。
+- 官方 CLI 62.2.0 的 build 容许子目录链接，而 deploy 将 Root Directory 再拼接一次。改用原生仓库映射及显式 project 选择，回归验证保留博客项目缓存。实际同一检出已成功构建、上传两份独立候选，项目归属正确。
+- CLI agent 模式成功输出包含多组 URL 的 JSON，原先按 URL 数量解析会失败。现使用 JSON 的 deployment ID，并重新向 Vercel API 查询；纯 URL 输出继续支持。两种输出与错误输入均有回归。
+- 本机直接请求候选域名超时，现有代理可达；这是本机验收网络条件。实际 JSON 匿名请求为 401，带项目 bypass 后博客首页和发布回执为 200，原始博客候选 `dpl_6mVMSMLXVTHF4CuPrdS7zDUMTWjt` 通过该检查。
+- 原始 Studio 候选 `dpl_AcQDvTtuUECo6z4pgCoYfFmic3H3` 匿名请求为 401，但绕过后工作区为 500，验证正确阻止其发布。运行日志确定为 sanitize-html CommonJS 加载 htmlparser2 12 ESM 时 ERR_REQUIRE_ESM。现仅在生产构建用 `ssr.noExternal` 转换已有 sanitize-html，开发模式保持原有依赖加载方式，保留版本和清理规则。真实打包 handler 在 Node 禁止 require ESM 时先复现 500，修正后工作区和无缓存版本回执 2/2 通过；该检查已加入 `test:paper-trees`。
+- 新修正本地单元套件 105/105、TypeScript、Studio 15 文件检查与 lint（0 errors）通过；完整论文树浏览器 26/26、500 篇实际构建与隐私扫描、生产打包运行 2/2 通过。新版实际 Studio 候选继续验证，尚未作为正式部署上线。
+
+此次新增适配修正在独立审查范围之后，以失败复现、完整受影响检查和实际云端候选作为验证；没有声称完成第二次审查。
+
+- Ruling: Extend Task 11 actual-cloud acceptance with two narrowly scoped Native CLI compatibility corrections after the completed independent review — CLI 62.2.0 build tolerates per-directory linking but deploy applies remote rootDirectory twice; its agent success output is JSON with several alias/guidance URLs, unlike plain stdout — use official repository mapping plus explicit project selection and authoritative JSON deployment ID; require RED→GREEN regression and actual protected-candidate verification before promotion. These adapter corrections are outside the reviewed range and receive no second reviewer, so cloud proof and full affected checks are mandatory.
+
+- Ruling: Transform the existing sanitize-html dependency in the Studio SSR bundle, retaining its installed version and sanitization rules — actual Vercel error ERR_REQUIRE_ESM is sanitize-html CommonJS requiring htmlparser2 12 ESM; built-function test with Node --no-experimental-require-module reproduced workspace 500 while version endpoint remained 200 — Vite ssr.noExternal is the minimal adapter configuration; a native built-handler runtime regression is added to the full paper-tree gate. Cloud verification is still required because the local flag approximates the platform loader.

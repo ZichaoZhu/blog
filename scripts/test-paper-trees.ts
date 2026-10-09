@@ -278,6 +278,27 @@ try {
 		throw new Error(
 			`Isolated Studio build failed: ${((studioBuild.stdout ?? "") + (studioBuild.stderr ?? "")).slice(-6000)}`,
 		);
+	const studioRuntime = spawnSync(
+		process.execPath,
+		[
+			"--no-experimental-require-module",
+			"--test",
+			join(source, "tests/integration/paper-tree-studio-runtime.test.mjs"),
+		],
+		{
+			cwd: source,
+			env: {
+				...env,
+				PAPER_TREE_STUDIO_OUTPUT_DIR: join(dest, "studio/.vercel/output"),
+			},
+			stdio: "inherit",
+		},
+	);
+	assert.equal(
+		studioRuntime.status,
+		0,
+		"Built Studio runtime acceptance failed",
+	);
 	const studioStatic = join(dest, "studio/.vercel/output/static");
 	await assertPublicArtifacts(studioStatic, ["PrivateStudioCatalogSentinel"]);
 	const integration = spawnSync(

@@ -1,7 +1,7 @@
 import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import { promisify } from "node:util";
 import { readPublicTreeInput } from "../../src/features/paper-trees/public-build";
 import { ApiError } from "../../studio/src/server/auth";
@@ -66,13 +66,21 @@ export class VercelProvider implements DeploymentProvider {
 		args: string[],
 		extra: NodeJS.ProcessEnv = {},
 	): Promise<string> {
+		const studio = this.config.role === "studio" && args[0] !== "promote";
 		try {
 			return (
 				await this.command(
 					"pnpm",
-					["dlx", "vercel@62.2.0", ...args, "--scope", this.config.teamId],
+					[
+						"dlx",
+						"vercel@62.2.0",
+						...args,
+						"--scope",
+						this.config.teamId,
+						...(studio ? ["--project", this.config.projectId] : []),
+					],
 					{
-						cwd: this.config.root,
+						cwd: studio ? dirname(this.config.root) : this.config.root,
 						env: {
 							...process.env,
 							...extra,
@@ -122,6 +130,46 @@ export class VercelProvider implements DeploymentProvider {
 			throw new ApiError(503, "DEPLOYMENT_PROTECTION_REQUIRED");
 	}
 	async build(job: ReleaseJob, inputDir: string): Promise<void> {
+		if (this.config.role === "studio") {
+			// Native repo linking keeps each project's settings and outputs in its own directory.
+			const directory = join(dirname(this.config.root), ".vercel");
+			const file = join(directory, "repo.json");
+			await mkdir(directory, { recursive: true });
+			const repo = JSON.parse(
+				await readFile(file, "utf8").catch((error: NodeJS.ErrnoException) => {
+					if (error.code !== "ENOENT") throw error;
+					return '{"projects":[]}';
+				}),
+			) as {
+				remoteName?: string;
+				projects: {
+					id: string;
+					name: string;
+					directory: string;
+					orgId: string;
+				}[];
+			};
+			await writeFile(
+				file,
+				JSON.stringify({
+					...repo,
+					remoteName: repo.remoteName ?? "origin",
+					projects: [
+						...repo.projects.filter(
+							(project) =>
+								project.id !== this.config.projectId &&
+								project.directory !== "studio",
+						),
+						{
+							id: this.config.projectId,
+							name: this.config.projectId,
+							directory: "studio",
+							orgId: this.config.teamId,
+						},
+					],
+				}),
+			);
+		}
 		await this.cli(["pull", "--yes", "--environment=production"]);
 		await this.cli(["build", "--prod"], {
 			PAPER_TREE_RELEASE_ID: job.releaseId,
@@ -201,10 +249,25 @@ export class VercelProvider implements DeploymentProvider {
 			"--meta",
 			`paperTreeCodeSha=${job.codeSha}`,
 		]);
-		const matches = output.match(/https:\/\/[a-z\d-]+\.vercel\.app\b/g);
-		if (matches?.length !== 1)
+		const result = output.trim();
+		if (result.startsWith("{")) {
+			let parsed: { status?: string; deployment?: { id?: unknown } };
+			try {
+				parsed = JSON.parse(result);
+			} catch {
+				throw new ApiError(502, "INVALID_DEPLOYMENT_RESPONSE");
+			}
+			if (
+				parsed?.status !== "ok" ||
+				typeof parsed.deployment?.id !== "string" ||
+				!/^dpl_[\w-]+$/.test(parsed.deployment.id)
+			)
+				throw new ApiError(502, "INVALID_DEPLOYMENT_RESPONSE");
+			return this.getDeployment(parsed.deployment.id);
+		}
+		if (!/^https:\/\/[a-z\d-]+\.vercel\.app$/.test(result))
 			throw new ApiError(502, "INVALID_DEPLOYMENT_RESPONSE");
-		return this.getDeployment(new URL(matches[0]).hostname);
+		return this.getDeployment(new URL(result).hostname);
 	}
 	async getDeployment(id: string): Promise<DeploymentRecord> {
 		if (!/^(?:dpl_[\w-]+|[a-z\d-]+\.vercel\.app)$/.test(id))
@@ -284,7 +347,9 @@ export class VercelProvider implements DeploymentProvider {
 						),
 					];
 		for (const path of paths) {
-			const anonymous = await this.request(`${origin}${path}`);
+			const anonymous = await this.request(`${origin}${path}`, {
+				accept: "application/json",
+			});
 			if (![401, 403].includes(anonymous.status))
 				throw new ApiError(502, "CANDIDATE_UNPROTECTED");
 			await anonymous.body?.cancel();

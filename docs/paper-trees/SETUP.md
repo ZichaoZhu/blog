@@ -69,7 +69,7 @@ gh repo create ZichaoZhu/paper-analysis-data --private --description 'Private pa
 | 候选访问保护 | `all_except_custom_domains` | 同左 |
 | Ignored Build Step | `exit 0` | `exit 0` |
 
-Studio 开启 Include source files outside Root Directory。其 `vercel.json` 已指定从父目录安装 workspace、构建 Studio。DNS 按 Vercel 实际提供的记录添加 Studio 子域名；不要替换博客现有 DNS。两者的 `*.vercel.app` production 候选也需保护，只保护 preview 不满足要求。分别创建项目级 Automation Bypass secret，供私人 worker 检查受保护候选。
+Studio 开启 Include source files outside Root Directory。其 `vercel.json` 已指定从父目录安装 workspace、构建 Studio。Native worker 自动维护忽略目录 `.vercel/repo.json` 中的 Studio 映射，并在仓库根目录显式选择项目；博客根目录与 Studio 子目录分别保存预构建产物。不要直接在 `studio` 内执行裸 `vercel deploy`，远端 Root Directory 会被重复拼成 `studio/studio`。DNS 按 Vercel 实际提供的记录添加 Studio 子域名；不要替换博客现有 DNS。两者的 `*.vercel.app` production 候选也需保护，只保护 preview 不满足要求。分别创建项目级 Automation Bypass secret，供私人 worker 检查受保护候选。
 
 Studio runtime / production 设置以下服务端变量：
 
@@ -114,6 +114,7 @@ Studio runtime / production 设置以下服务端变量：
 pnpm install --frozen-lockfile
 pnpm test
 pnpm check:studio
+pnpm test:paper-trees
 ```
 
 操作员进程需通过安全环境注入：`GH_DATA_TOKEN`（私人数据仓库 Contents / Actions write）、`PAPER_TREE_DATA_REPO`、`PAPER_TREE_DATA_BRANCH`、`BLOG_SOURCE_REPO`、`BLOG_SOURCE_BRANCH`，以及上述 Vercel 变量和 secrets。CLI 内部项目变量名为 `VERCEL_PROJECT_ID` / `VERCEL_STUDIO_PROJECT_ID`，分别对应 Actions 的 `BLOG_VERCEL_PROJECT_ID` / `STUDIO_VERCEL_PROJECT_ID`。不要将 token 写进命令参数或 shell history。
@@ -122,9 +123,11 @@ pnpm check:studio
 pnpm publish:code <当前checkout的40位HEAD提交SHA>
 ```
 
+本机如果配置了 HTTP_PROXY / HTTPS_PROXY，可在操作员命令前设置 `NODE_OPTIONS=--use-env-proxy`，让 Node 22.23 的原生请求使用现有代理；不要提交代理地址或凭据。GitHub Actions 使用自身网络，不需要本机代理。
+
 命令原子登记 code job 并触发私人工作流，输出 job ID；它不是“已经上线”的回执。工作流固定 `code_sha`、`data_sha`，先验证 allowed branch 与私人锁，再安装依赖；先构建并验证两份受保护候选，再切换两个正式域名，最后更新成功指针。期间保存草稿仍可用，其他发布请求会返回 busy。
 
-完成后比对博客 `/paper-trees/release.json`、Studio `/version.json`、Vercel 正式 alias 的 deployment ID 和私人 control；code / release / job 应与本次作业一致，回执 `Cache-Control` 应包含 `no-store`。匿名访问候选首页及图 JSON 应为 401 / 403；带项目 bypass 的请求才允许检查候选。编辑入口只有在 Studio 登录验收后启用。
+完成后比对博客 `/paper-trees/release.json`、Studio `/version.json`、Vercel 正式 alias 的 deployment ID 和私人 control；code / release / job 应与本次作业一致，回执 `Cache-Control` 应包含 `no-store`。匿名检查显式发送 `Accept: application/json`，访问候选首页及图 JSON 应为 401 / 403（普通浏览器请求可能返回 Vercel 登录跳转，见 [官方认证说明](https://vercel.com/docs/deployment-protection/methods-to-protect-deployments/vercel-authentication)）；带项目 bypass 的请求才允许检查候选。编辑入口只有在 Studio 登录验收后启用。
 
 作者进入 `https://studio.blessingworld.cn/studio/paper-trees/`，GitHub 登录 → 选择论文 → 完整模板或空树 → 编辑 → 保存私人草稿 → 预览公开版本 → 手动确认发布。模板含 Abstract / Introduction / Method / Experiments / Limitation；节点说明和链接都会公开，草稿保存本身不会发布。只有公开的正文型 Paper 能发布图。
 
