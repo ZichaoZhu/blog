@@ -1,5 +1,6 @@
 packages:
   - '.'
+  - 'studio'
 allowBuilds:
   esbuild: true
   workerd: true

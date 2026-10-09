@@ -1,0 +1,27 @@
+---
+import '../../../src/styles/main.css';
+import '../../../src/styles/variables.styl';
+import BackLink from '../../../src/components/knowledge/BackLink.astro';
+import { siteConfig } from '../../../src/config/siteConfig';
+interface Props { title: string }
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-CN" style={`--hue:${siteConfig.themeColor.hue}`}>
+ <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="robots" content="noindex,nofollow"/><title>{title} · Goongmly Studio</title></head>
+ <body class="studio-body">
+  <header class="card-base studio-header"><BackLink href="https://blog.blessingworld.cn/papers/" label="返回论文"/><a class="btn-plain knowledge-action" href="/studio/paper-trees/">解析树工作区</a><button class="btn-plain knowledge-action" data-studio-theme aria-label="切换亮暗主题">亮暗主题</button></header>
+  <main id="studio-main"><slot/></main>
+ </body>
+</html>
+<script>
+ const key='paper-tree-studio-theme';
+ function setTheme(dark:boolean){document.documentElement.classList.toggle('dark',dark);}
+ setTheme(localStorage.getItem(key)==='dark'||(!localStorage.getItem(key)&&matchMedia('(prefers-color-scheme: dark)').matches));
+ document.querySelector('[data-studio-theme]')?.addEventListener('click',()=>{const dark=!document.documentElement.classList.contains('dark');setTheme(dark);localStorage.setItem(key,dark?'dark':'light');});
+</script>
+<style is:global>
+ .studio-body{background:var(--page-bg);color:var(--deep-text);min-height:100vh;padding:1rem;font-family:var(--font-sans);}
+ .studio-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:.75rem 1rem;max-width:96rem;margin:0 auto 1rem;}
+ #studio-main{max-width:96rem;margin:auto;}
+</style>

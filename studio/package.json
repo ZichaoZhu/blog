@@ -1,0 +1,21 @@
+{
+  "name": "@goongmly/paper-tree-studio",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22.23.0 <23"},
+  "scripts": {"dev": "astro dev --host 127.0.0.1 --port 4323", "check": "astro check", "build": "astro build"},
+  "dependencies": {
+    "astro": "7.3.2",
+    "@astrojs/vercel": "11.0.12",
+    "@astrojs/svelte": "9.0.1",
+    "svelte": "5.57.0",
+    "@astrojs/check": "0.9.10",
+    "typescript": "6.0.3",
+    "astro-icon": "1.2.0",
+    "@iconify-json/material-symbols": "1.2.91",
+    "@tailwindcss/vite": "4.3.3",
+    "@tailwindcss/typography": "0.5.20",
+    "tailwindcss": "4.3.3",
+    "stylus": "0.64.0"
+  }
+}

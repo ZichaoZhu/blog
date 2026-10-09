@@ -1,0 +1,6 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {"resolveJsonModule": true, "esModuleInterop": true, "types": ["node"]},
+  "include": [".astro/types.d.ts", "src/**/*"],
+  "exclude": ["dist", ".vercel"]
+}

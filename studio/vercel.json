@@ -1,0 +1,6 @@
+{
+  "framework": "astro",
+  "installCommand": "pnpm --dir .. install --frozen-lockfile",
+  "buildCommand": "pnpm --dir .. build:studio",
+  "headers": [{"source": "/(.*)", "headers": [{"key": "Cache-Control", "value": "private, no-store"}, {"key": "X-Robots-Tag", "value": "noindex, nofollow"}]}]
+}

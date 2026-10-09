@@ -29,7 +29,11 @@
     "verify:site": "node --import tsx scripts/verify-site.ts",
     "audit:migration": "node --import tsx scripts/verify-site.ts --audit-migration",
     "test:authoring": "node --import tsx scripts/test-authoring.ts",
-    "test:paper-trees": "node --import tsx scripts/test-paper-trees.ts"
+    "test:paper-trees": "node --import tsx scripts/test-paper-trees.ts",
+    "prepare:studio": "node --import tsx scripts/paper-trees/catalog.ts",
+    "dev:studio": "pnpm prepare:studio && pnpm --dir studio dev",
+    "check:studio": "pnpm prepare:studio && pnpm --dir studio check",
+    "build:studio": "pnpm prepare:studio && pnpm --dir studio build"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
